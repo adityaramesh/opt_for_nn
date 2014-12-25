@@ -145,6 +145,7 @@
 \newcommand{\esterr}{\mathcal{E}_{\mathrm{est}}}
 \newcommand{\opterr}{\mathcal{E}_{\mathrm{opt}}}
 \newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\tr}{\operatorname{tr}}
 
 \title{Optimization for Neural Networks}
 \author{Aditya Ramesh}
@@ -975,6 +976,8 @@ TODO
 
 \section{Concepts from Statistical Learning Theory}
 
+\subsection{Generalization and PAC-learning}
+
 Our initial goal when motivating the discussion for neural networks was to
 ``learn'' what a given function $f: \reals{n} \to \reals{m}$ does to transform
 $x \in \reals{n}$ to $y \in \reals{m}$. But what exactly does it mean to learn?
@@ -988,7 +991,7 @@ When performing binary classification, each training instance $(x_k, y_k) \in S$
 is implicitly associated with a target \emph{concept} that we wish to learn.
 This concept is a mapping $c$ from the input space $X$ to the output space $Y
 \coloneqq \{0, 1\}$, such that $y_k = c(x_k)$. The set of all concepts
-associated with our classificatiion task is called the \emph{concept class}, and
+associated with our classification task is called the \emph{concept class}, and
 is denoted by $C$. A concept can be something simple, such as the set of
 axis-aligned rectangles in $\reals{2}$, or something exceedingly complex, such
 as the manifold of human faces in $\reals{256 \times 256}$, the space of $256
@@ -1002,10 +1005,10 @@ This leads to the following definition for \emph{generalization error}.
 
 \begin{definition}[Generalization error~\citep{ml_mohri}]
 Given a candidate function $f \in F$, a target concept $c \in C$, and an
-underlying distribution $D$, the \emph{generalization error} of $f$ is defined
-as
+underlying distribution $D$, the \emph{generalization error} or \emph{risk} of
+$f$ is defined as
 \[
-	E(f) \coloneqq \Pr_{x \sim D}(f(x) \neq c(x)) =
+	R(f) \coloneqq \Pr_{x \sim D}(f(x) \neq c(x)) =
 		\E_{x \sim D} \left(\ind{f(x) \neq c(x)}\right).
 \]
 \end{definition}
@@ -1017,9 +1020,9 @@ misclassifications over a sample $S \sim D$.
 \begin{definition}[Empirical error~\citep{ml_mohri}]
 Given a candidate function $f \in F$, a target concept $c \in C$, and a sample
 $S \coloneqq \{(x_1, y_k), \ldots, (x_N, y_N)\} \sim D$, the \emph{empirical
-error} is defined as
+error} or \emph{empirical risk} of $f$ is defined as
 \[
-	\hat{E}(f) \coloneqq \frac{1}{N} \sum_{i = 1}^N \ind{f(x) \neq c(x)}.
+	\hat{R}(f) \coloneqq \frac{1}{N} \sum_{i = 1}^N \ind{f(x) \neq c(x)}.
 \]
 \end{definition}
 
@@ -1027,7 +1030,7 @@ There is a simple relationship between the empirical and generalization errors.
 Let $f \in F$.  Using the linearity of expectations and the fact that $S$ is
 drawn iid from $D$, it is easy to show that
 \[
-	\E_{S \sim D} (\hat{E}(f)) = E(f).
+	\E_{S \sim D} (\hat{R}(f)) = R(f).
 \]
 In other words, the generalization error of $f$ is simply the average
 misclassification rate over samples drawn from $D$. We are now ready to present
@@ -1037,11 +1040,11 @@ the the definition of probably approximate correct~(PAC) learning.
 Let $O(n)$ be an upper bound on the space complexity of an input $x \in X$. A
 concept class is said to be PAC-learnable if there exists an algorithm $A$ and a
 polynomial function $g : \reals{4} \to \reals{1}$ such that for any $\epsilon,
-\delta > 0$, for all distributions $D$ over $X$, and for any target concept $c
-\in C$, the following holds for any sample $N \geq g(1/\epsilon, 1/\delta, n,
-\size(c))$:
+\delta \in (0, 1]$, for all distributions $D$ over $X$, and for any target
+concept $c \in C$, the following holds for any sample $N \geq g(1/\epsilon,
+1/\delta, n, \size(c))$:
 \[
-	\Pr_{S \sim D} (E(f) \leq \epsilon) \geq 1 - \delta.
+	\Pr_{S \sim D} (R(f) \leq \epsilon) \geq 1 - \delta.
 \]
 If $A$ runs in $g(1/\epsilon, 1/\delta, n, \size(c))$, then $C$ is said to be
 efficiently PAC-learnable. In this case, $A$ is called a PAC-learning algorithm
@@ -1061,46 +1064,52 @@ One of the goals of statistical learning theory is to derive upper bounds on the
 generalization error in various situations. When such an upper bound applies to
 the particular situation at hand, we know that it is possible, at least in
 principle, to learn efficiently. Many of these upper bounds take the following
-form. Let $\delta > 0$ be our target confidence, and let $N$ be the size of the
-training samples drawn from $D$. Then with probability $1 - \delta$, it holds
-for any $f \in F$ that
+form. Let $\delta \in (0, 1]$ be our target confidence, and let $N$ be the size
+of the training samples drawn from $D$. Then with probability $1 - \delta$, it
+holds for any $f \in F$ that
 \begin{equation}
-	E(f) \leq \hat{E}(f) + c \sqrt{\frac{\capacity(F)}{N}},
+	R(f) \leq \hat{R}(f) + c \sqrt{\frac{\capacity(F)}{N}},
 	\label{eq:generalization_bound}
 \end{equation}
 where $c \in \reals{+}$ and $\capacity(F)$ is a quantity that measures the
-complexity of our chosen family of functions.
+complexity of our chosen family of functions. When we apply the
+bound~(\ref{eq:generalization_bound}), we often subsume auxiliary constants into
+$c$. So two occurrences of $c$ do not necessary represent the same constant
+value.
+
+\subsection{ERM vs SRM}
 
 The central idea of statistical learning theory is that learning is a tradeoff
 between minimizing the training error and the complexity of the family of
 functions used to model $C$. These quantities correspond to the first and second
-terms of Equation~\ref{eq:generalization_bound}, respectively. This tradeoff can
-be expressed in another way that is particularly illuminating. Let
+terms on the RHS of~(\ref{eq:generalization_bound}), respectively. This tradeoff
+can be expressed in another way that is particularly illuminating. Let
 \[
-	f^\star \coloneqq \argmin_{f} E(f) \quad\text{and}\quad
-	f_F^\star \coloneqq \argmin_{f \in F} E(f).
+	f^\star \coloneqq \argmin_{f} R(f) \quad\text{and}\quad
+	f_F^\star \coloneqq \argmin_{f \in F} R(f).
 \]
-In other words, $E(f^\star)$ is the best we can ever hope to do, while
-$E(f_F^\star)$ is the best we can do using our chosen family $F$. We define the
-\emph{excess error} $\mathcal{E}$ as
+In other words, $R(f^\star)$ is the best we can ever hope to do, while
+$R(f_F^\star)$ is the best we can do using our chosen family $F$. Given a
+function $f \in F$, we define the \emph{excess error} $\mathcal{E}$ as
 \begin{equation}
-	\mathcal{E} \coloneqq E(f) - E(f^\star)
-		= (E(f_F^\star) - E(f^\star)) + (E(f) - E(f_F^\star))
+	\mathcal{E} \coloneqq R(f) - R(f^\star)
+		= (R(f_F^\star) - R(f^\star)) + (R(f) - R(f_F^\star))
 		= \apperr + \esterr,
 	\label{eq:app_est_decomp}
 \end{equation}
 where
 \[
-	\apperr = E(f_F^\star) - E(f^\star)
+	\apperr = R(f_F^\star) - R(f^\star)
 	\quad\text{and}\quad
-	\esterr = E(f) - E(f_F^\star)
+	\esterr = R(f) - R(f_F^\star)
 \]
 The quantity $\apperr$ is called the \emph{approximation error}, and measures
 how well functions in $F$ can approximate functions in $C$. It is generally
 intractible, as we have no way of estimating it. The quantity $\esterr$ is
 called the \emph{estimation error}, and measures the performance of $f$ relative
-to that of the best-in-class hypothesis $f_F^\star$. It is bounded above by
-Equation~\ref{eq:generalization_bound}. Equation~\ref{eq:app_est_decomp} shows
+to that of the best-in-class hypothesis $f_F^\star$. It is easy to show that
+$\esterr$ is bounded above by the second term on the RHS
+of~(\ref{eq:generalization_bound}). Equation~\ref{eq:app_est_decomp} tells us
 that the quality of a candidate function $f$ is determined by the sum of these
 errors.
 
@@ -1135,20 +1144,20 @@ where $\complexity(f)$ is a measure of complexity of $f$. Consequently, $F_a
 \subseteq F_b$ whenever $a, b \in \reals{+}$ such that $a < b$. ERM and SRM seek
 to find the functions given by
 \begin{equation}
-	f_{\text{ERM}} \coloneqq \argmin_{f \in F} \hat{E}(f)
+	f_{\text{ERM}} \coloneqq \argmin_{f \in F} \hat{R}(f)
 	\quad\text{and}\quad
 	f_{\text{SRM}} \coloneqq \argmin_{\substack{c \in \reals{+} \\ f \in F_c}}
-		\hat{E}(f),
+		\hat{R}(f),
 	\label{eq:erm_srm_solutions}
 \end{equation}
 respectively. The SRM procedure finds a function in $F$ that minimizes the
-generalization bound given by Equation~\ref{eq:generalization_bound} (see
+generalization bound~(\ref{eq:generalization_bound}) (see
 Figure~\ref{fig:srm_graph}). We can transform second equation
-in~(\ref{eq:erm_srm_solutions}) into an unconstrained optimization problem by
+in~(\ref{eq:erm_srm_solutions}) into an unconstrained minimization problem by
 using the penalty method. This gives
 \begin{equation}
 	f_{\text{SRM}} = \argmin_{\substack{\lambda \in \reals{+} \\ f \in F}}
-		\left(\hat{E}(f) + \lambda\complexity(f)\right).
+		\left(\hat{R}(f) + \lambda\complexity(f)\right).
 	\label{eq:srm_penalty}
 \end{equation}
 The Lagrange multiplier $\lambda$ called the the \emph{regularization
@@ -1162,38 +1171,43 @@ cross-validation to choose $\lambda^\star$ from a finite sequence $\{ \lambda_k
 
 As an example, suppose that we are are performing least-squares regression,
 where $X = \reals{n}$ and $Y \in \reals{1}$. Let $S$ be a training sample
-consisting of $N$ instances. We define $F \coloneqq \{ x \mapsto \trans{w}x + b
-: w \in \reals{n}, b \in \reals{1} \}$ and assume let $\hat{E}$ be the
-sum-of-squares error given by Equation~\ref{eq:sum_of_squares}. According to the
-theory developed so far, choosing $f \coloneqq \argmin_{f \in F} \hat{E}(f)$ is
-highly inadvisable. Let $\complexity(f) \coloneqq \|w\|_2$ for any $f \in F$. A
-better idea would be to try sequence of values for $\lambda$ in
-Equation~\ref{eq:srm_penalty}, such as $\{ \lambda_k \}_{k = -5}^5$, where
-$\lambda_k \coloneqq 2^k$. The results from statistical learning theory shape
-our understanding of how we should solve problems in machine learning.
+consisting of $N$ instances. We define
+\[
+	F \coloneqq \{ x \mapsto \trans{w}x + b : w \in \reals{n}, b \in
+		\reals{1} \},
+	\label{eq:affine_family}
+\]
+and assume let $E$ be the sum-of-squares error given by
+Equation~\ref{eq:sum_of_squares}. According to the theory developed so far,
+choosing $f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let
+$\complexity(f) \coloneqq \|w\|_2$ for any $f \in F$. A better idea would be to
+try sequence of values for $\lambda$ in Equation~\ref{eq:srm_penalty}, such as
+$\{ \lambda_k \}_{k = -5}^5$, where $\lambda_k \coloneqq 2^k$. The results from
+statistical learning theory shape our understanding of how we should solve
+problems in machine learning.
 
 \section{Characterizing Optimization Algorithms}
 
 We turn our focus to applying statistical learning theory to characterize the
-quality of optimization algorithms for machine learning. Recall that the
-quality of a candidate function is determined by the excess error, which can be
-written as $\mathcal{E} = \apperr + \esterr$. In practice, the optimization
-algorithm will rarely find the best-in-class function $f_F^\star$. Instead, we
-require that the algorithm produce a function $\hat{f} \in F$, whose performance
-is within a fixed tolerance $\rho \in \reals{+}$ of that of $f_F^\star$:
+quality of optimization algorithms for machine learning. Let $f_{\text{ERM}}$ be
+given by Equation~\ref{eq:erm_srm_solutions}. During training, we only require
+that the optimization algorithm produce a function $\hat{f} \in F$, whose
+empirical error is within a fixed tolerance $\rho \in \reals{+}$ of that of
+$f_{\text{ERM}}$:
+\begin{equation}
+	\hat{R}(\hat{f}) - \hat{R}(f_{\text{ERM}}) \leq \rho.
+	\label{eq:tol_eq}
+\end{equation}
+The expectation of the LHS of~(\ref{eq:tol_eq}) taken over $S \sim D$ is called
+the \emph{optimization error}~\citep{bousquet2008tradeoffs}, and is defined as
 \[
-	E(\hat{f}) - E(f_F^\star) \leq \rho.
+	\opterr \coloneqq R(\hat{f}) - R(f_{\text{ERM}}).
 \]
-The term
-\[
-	\opterr \coloneqq E(f_F^\star) - E(\hat{f})
-\]
-is called the \emph{optimization error}~\citep{bousquet2008tradeoffs}. We can
-now express the excess error as
+We can now express the excess error of $\hat{f}$ as
 \begin{align}
 	\mathcal{E}
-	&= (E(f_F^\star) - E(f^\star)) + (E(f) - E(f_F^\star)) +
-		(E(f_F^\star) - E(\hat{f})) \\
+	&= (R(f_F^\star) - R(f^\star)) + (R(f_{\text{ERM}}) - R(f_F^\star)) +
+		(R(\hat{f}) - R(f_{\text{ERM}})) \\
 	&= \apperr + \esterr + \opterr.
 	\label{eq:excess_error}
 \end{align}
@@ -1216,9 +1230,10 @@ problem~\citep{bousquet2008tradeoffs}:
 	& \text{subject to} & & \hspace{3.5em} N \leq N_{\text{max}} \\
 	& & & T(F, \rho, N) \leq T_{\text{max}}.
 \end{aligned}
+\label{eq:metaopt_program}
 \end{equation}
-
-
+Table~\ref{tab:metaopt_variables} shows how the errors and computing time are
+affected when $\capacity(F)$, $\rho$, and $N$ are increased.
 
 \begin{table}
 \centering
@@ -1229,10 +1244,151 @@ problem~\citep{bousquet2008tradeoffs}:
 $\apperr$ & $\downarrow$ & \text{---} & \text{---} \\
 $\esterr$ & $\updownarrow$ & $\updownarrow$ & \text{---} \\
 $\opterr$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
+$T$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
 \bottomrule
 \end{tabular}
-\caption{TODO}
+\caption{The effect of increasing $\capacity(F)$, $N$, and $\rho$ on the three
+errors and computing time. The symbol $\updownarrow$ indicates that either an
+increase or a decrease is possible.\label{tab:metaopt_variables}}
 \end{table}
+
+As stated in~\citet{bousquet2008tradeoffs}, ``the solution of the optimization
+program~(\ref{eq:metaopt_program}) depends critically on which budget constraint
+is active: [the] constraint $N < N_{\text{max}}$ on the number of examples, or
+[the] constraint $T < T_{\text{max}}$ on the training time.'' A
+\emph{small-scale} problem is one that is constrained by the sample size. In
+this case, the computation time is not limited, so we can make $\opterr$
+negligible by choosing $\rho$ sufficiently small. Using the fact that $\esterr$
+is bounded above by the second term of~(\ref{eq:generalization_bound}), we have
+\begin{equation}
+	\mathcal{E} = \apperr + \esterr \leq \apperr + c
+		\sqrt{\frac{\capacity(F)}{N}}.
+	\label{eq:small_scale_bound}
+\end{equation}
+A \emph{large-scale} problem is one that is constrained by the maximum computing
+time. In this case, performing approximate optimization by choosing $\rho > 0$
+improves generalization, because we can process more training instances in the
+allotted time. It is easy to show that
+\begin{equation}
+	\mathcal{E}
+	= \apperr + \esterr + \opterr
+	\leq \apperr + \rho + c\sqrt{\frac{\capacity(F)}{N}}.
+	\label{eq:large_scale_bound}
+\end{equation}
+
+Unfortunately, the bounds~(\ref{eq:small_scale_bound})
+and~(\ref{eq:large_scale_bound}) are too pessimistic, and do not accurately
+reflect reality. In order to proceed with our analysis, we make some simpliyfing
+assumptions. First, we assume that $F$ is the family of affine functions given
+by Equation~\ref{eq:affine_family}. In this special case, the generalization
+bound~(\ref{eq:generalization_bound}) simplifies to
+\[
+	R(f) \leq \hat{R}(f) + c \sqrt{\frac{n}{N}}.
+\]
+A much sharper bound on the excess error can now be
+applied~\citep{bousquet2008tradeoffs}. It is given by
+\[
+	\mathcal{E}
+	= \apperr + \esterr + \opterr
+	\leq c \left( \apperr + \left(\frac{n}{N}\log\frac{n}{N}\right)^\alpha +
+		\rho \right),
+\]
+where $\alpha \in [1/2, 1]$ is a constant that depends on a variance bound on
+the loss function. Since the three components of the excess error should
+decrease at approximately the same rate~\citep{bousquet2008tradeoffs}, we make
+the additional assumption that
+\[
+	\mathcal{E} \approx \apperr \approx \esterr \approx \opterr \approx
+		\left(\frac{n}{N}\log\frac{n}{N}\right)^\alpha \approx \rho.
+\]
+
+We now investigate the properties of four specific optimization algorithms.
+Assume that our empirical loss function $E$ is convex and twice differentiable
+(e.g. the sum-of-squares loss function). For convenience, we let $\theta \in
+\reals{2n}$, where the first $n$ components of $\theta$ refer to a weight vector
+$w \in \reals{n}$ and the last $n$ components of $\theta$ refer to a bias vector
+$b \in \reals{n}$. Thus $\theta = (w, b)$, for some $w, b \in \reals{n}$. We
+define $E(\theta) \coloneqq E(w, b)$. Since $E$ is convex, it has a unique
+minimum in terms of $\theta$. Let $\theta_{\text{ERM}} \coloneqq
+(w_{\text{ERM}}, b_{\text{ERM}})$ be the parameter vector corresponding to
+$f_{\text{ERM}}$. For a given input $x_k \in \reals{n}$, we define
+$\hat{y}_k^{\text{ERM}} \coloneqq w_{\text{ERM}} x_k + b_{\text{ERM}}$.
+
+The Hessian matrix $H_{\text{ERM}}$ and gradient covariance matrix
+$G_{\text{ERM}}$ evaluated at $\theta_{\text{ERM}}$ play an important role in
+our analyses~\citep{bousquet2008tradeoffs}. They are given by
+\[
+	H_{\text{ERM}} \coloneqq (\nabla_\theta^2 E)(\theta_{\text{ERM}})
+	= \frac{1}{N} \sum_{i = 1}^N (\nabla_\theta^2 e)(\hat{y}_k^{\text{ERM}}, y_k)
+\]
+and
+\begin{align*}
+	G_{\text{ERM}}
+	&\coloneqq \left((\nabla_\theta E)(\theta_{\text{ERM}})\right)
+		\trans{\left((\nabla_\theta E)(\theta_{\text{ERM}})\right)} \\
+	&= \frac{1}{N} \sum_{i = 1}^N
+		\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)
+		\trans{\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)},
+\end{align*}
+where $e$ is the per-instance loss function associated with $E$. We assume that
+there exist constants $\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$ and
+$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample size $N
+\in \naturals{1}$ such that, with probability at least $1 - \delta$, we have
+\[
+	\tr(G_{\text{ERM}} (H_{\text{ERM}})^{-1}) \leq \nu \quad\text{and}\quad
+	\operatorname{Sp}(H_{\text{ERM}}) \subset [\lambda_{\text{min}}, \lambda_{\text{max}}].
+\]
+The condition number $\kappa \coloneqq
+\lambda_{\text{max}}/{\lambda_{\text{min}}}$ determines the difficulty of the
+optimization problem.
+
+The optimization algorithms used in machine learning can either use \emph{batch
+updates} or \emph{stochastic updates}. An algorithm that uses stochastic updates
+will apply an update to $\theta$ for each instance in $S$. On the other hand, an
+algorithm that uses batch updates will apply an update to $\theta$ every $r$
+iterations, where $r | N$. The derivative information computed by batch
+algorithms is averaged over the $r$ iterations. For the purposes of our
+discussion, we assume that the batch size is $N$.
+
+Following the precedent of Stephen Wright, we refer to the algorithms below as
+\emph{gradient update} algorithms rather than as \emph{gradient descent}
+algorithms, because the search directions computed by the update rules are not
+necessary descent directions.
+\begin{itemize} 
+\item The gradient update (GU) algorithm uses the update rule
+\[
+	\theta_{k + 1}
+	\coloneqq \theta_k - \eta (\nabla_\theta E)(\theta_k)
+	= \theta_k - \frac{\eta}{N} \sum_{i = 1}^N
+		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
+\]
+When $\eta = 1/\lambda_{\text{max}}$, this algorithm requires $O(\kappa \log(1 /
+\rho))$ updates to reach accuracy~$\rho$.
+
+\item The second-order gradient update (2GU) algorithm uses the update rule
+\[
+	\theta_{k + 1}
+	\coloneqq \theta_k - (H_{\text{ERM}})^{-1} (\nabla_\theta E)(\theta_k)
+	= \theta_k - \frac{(H_{\text{ERM}})^{-1}}{N} \sum_{i = 1}^N
+		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
+\]
+Note that the Hessian is \emph{not} evaluated at each $\theta_k$: we assume that
+we know $H_{\text{ERM}}$ in advance, and use the same matrix at each iteration.
+In general, this algorithm requires $O(\log\log(1 / \rho))$ iterations to reach
+accuracy $\rho$.
+
+\item Given an instance $(x_k, y_k) \in S$, the stochastic gradient update (SGU)
+algorithm uses the update rule
+\[
+	\theta_{k + 1}
+	\coloneqq \theta_k - \frac{\eta}{k}
+		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k).
+\]
+If $\eta = 1/\lambda_{\text{min}}$, this algorithm requires $\nu \kappa^2 / \rho
++ o(1 \ rho)$ iterations, on average, to reach accuracy $\rho$.
+
+\item Hi
+\end{itemize}
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
