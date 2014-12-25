@@ -24,42 +24,6 @@
 % trying to discuss.
 % - TODO: Change title.
 %
-% 	- How neural networks are regularized.
-% 		- Bishop's three ways to incorporate regularize into NN's.
-% 		- Mention dropout: one of the methods that allowed neural
-% 		networks to achieve state-of-the-art performance on many tasks.
-% 		- Mention tangent propagation. Not typically experimented with
-% 		today; may yield interesting results.
-% 		- Applying L1/L2 regularization to a subset of the weights in
-% 		SGD. Typically only useful for top-level layers.
-%
-% - Survey of optimization algorithms.
-%  	- Goals of optimization algorithms.
-%  		- Mention statistical learning theory, and summarize the result
-%  		of Bottou's paper in light on this theory. How impactful is the
-%  		inclusion of higher-order information on convergence?
-%  		- Why stochastic updates are better than large batch updates.
-%  		- Mention bad news about weight symmetries of neural networks;
-%  		in statistics, we typically want to elimiate redundant weight
-%  		configurations. Base this explanation on the one found in
-%  		Bishop.
-%  		- Mention Schaul's stochastic optimization benchmark.
-%  		- Mention recent research using random matrix theory: all local
-%  		minima have very similar energies. So the existence of a large
-%  		number of local minima does not typically get in the way of
-%  		things.
-%  		- Show that there is empirical evidence for this: using
-%  		different optimization algorithms or starting from different
-%  		weight configurations still results in a very similar, sometimes
-%  		identical loss/performance at convergence.
-%  		- Mention how we can get away using very low precision for
-%  		floating-point calculations. Mention colloboration with NVIDIA
-%  		regarding this.
-%  		- Mention recent research showing that it may not even be
-%  		important to compute the gradient exactly: we only need to be
-%  		away from orthogonality (or something like that: read the paper
-%  		more carefully). Buggy implementations of bprop can still work
-%  		well.
 % 	- First-order methods.
 % 		- Stochastic gradient update (SGU).
 % 		- Refer to this paper for accelerated first-order methods:
@@ -101,6 +65,7 @@
 \usepackage{natbib}
 
 % Basic math and figure configuration.
+\usepackage{array}
 \usepackage{afterpage}
 \usepackage{figures}
 \usepackage{mathdefs}
@@ -404,11 +369,11 @@ function $\sigma_k$. If $w \coloneqq |L_k|$, then writing
 	(z_0, \ldots, z_{k - 1}) \xmapsto{\sigma_k} z_k
 \]
 is shorthand for saying that we compute $z_k$ through $w$ simultaneous
-applications of Equation~\ref{eq:activation}, followed by $w$ simultaneous
-applications of Equation~\ref{eq:output}. In order to compute the network's
+applications of~(\ref{eq:activation}), followed by $w$ simultaneous
+applications of~(\ref{eq:output}). In order to compute the network's
 prediction $\hat{y} \in \reals{m}$ corresponding to an input $x \in \reals{n}$,
-we apply the functions $\sigma_1, \ldots, \sigma_d$ as described by
-Equations~\ref{eq:forward_propagation}. This process is called \emph{forward
+we apply the functions $\sigma_1, \ldots, \sigma_d$ as described
+by~(\ref{eq:forward_propagation}). This process is called \emph{forward
 propagation}.
 
 \subsection{Activation Functions and Feature Learning}
@@ -634,8 +599,8 @@ probability distribution over the classes.
 
 We have seen that a neural network is a biologically-inspired nonlinear function
 controlled by two adjustable vectors of parameters: the weights $w$ and the
-biases $b$. Now consider a sample $S \coloneqq \{(x_1, y_1), \ldots, (x_N,
-y_N)\}$, where each $x_k \in \reals{n}$ is an input vector, and each $y_k$ is
+biases $b$. Now consider a sample $S \coloneqq \{(x_1, y_1), \ldots, (x_s,
+y_s)\}$, where each $x_k \in \reals{n}$ is an input vector, and each $y_k$ is
 the target vector that we aim to predict when we are given $x_k$. We focus on
 two categories of tasks that we can perform using neural networks:
 classification and regression. For regression, we have $y_k \in \reals{m}$, so
@@ -775,22 +740,21 @@ interpretation to the network outputs~\citep{ml_bishop}. Let $w$ and $b$ be the
 vectors of weights and biases of the network. By choosing an explicit
 representation for the conditional distribution $p(y_k \given x_k, w, b)$, we
 are led to a canonical loss function corresponding to this choice. Let $X =
-\{x_1, \ldots, x_N\}$ and $Y = \{y_1, \ldots, y_N\}$.  If we assume that the
+\{x_1, \ldots, x_s\}$ and $Y = \{y_1, \ldots, y_s\}$. If we assume that the
 instances $(x_k, y_k) \in S$ are iid, then we can apply the chain rule to write
 \[
-	p(Y \given X, w, b) = \prod_{k = 1}^N p(y_k \given x_k, w, b).
+	p(Y \given X, w, b) = \prod_{k = 1}^s p(y_k \given x_k, w, b).
 	\label{eq:likelihood_function}
 \]
-The LHS of Equation~\ref{eq:likelihood_function} is called the likelihood
-function. The canonical loss function is obtained by maximizing the likelihood
-function over the $w$ and $b$. Maximizing the likelihood function is equivalent
-to minimizing its negative logarithm, which is given by
+The LHS of~(\ref{eq:likelihood_function}) is called the likelihood function. The
+canonical loss function is obtained by maximizing the likelihood function over
+the $w$ and $b$. Maximizing the likelihood function is equivalent to minimizing
+its negative logarithm, which is given by
 \begin{equation}
-	-\ln{p(Y \given X, w, b)} = -\sum_{k = 1}^N \ln{p(y_k \given x_k, w, b)}.
+	-\ln{p(Y \given X, w, b)} = -\sum_{k = 1}^s \ln{p(y_k \given x_k, w, b)}.
 	\label{eq:nll}
 \end{equation}
-The LHS of Equation~\ref{eq:nll} is called the negative log-likelihood
-function~(NLL).
+The LHS of~(\ref{eq:nll}) is called the negative log-likelihood function~(NLL).
 
 For regression, it is often appropriate to assume that
 \[
@@ -806,15 +770,15 @@ The value $\hat{y}_k$ is the network's prediction for $x_k$, and $\beta$ is the
 precision (inverse variance) of the Gaussian noise. The corresponding NLL
 function is given by
 \[
-	\frac{\beta}{2} \sum_{k = 1}^N \left(\hat{y}_k - y_k\right)^2 -
-		\frac{N}{2} \ln\beta + \frac{N}{2} \ln(2 \pi).
+	\frac{\beta}{2} \sum_{k = 1}^s \left(\hat{y}_k - y_k\right)^2 -
+		\frac{s}{2} \ln\beta + \frac{s}{2} \ln(2 \pi).
 \]
 We discard the constant terms, which do not affect the minimization process.
 This leaves us with the sum-of-squares loss function, which is given by
 \begin{equation}
 	E(w, b)
-	\coloneqq \frac{1}{2} \sum_{k = 1}^N \left(\hat{y}_k - y_k\right)^2
-	= \sum_{k = 1}^N e(\hat{y}_k, y_k),
+	\coloneqq \frac{1}{2} \sum_{k = 1}^s \left(\hat{y}_k - y_k\right)^2
+	= \sum_{k = 1}^s e(\hat{y}_k, y_k),
 	\label{eq:sum_of_squares}
 \end{equation}
 where $e$ is the per-instance loss function
@@ -835,8 +799,8 @@ The corresponding NLL function is the \emph{multiclass cross-entropy function},
 and does not have any constant terms that we can discard. So we define
 \[
 	E(w, b)
-	= -\sum_{k = 1}^N \sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}
-	= \sum_{k = 1}^N e(\hat{y}_k, y_k),
+	= -\sum_{k = 1}^s \sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}
+	= \sum_{k = 1}^s e(\hat{y}_k, y_k),
 \]
 where $e$ is the per-instance loss function
 \[
@@ -861,13 +825,12 @@ function is the \emph{softmax} function; for $z \in \reals{m}$, it is given by
 	\phi(z_i) = \frac{\exp(z_i)}{\sum_{j = 1}^m \exp(z_j)}.
 	\label{eq:softmax}
 \end{equation}
-This is a normalized RBF of the form given by Equation~\ref{eq:normalized_rbf}.
-It follows that using Equation~\ref{eq:softmax} as the output activation
-function will guarantee that the components of $\hat{y}_k$ determine a discrete
-probability distribution over the classes. For binary classification,
-Equation~\ref{eq:softmax} reduces to the \emph{logistic sigmoid} function upon
-setting the component $\hat{y}_{k2}$, which corresponds to the second class, to
-zero:
+This is a normalized RBF of the form given by~(\ref{eq:normalized_rbf}). It
+follows that using~(\ref{eq:softmax}) as the output activation function will
+guarantee that the components of $\hat{y}_k$ determine a discrete probability
+distribution over the classes. For binary classification, (\ref{eq:softmax})
+reduces to the \emph{logistic sigmoid} function upon setting the component
+$\hat{y}_{k2}$, which corresponds to the second class, to zero:
 \begin{align*}
 	\phi(\hat{y}_1)
 	&= \frac{\exp(\hat{y}_1)}{\exp(\hat{y}_1) + \exp(\hat{y}_2)} \\
@@ -901,9 +864,8 @@ Now assume that the inputs are decorrelated, so that
 \[
 	\E(x_i) = 0 \quad\text{and}\quad \Var(x_i) = 1,
 \]
-for each $i \in [1, n]$. From Equation~\ref{eq:activation}, we know that the
-activation of $(1, j)$, the $j$th unit in the first layer of the network, is
-given by
+for each $i \in [1, n]$. From~(\ref{eq:activation}), we know that the activation
+of $(1, j)$, the $j$th unit in the first layer of the network, is given by
 \[
 	a_{1j} \;\coloneqq \sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}.
 \]
@@ -1019,10 +981,10 @@ misclassifications over a sample $S \sim D$.
 
 \begin{definition}[Empirical error~\citep{ml_mohri}]
 Given a candidate function $f \in F$, a target concept $c \in C$, and a sample
-$S \coloneqq \{(x_1, y_k), \ldots, (x_N, y_N)\} \sim D$, the \emph{empirical
+$S \coloneqq \{(x_1, y_k), \ldots, (x_s, y_s)\} \sim D$, the \emph{empirical
 error} or \emph{empirical risk} of $f$ is defined as
 \[
-	\hat{R}(f) \coloneqq \frac{1}{N} \sum_{i = 1}^N \ind{f(x) \neq c(x)}.
+	\hat{R}(f) \coloneqq \frac{1}{s} \sum_{i = 1}^s \ind{f(x) \neq c(x)}.
 \]
 \end{definition}
 
@@ -1041,7 +1003,7 @@ Let $O(n)$ be an upper bound on the space complexity of an input $x \in X$. A
 concept class is said to be PAC-learnable if there exists an algorithm $A$ and a
 polynomial function $g : \reals{4} \to \reals{1}$ such that for any $\epsilon,
 \delta \in (0, 1]$, for all distributions $D$ over $X$, and for any target
-concept $c \in C$, the following holds for any sample $N \geq g(1/\epsilon,
+concept $c \in C$, the following holds for any sample $s \geq g(1/\epsilon,
 1/\delta, n, \size(c))$:
 \[
 	\Pr_{S \sim D} (R(f) \leq \epsilon) \geq 1 - \delta.
@@ -1064,11 +1026,11 @@ One of the goals of statistical learning theory is to derive upper bounds on the
 generalization error in various situations. When such an upper bound applies to
 the particular situation at hand, we know that it is possible, at least in
 principle, to learn efficiently. Many of these upper bounds take the following
-form. Let $\delta \in (0, 1]$ be our target confidence, and let $N$ be the size
+form. Let $\delta \in (0, 1]$ be our target confidence, and let $s$ be the size
 of the training samples drawn from $D$. Then with probability $1 - \delta$, it
 holds for any $f \in F$ that
 \begin{equation}
-	R(f) \leq \hat{R}(f) + c \sqrt{\frac{\capacity(F)}{N}},
+	R(f) \leq \hat{R}(f) + c \sqrt{\frac{\capacity(F)}{s}},
 	\label{eq:generalization_bound}
 \end{equation}
 where $c \in \reals{+}$ and $\capacity(F)$ is a quantity that measures the
@@ -1171,29 +1133,28 @@ cross-validation to choose $\lambda^\star$ from a finite sequence $\{ \lambda_k
 
 As an example, suppose that we are are performing least-squares regression,
 where $X = \reals{n}$ and $Y \in \reals{1}$. Let $S$ be a training sample
-consisting of $N$ instances. We define
+consisting of $s$ instances. We define
 \[
 	F \coloneqq \{ x \mapsto \trans{w}x + b : w \in \reals{n}, b \in
 		\reals{1} \},
 	\label{eq:affine_family}
 \]
-and assume let $E$ be the sum-of-squares error given by
-Equation~\ref{eq:sum_of_squares}. According to the theory developed so far,
-choosing $f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let
-$\complexity(f) \coloneqq \|w\|_2$ for any $f \in F$. A better idea would be to
-try sequence of values for $\lambda$ in Equation~\ref{eq:srm_penalty}, such as
-$\{ \lambda_k \}_{k = -5}^5$, where $\lambda_k \coloneqq 2^k$. The results from
-statistical learning theory shape our understanding of how we should solve
-problems in machine learning.
+and assume let $E$ be the sum-of-squares error given
+by~(\ref{eq:sum_of_squares}). According to the theory developed so far, choosing
+$f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let $\complexity(f)
+\coloneqq \|w\|_2$ for any $f \in F$. A better idea would be to try sequence of
+values for $\lambda$ in~(\ref{eq:srm_penalty}), such as $\{ \lambda_k \}_{k =
+-5}^5$, where $\lambda_k \coloneqq 2^k$. The results from statistical learning
+theory shape our understanding of how we should solve problems in machine
+learning.
 
 \section{Characterizing Optimization Algorithms}
 
 We turn our focus to applying statistical learning theory to characterize the
 quality of optimization algorithms for machine learning. Let $f_{\text{ERM}}$ be
-given by Equation~\ref{eq:erm_srm_solutions}. During training, we only require
-that the optimization algorithm produce a function $\hat{f} \in F$, whose
-empirical error is within a fixed tolerance $\rho \in \reals{+}$ of that of
-$f_{\text{ERM}}$:
+given by~(\ref{eq:erm_srm_solutions}). During training, we only require that the
+optimization algorithm produce a function $\hat{f} \in F$, whose empirical error
+is within a fixed tolerance $\rho \in \reals{+}$ of that of $f_{\text{ERM}}$:
 \begin{equation}
 	\hat{R}(\hat{f}) - \hat{R}(f_{\text{ERM}}) \leq \rho.
 	\label{eq:tol_eq}
@@ -1214,65 +1175,65 @@ We can now express the excess error of $\hat{f}$ as
 
 In practice, the quality of the solution to a machine learning problem is
 determined by monetary cost (which determines the maximum sample size
-$N_{\text{max}}$) and human patience (which determines the limit on
-computation time $T_{\text{max}}$). The definition for PAC-learning is one way
+$s_{\text{max}}$) and human patience (which determines the limit on
+computation time $t_{\text{max}}$). The definition for PAC-learning is one way
 of characterizing when one might be satisfied with the performance of a learning
-algorithm with respect to these constraints. Let $T(F, \rho, N)$ represent the
+algorithm with respect to these constraints. Let $t(F, \rho, s)$ represent the
 time required by the optimization algorithm to find a function $\hat{f} \in F$
-satisfying $\opterr \leq \rho$, given a sample of size $N$. Minimizing the
-excess error in Equation~\ref{eq:excess_error} subject to the constraints on
-$N_{\text{max}}$ and $T_{\text{max}}$ yields the following meta-optimization
+satisfying $\opterr \leq \rho$, given a sample of size $s$. Minimizing the
+excess error in~(\ref{eq:excess_error}) subject to the constraints on
+$s_{\text{max}}$ and $t_{\text{max}}$ yields the following meta-optimization
 problem~\citep{bousquet2008tradeoffs}:
 \begin{equation}
 \begin{aligned}
-	& \underset{F, \rho, N}{\text{minimize}} & &
+	& \underset{F, \rho, s}{\text{minimize}} & &
 		\mathcal{E} = \apperr + \esterr + \opterr \\
-	& \text{subject to} & & \hspace{3.5em} N \leq N_{\text{max}} \\
-	& & & T(F, \rho, N) \leq T_{\text{max}}.
+	& \text{subject to} & & \hspace{3.5em} s \leq s_{\text{max}} \\
+	& & & t(F, \rho, s) \leq t_{\text{max}}.
 \end{aligned}
 \label{eq:metaopt_program}
 \end{equation}
 Table~\ref{tab:metaopt_variables} shows how the errors and computing time are
-affected when $\capacity(F)$, $\rho$, and $N$ are increased.
+affected when $\capacity(F)$, $\rho$, and $s$ are increased.
 
 \begin{table}
 \centering
 \begin{tabular}{lccc}
 \toprule
-& $\capacity(F)$ & $N$ & $\rho$ \\
+& $\capacity(F)$ & $s$ & $\rho$ \\
 \midrule
 $\apperr$ & $\downarrow$ & \text{---} & \text{---} \\
 $\esterr$ & $\updownarrow$ & $\updownarrow$ & \text{---} \\
 $\opterr$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
-$T$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
+$t$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
 \bottomrule
 \end{tabular}
-\caption{The effect of increasing $\capacity(F)$, $N$, and $\rho$ on the three
+\caption{The effects of increasing $\capacity(F)$, $s$, and $\rho$ on the three
 errors and computing time. The symbol $\updownarrow$ indicates that either an
 increase or a decrease is possible.\label{tab:metaopt_variables}}
 \end{table}
 
 As stated in~\citet{bousquet2008tradeoffs}, ``the solution of the optimization
 program~(\ref{eq:metaopt_program}) depends critically on which budget constraint
-is active: [the] constraint $N < N_{\text{max}}$ on the number of examples, or
-[the] constraint $T < T_{\text{max}}$ on the training time.'' A
+is active: [the] constraint $s < s_{\text{max}}$ on the number of examples, or
+[the] constraint $t < t_{\text{max}}$ on the training time.'' A
 \emph{small-scale} problem is one that is constrained by the sample size. In
 this case, the computation time is not limited, so we can make $\opterr$
 negligible by choosing $\rho$ sufficiently small. Using the fact that $\esterr$
 is bounded above by the second term of~(\ref{eq:generalization_bound}), we have
 \begin{equation}
 	\mathcal{E} = \apperr + \esterr \leq \apperr + c
-		\sqrt{\frac{\capacity(F)}{N}}.
+		\sqrt{\frac{\capacity(F)}{s}}.
 	\label{eq:small_scale_bound}
 \end{equation}
 A \emph{large-scale} problem is one that is constrained by the maximum computing
 time. In this case, performing approximate optimization by choosing $\rho > 0$
 improves generalization, because we can process more training instances in the
-allotted time. It is easy to show that
+allotted time. Using~(\ref{eq:generalization_bound}), it is easy to show that
 \begin{equation}
 	\mathcal{E}
 	= \apperr + \esterr + \opterr
-	\leq \apperr + \rho + c\sqrt{\frac{\capacity(F)}{N}}.
+	\leq \apperr + \rho + c\sqrt{\frac{\capacity(F)}{s}}.
 	\label{eq:large_scale_bound}
 \end{equation}
 
@@ -1280,27 +1241,29 @@ Unfortunately, the bounds~(\ref{eq:small_scale_bound})
 and~(\ref{eq:large_scale_bound}) are too pessimistic, and do not accurately
 reflect reality. In order to proceed with our analysis, we make some simpliyfing
 assumptions. First, we assume that $F$ is the family of affine functions given
-by Equation~\ref{eq:affine_family}. In this special case, the generalization
+by~(\ref{eq:affine_family}). In this special case, the generalization
 bound~(\ref{eq:generalization_bound}) simplifies to
 \[
-	R(f) \leq \hat{R}(f) + c \sqrt{\frac{n}{N}}.
+	R(f) \leq \hat{R}(f) + c \sqrt{\frac{n}{s}}.
 \]
 A much sharper bound on the excess error can now be
 applied~\citep{bousquet2008tradeoffs}. It is given by
-\[
+\begin{equation}
 	\mathcal{E}
 	= \apperr + \esterr + \opterr
-	\leq c \left( \apperr + \left(\frac{n}{N}\log\frac{n}{N}\right)^\alpha +
+	\leq c \left( \apperr + \left(\frac{n}{s}\log\frac{s}{n}\right)^\alpha +
 		\rho \right),
-\]
+	\label{eq:fast_rate_bound}
+\end{equation}
 where $\alpha \in [1/2, 1]$ is a constant that depends on a variance bound on
 the loss function. Since the three components of the excess error should
 decrease at approximately the same rate~\citep{bousquet2008tradeoffs}, we make
 the additional assumption that
-\[
+\begin{equation}
 	\mathcal{E} \approx \apperr \approx \esterr \approx \opterr \approx
-		\left(\frac{n}{N}\log\frac{n}{N}\right)^\alpha \approx \rho.
-\]
+		\left(\frac{n}{s}\log\frac{s}{n}\right)^\alpha \approx \rho.
+	\label{eq:error_equiv}
+\end{equation}
 
 We now investigate the properties of four specific optimization algorithms.
 Assume that our empirical loss function $E$ is convex and twice differentiable
@@ -1319,20 +1282,20 @@ $G_{\text{ERM}}$ evaluated at $\theta_{\text{ERM}}$ play an important role in
 our analyses~\citep{bousquet2008tradeoffs}. They are given by
 \[
 	H_{\text{ERM}} \coloneqq (\nabla_\theta^2 E)(\theta_{\text{ERM}})
-	= \frac{1}{N} \sum_{i = 1}^N (\nabla_\theta^2 e)(\hat{y}_k^{\text{ERM}}, y_k)
+	= \frac{1}{s} \sum_{i = 1}^s (\nabla_\theta^2 e)(\hat{y}_k^{\text{ERM}}, y_k)
 \]
 and
 \begin{align*}
 	G_{\text{ERM}}
 	&\coloneqq \left((\nabla_\theta E)(\theta_{\text{ERM}})\right)
 		\trans{\left((\nabla_\theta E)(\theta_{\text{ERM}})\right)} \\
-	&= \frac{1}{N} \sum_{i = 1}^N
+	&= \frac{1}{s} \sum_{i = 1}^s
 		\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)
 		\trans{\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)},
 \end{align*}
 where $e$ is the per-instance loss function associated with $E$. We assume that
 there exist constants $\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$ and
-$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample size $N
+$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample size $s
 \in \naturals{1}$ such that, with probability at least $1 - \delta$, we have
 \[
 	\tr(G_{\text{ERM}} (H_{\text{ERM}})^{-1}) \leq \nu \quad\text{and}\quad
@@ -1346,9 +1309,9 @@ The optimization algorithms used in machine learning can either use \emph{batch
 updates} or \emph{stochastic updates}. An algorithm that uses stochastic updates
 will apply an update to $\theta$ for each instance in $S$. On the other hand, an
 algorithm that uses batch updates will apply an update to $\theta$ every $r$
-iterations, where $r | N$. The derivative information computed by batch
+iterations, where $r | s$. The derivative information computed by batch
 algorithms is averaged over the $r$ iterations. For the purposes of our
-discussion, we assume that the batch size is $N$.
+discussion, we assume that the batch size is $s$.
 
 Following the precedent of Stephen Wright, we refer to the algorithms below as
 \emph{gradient update} algorithms rather than as \emph{gradient descent}
@@ -1359,7 +1322,7 @@ necessary descent directions.
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - \eta (\nabla_\theta E)(\theta_k)
-	= \theta_k - \frac{\eta}{N} \sum_{i = 1}^N
+	= \theta_k - \frac{\eta}{s} \sum_{i = 1}^s
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
 \]
 When $\eta = 1/\lambda_{\text{max}}$, this algorithm requires $O(\kappa \log(1 /
@@ -1369,13 +1332,13 @@ When $\eta = 1/\lambda_{\text{max}}$, this algorithm requires $O(\kappa \log(1 /
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - (H_{\text{ERM}})^{-1} (\nabla_\theta E)(\theta_k)
-	= \theta_k - \frac{(H_{\text{ERM}})^{-1}}{N} \sum_{i = 1}^N
+	= \theta_k - \frac{(H_{\text{ERM}})^{-1}}{s} \sum_{i = 1}^s
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
 \]
 Note that the Hessian is \emph{not} evaluated at each $\theta_k$: we assume that
 we know $H_{\text{ERM}}$ in advance, and use the same matrix at each iteration.
 In general, this algorithm requires $O(\log\log(1 / \rho))$ iterations to reach
-accuracy $\rho$.
+accuracy~$\rho$.
 
 \item Given an instance $(x_k, y_k) \in S$, the stochastic gradient update (SGU)
 algorithm uses the update rule
@@ -1385,10 +1348,88 @@ algorithm uses the update rule
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k).
 \]
 If $\eta = 1/\lambda_{\text{min}}$, this algorithm requires $\nu \kappa^2 / \rho
-+ o(1 \ rho)$ iterations, on average, to reach accuracy $\rho$.
++ o(1 / \rho)$ iterations, on average, to reach accuracy~$\rho$.
 
-\item Hi
+\item Given an instance $(x_k, y_k) \in S$, the second-order stochastic gradient
+update algorithm (2SGU) uses the update rule
+\[
+	\theta_{k + 1}
+	\coloneqq \theta_k - \frac{(H_{\text{ERM}})^{-1}}{k}
+		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k).
+\]
+This algorithm requires $\eta / \rho + o(1 / \rho)$ iterations, on average, to
+reach accuracy~$\rho$. Note that, unlike~2GU, the use of second-order
+information does not weaken the dependence on $\rho$.
 \end{itemize}
+
+\begin{table}
+\centering\footnotesize
+\begin{tabular}{
+	>{\raggedright\arraybackslash}m{1.5cm}
+	>{\centering\arraybackslash}m{2cm}
+	>{\centering\arraybackslash}m{2cm}
+	>{\centering\arraybackslash}m{3.25cm}
+	>{\centering\arraybackslash}m{3.25cm}
+}
+\toprule
+Algorithm &
+Cost of one iteration &
+Iterations to reach~$\rho$ &
+Time to reach accuracy~$\rho$ &
+Time to reach $\mathcal{E} \leq c(\apperr + \epsilon)$ \\
+\midrule
+GU &
+$O(ns)$ &
+$O\left( \kappa \log\frac{1}{\rho} \right)$ &
+$O\left( ns\kappa \log\frac{1}{\rho} \right)$ &
+$O\left( \frac{n^2\kappa}{\epsilon^{1 / \alpha}} \log^2 \frac{1}{\epsilon} \right)$ \\
+2GU &
+$O(n^2 + ns)$ &
+$O\left( \log\log\frac{1}{\rho} \right)$ &
+$O\left( (n^2 + ns) \log\log\frac{1}{\rho} \right)$ &
+$O\left( \frac{n^2}{\epsilon^{1 / \alpha}} \log \frac{1}{\epsilon} \log\log
+	\frac{1}{\epsilon} \right)$ \\
+SGU &
+$O(n)$ &
+$\frac{\nu \kappa^2}{\rho} + o(\frac{1}{\rho})$ &
+$O(\frac{n \nu \kappa^2}{\rho})$ &
+$O(\frac{n \nu \kappa^2}{\epsilon})$ \\
+2SGU &
+$O(n^2)$ &
+$\frac{\nu}{\rho} + o(\frac{1}{\rho})$ &
+$O(\frac{n \nu}{\rho})$ &
+$O(\frac{n \nu}{\epsilon})$ \\
+\bottomrule
+\end{tabular}
+\caption{Asymptotic rates for the four algorithms discussed (adapted
+from~\citet{bousquet2008tradeoffs}).\label{tab:asymptotic_rates}}
+\end{table}
+
+The the asymptotic rates for the four algorithms that were presented are given
+in Table~\ref{tab:asymptotic_rates}. The rates in the first column are based on
+the sizes of the vectors and matrices involved in the corresponding update
+rules. The rates in the second column are taken directly from our discussion. To
+obtain the rates in the third column, we multiply the corresponding rates in the
+first and second columns. One of our assumptions in~(\ref{eq:error_equiv}) is
+that
+\begin{equation}
+	\rho \approx \left(\frac{n}{s}\log\frac{s}{n}\right)^\alpha.
+	\label{eq:rho_assumption}
+\end{equation}
+Substituting this value of $\rho$ into the bound~(\ref{eq:fast_rate_bound}) and
+comparing the result to $c(\apperr + \epsilon)$ shows that
+\begin{equation}
+	\rho \approx \epsilon.
+	\label{eq:rho_approx_eps}
+\end{equation}
+Using~(\ref{eq:rho_assumption}) and~(\ref{eq:rho_approx_eps}), it can then be
+shown that
+\begin{equation}
+	s \approx \frac{n}{\epsilon^{1 / \alpha}} \log\frac{1}{\epsilon}.
+	\label{eq:s_assumption}
+\end{equation}
+Substituing~(\ref{eq:rho_approx_eps}) and~(\ref{eq:s_assumption}) into the rates
+in the third column gives the rates in the fourth column.
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
