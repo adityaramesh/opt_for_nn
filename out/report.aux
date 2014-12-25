@@ -1,0 +1,84 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction to Neural Networks}{1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Representation}{1}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:simple_dag}{{1.1a}{2}}
+\newlabel{sub@fig:simple_dag}{{a}{2}}
+\newlabel{fig:simple_layered_dag}{{1.1b}{2}}
+\newlabel{sub@fig:simple_layered_dag}{{b}{2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces In\nobreakspace {}1.1a\hbox {}, we see a DAG, and in\nobreakspace {}1.1b\hbox {}, the representation of the DAG as a layered graph. Notice that the edges $A \rightarrow D$ and $C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }}{2}}
+\newlabel{fig:layered_graph_drawing}{{1.1}{2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces A small, two-layer neural network. The pair $(k, j)$ is used to denote the $j$th unit in layer $k$.\relax }}{3}}
+\newlabel{fig:two_layer_nn}{{1.2}{3}}
+\newlabel{eq:forward_propagation}{{1.1}{3}}
+\newlabel{eq:activation}{{1.2}{3}}
+\newlabel{eq:output}{{1.3}{3}}
+\citation{lecun-98b}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of $(k, 1)$, a unit with three inputs from $L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation $a_{k1}$ is computed by forming a linear combination of the outputs of the units in $\operatorname  {Pa}(k, 1)$ with the corresponding weights to $(k, j)$, and adding the bias $b_{k1}$. Then, the output $z_{k1}$ is determined by applying the activation function $u_{k1}$ to $a_{k1}$.\relax }}{4}}
+\newlabel{fig:unit_output}{{1.3}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Activation Functions and Feature Learning}{4}}
+\citation{nair2010rectified}
+\citation{krizhevsky2012imagenet}
+\newlabel{fig:tanh_plot}{{1.4a}{5}}
+\newlabel{sub@fig:tanh_plot}{{a}{5}}
+\newlabel{fig:linear_threshold_plot}{{1.4b}{5}}
+\newlabel{sub@fig:linear_threshold_plot}{{b}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.4}{\ignorespaces Plots of two of the most common activation functions and their derivatives.\relax }}{5}}
+\newlabel{fig:activation_plots}{{1.4}{5}}
+\citation{lecun-01a}
+\newlabel{eq:rbf_sum}{{1.4}{6}}
+\citation{zeiler2014visualizing}
+\citation{zeiler2014visualizing}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.5}{\ignorespaces Visualization of the hierarchy of features in a fully-trained convolutional network for image classification, taken from\nobreakspace {}\citet  {zeiler2014visualizing}. For each of the first five layers of the network, a selection of the highest activation values in the layer is shown alongside the corresponding input images. Note that in general, visualizing features in a meaningful way is very difficult. \relax }}{7}}
+\newlabel{fig:cnn_features}{{1.5}{7}}
+\citation{lecun-98b}
+\newlabel{eq:normalized_rbf}{{1.5}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Classification and Regression}{8}}
+\citation{ml_bishop}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.6}{\ignorespaces A visualization of how the $k$th instance $(x_k, y_k)$ is fed into the two-layer neural network from Figure\nobreakspace {}1.2\hbox {}.\relax }}{9}}
+\newlabel{fig:nn_with_loss}{{1.6}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}The Loss Function}{9}}
+\newlabel{eq:likelihood_function}{{1.4}{9}}
+\newlabel{eq:nll}{{1.6}{9}}
+\newlabel{eq:sum_of_squares}{{1.7}{10}}
+\citation{lecun-98b}
+\citation{lecun-98b}
+\newlabel{eq:softmax}{{1.8}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Data Preprocessing and Initialization}{11}}
+\citation{lecun-98b,krizhevsky2012imagenet}
+\citation{glorot2010understanding}
+\citation{glorot2010understanding}
+\citation{glorot2010understanding,martens2010deep}
+\citation{krizhevsky2012imagenet}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Computing Derivatives}{13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Convolutional Networks}{13}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Concepts from Statistical Learning Theory}{13}}
+\citation{ml_mohri}
+\citation{ml_mohri}
+\citation{ml_mohri}
+\citation{ml_mohri}
+\citation{ml_mohri}
+\newlabel{eq:generalization_bound}{{2.1}{15}}
+\newlabel{eq:app_est_decomp}{{2.2}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Visualization of the SRM procedure (adapted from\nobreakspace {}\citet  {ml_mohri}). The SRM procedure minimizes an upper bound of the generalization error that is a sum of the training error and the complexity term.\relax }}{16}}
+\newlabel{fig:srm_graph}{{2.1}{16}}
+\newlabel{eq:regularized_family}{{2.3}{16}}
+\newlabel{eq:erm_srm_solutions}{{2.4}{16}}
+\newlabel{eq:srm_penalty}{{2.5}{16}}
+\citation{bousquet2008tradeoffs}
+\citation{bousquet2008tradeoffs}
+\bibstyle{plainnat}
+\bibdata{references/main,references/lecun}
+\bibcite{ml_bishop}{{1}{2006}{{Bishop}}{{}}}
+\bibcite{bousquet2008tradeoffs}{{2}{2008}{{Bousquet and Bottou}}{{}}}
+\bibcite{glorot2010understanding}{{3}{2010}{{Glorot and Bengio}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Goals of Optimization}{17}}
+\newlabel{eq:excess_error}{{3.2}{17}}
+\bibcite{krizhevsky2012imagenet}{{4}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
+\bibcite{lecun-98b}{{5}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
+\bibcite{lecun-01a}{{6}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
+\bibcite{martens2010deep}{{7}{2010}{{Martens}}{{}}}
+\bibcite{ml_mohri}{{8}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
+\bibcite{nair2010rectified}{{9}{2010}{{Nair and Hinton}}{{}}}
+\bibcite{zeiler2014visualizing}{{10}{2014}{{Zeiler and Fergus}}{{}}}
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces TODO\relax }}{18}}

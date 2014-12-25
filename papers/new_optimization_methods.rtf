@@ -1,0 +1,25 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww17200\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 It might be better to use this method once we already seem to be converging to a local minimum.\
+\
+The idea is to converge to the best local minimum we can find for each instance without changing the output of the network \'93too much\'94.\
+\
+At iteration k:\
+	Step 1: Compute J_k <- J_k(w_k)\
+	v_k <- w_k\
+	Step 2: Try to find a local minimum \'93near\'94 w_k without changing the output \'93too much"\
+	while ||J_k v_k|| < omega and ||p_k|| > epsilon\
+		Obtain (alpha_k, p_k) using steepest descent with backtracking line search\
+		v_k <- v_k + alpha_k p_k\
+	Step 3: If we reached a local minimum:\
+		Repeat:\
+			Find an intersection u_k of the graph with a relatively shallow cone at v_k using a zero-finding method\
+			If ||J_k u_k|| > omega:\
+				Break\
+			v_k <- u_k\
+			Make the cone narrower\
+}

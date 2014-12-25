@@ -1,0 +1,70 @@
+\begin{thebibliography}{10}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bishop(2006)]{ml_bishop}
+Christopher~M. Bishop.
+\newblock \emph{Pattern Recognition and Machine Learning (Information Science
+  and Statistics)}.
+\newblock Springer-Verlag New York, Inc., Secaucus, NJ, USA, 2006.
+\newblock ISBN 0387310738.
+
+\bibitem[Bousquet and Bottou(2008)]{bousquet2008tradeoffs}
+Olivier Bousquet and L{\'e}on Bottou.
+\newblock The tradeoffs of large scale learning.
+\newblock In \emph{Advances in neural information processing systems}, pages
+  161--168, 2008.
+
+\bibitem[Glorot and Bengio(2010)]{glorot2010understanding}
+Xavier Glorot and Yoshua Bengio.
+\newblock Understanding the difficulty of training deep feedforward neural
+  networks.
+\newblock In \emph{International Conference on Artificial Intelligence and
+  Statistics}, pages 249--256, 2010.
+
+\bibitem[Krizhevsky et~al.(2012)Krizhevsky, Sutskever, and
+  Hinton]{krizhevsky2012imagenet}
+Alex Krizhevsky, Ilya Sutskever, and Geoffrey~E Hinton.
+\newblock Imagenet classification with deep convolutional neural networks.
+\newblock In \emph{Advances in neural information processing systems}, pages
+  1097--1105, 2012.
+
+\bibitem[LeCun et~al.(1998)LeCun, Bottou, Orr, and Muller]{lecun-98b}
+Y.~LeCun, L.~Bottou, G.~Orr, and K.~Muller.
+\newblock Efficient backprop.
+\newblock In G.~Orr and Muller K., editors, \emph{Neural Networks: Tricks of
+  the trade}. Springer, 1998.
+
+\bibitem[LeCun et~al.(2001)LeCun, Bottou, Bengio, and Haffner]{lecun-01a}
+Y.~LeCun, L.~Bottou, Y.~Bengio, and P.~Haffner.
+\newblock Gradient-based learning applied to document recognition.
+\newblock In \emph{Intelligent Signal Processing}, pages 306--351. IEEE Press,
+  2001.
+
+\bibitem[Martens(2010)]{martens2010deep}
+James Martens.
+\newblock Deep learning via hessian-free optimization.
+\newblock In \emph{Proceedings of the 27th International Conference on Machine
+  Learning (ICML-10)}, pages 735--742, 2010.
+
+\bibitem[Mohri et~al.(2012)Mohri, Rostamizadeh, and Talwalkar]{ml_mohri}
+Mehryar Mohri, Afshin Rostamizadeh, and Ameet Talwalkar.
+\newblock \emph{Foundations of Machine Learning}.
+\newblock The MIT Press, 2012.
+\newblock ISBN 026201825X, 9780262018258.
+
+\bibitem[Nair and Hinton(2010)]{nair2010rectified}
+Vinod Nair and Geoffrey~E Hinton.
+\newblock Rectified linear units improve restricted boltzmann machines.
+\newblock In \emph{Proceedings of the 27th International Conference on Machine
+  Learning (ICML-10)}, pages 807--814, 2010.
+
+\bibitem[Zeiler and Fergus(2014)]{zeiler2014visualizing}
+Matthew~D Zeiler and Rob Fergus.
+\newblock Visualizing and understanding convolutional networks.
+\newblock In \emph{Computer Vision--ECCV 2014}, pages 818--833. Springer, 2014.
+
+\end{thebibliography}
