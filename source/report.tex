@@ -33,6 +33,7 @@
 % 		- Adagrad.
 % 		- Adadelta.
 % 		- Rmsprop.
+% 		- vSGD.
 % 		- Effect of line search.
 % 	- Second-order methods.
 % 	  	- L-BFGS.
@@ -109,8 +110,6 @@
 \newcommand{\apperr}{\mathcal{E}_{\mathrm{app}}}
 \newcommand{\esterr}{\mathcal{E}_{\mathrm{est}}}
 \newcommand{\opterr}{\mathcal{E}_{\mathrm{opt}}}
-\newcommand{\argmin}{\operatorname*{arg\,min}}
-\newcommand{\tr}{\operatorname{tr}}
 
 \title{Optimization for Neural Networks}
 \author{Aditya Ramesh}
@@ -212,7 +211,7 @@ between nodes in different layers, are allowed. The process by which this is
 accomplished is called \emph{layered graph drawing} (see
 Figure~\ref{fig:layered_graph_drawing}). Since $G$ is a DAG, we can partition
 its nodes into an array of successive layers $L_0, \ldots, L_d$, where $d$ is
-the \emph{depth} of the neural network. The first layer, $L_1$, consists of the
+the \emph{depth} of the neural network. The first layer, $L_0$, consists of the
 input nodes ordered from left to right based on the components of $x$ to which
 they correspond. It is called the \emph{input layer}. Not all output nodes
 necessarily belong to the last layer, so an \emph{output layer} need not exist
@@ -463,8 +462,8 @@ The choices for the constants $a$ and $b$ of the scaled $\tanh$ function are
 motivated by several reasons~\citep{lecun-98b}. Firstly, the scaled $\tanh$
 function is symmetric and approximately linear about the origin. If the inputs
 are decorrelated, our choices for $a$ and $b$ cause the variance of the scaled
-$\tanh$ function to be close to unity. This has been shown to accelerate
-learning in neural networks.
+$\tanh$ function to be close to unity. This accelerates the convergence of
+optimization algorithms~(see Section~\ref{sec:pp_and_init}).
 
 Secondly, the choices for these constant helps prevent the \emph{vanishing
 gradient problem}. Using these constants causes the second derivative of the
@@ -841,6 +840,39 @@ Thus, the softmax function can be viewed as a generalization of the logistic
 sigmoid function to more than two classes.
 
 \subsection{Data Preprocessing and Initialization}
+\label{sec:pp_and_init}
+
+Preprocessing the data can have drastic effects on convergence of the
+optimization algorithm used for learning. However, normalizing the features (the
+components of an input $x_k \in \reals{n}$) must be done with great care, so as
+not to destroy useful information encoded by the relative magnitudes of a
+feature. Suppose that it is equally important that we predict the target value
+for any input $x_k$ from our training sample $D$. This is \emph{not} the case,
+for instance, when we wish to predict whether the person corresponding to an
+input $x_k$ has a rare disease. Then it can be beneficial to center and scale
+the features by subtracting the mean vector $\mu$ and scaling by the variance
+vector $\sigma$. Specifically, each input $x_k$ is normalized by computing
+\begin{equation}
+	\bar{x}_k \coloneqq \frac{x_k - \mu}{\sigma}.
+	\label{eq:center_and_scale}
+\end{equation}
+
+In general, it is recommended to \emph{decorrelate} the features whenever
+possible~\citep{lecun-98b}. Doing so decouples the updates to the individual
+weights of the network during the optimization process, which accelerates
+convergence. \citet{lecun-98b} give an intuitive explanation for why
+decorrelating the inputs can be beneficial. Consider the extreme case where all
+components of the inputs are positive. Let $(1, j)$ be a unit in the second
+layer of the network, and let $\tilde{x}_k$ consist of the components of $x_k$
+corresponding to $\parents{(1, j)}$ (see Figure~\ref{fig:two_layer_nn}). Let
+$\delta$ be the scalar error computed for $(1, j)$ using the techniques
+discussed in Section~\ref{sec:computing_derivatives}. Then a na\"{i}ve
+first-order optimization algorithm will update the weights to $(1, j)$ by an
+amount proportional to $\delta \tilde{x}_k$. Thus, the weights to $(1, j)$ will
+either \emph{all} increase or \emph{all} decrease (depending on the
+$\sign(\delta)$) after each update. This makes finding a good weight
+configuration difficult. A more sophisticated approach to decorrelating the
+inputs involves PCA~\citep{lecun-98b, krizhevsky2012imagenet}.
 
 The initial values of the weights can have a significant impact on both
 convergence speed and generalization error. Suppose that we use the scaled
@@ -850,22 +882,13 @@ within the linear region of the scaled $\tanh$ function. One way of enforcing
 this is to require that the activation values have zero mean and unit
 variance~\citep{lecun-98b}.
 
-When all of the instances in the training sample have the same importance, it is
-often beneficial to \emph{decorrelate} the inputs. One way of doing this is as
-follows~\citep{lecun-98b}. Given a sample $D$, we compute the mean and variance
-for each of the $n$ components of the inputs; this yields the vectors $\mu,
-\sigma \in \reals{n}$, respectively. Each input $x_k \in \reals{n}$ is
-normalized by computing
-\[
-	\bar{x}_k \coloneqq \frac{x_k - \mu}{\sigma}.
-\]
-
-Now assume that the inputs are decorrelated, so that
+Suppose that the inputs are centered and scaled according
+to~(\ref{eq:center_and_scale}), so that
 \[
 	\E(x_i) = 0 \quad\text{and}\quad \Var(x_i) = 1,
 \]
 for each $i \in [1, n]$. From~(\ref{eq:activation}), we know that the activation
-of $(1, j)$, the $j$th unit in the first layer of the network, is given by
+of $(1, j)$ is given by
 \[
 	a_{1j} \;\coloneqq \sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}.
 \]
@@ -899,8 +922,8 @@ solve for the value of $\sigma$ that forces $\Var(a_{1j}) = 1$, we compute
 	&= \sum_{(0, i) \in \parents(1, j)} \Var(\weight{0l}{1j}) \Var(x_{0l}) \\
 	&= \sum_{(0, i) \in \parents(1, j)} \sigma^2 = f \sigma^2.
 \end{align*}
-In order to enforce that $\Var(a_{1j}) = 1$, we should sample the weights from a
-distribution with zero mean and standard deviation given by
+So in order to enforce that $\Var(a_{1j}) = 1$, we should sample the weights
+from a distribution with zero mean and standard deviation given by
 \[
 	\sigma = \frac{1}{\sqrt{f}}.
 \]
@@ -925,10 +948,11 @@ martens2010deep}. Another strategy is to incorporate a form of internal
 normalization into the network by adding \emph{local response normalization}
 layers~\citep{krizhevsky2012imagenet}. Part of the reason that training deep
 neural networks is so difficult is that these dynamics are so poorly understood.
-Developing a deeper understanding of what is happening in these situations is
-likely to have widespread practical consequences.
+Development of a deeper understanding of what is happening in these situations
+is likely to have widespread practical consequences.
 
 \subsection{Computing Derivatives}
+\label{sec:computing_derivatives}
 
 TODO
 
@@ -977,7 +1001,7 @@ $f$ is defined as
 
 The generalization error is not a quantity that we can directly measure.
 Instead, we must work with the \emph{empirical error}, the average number of
-misclassifications over a sample $S \sim D$.
+misclassifications over our training sample $S \sim D$.
 
 \begin{definition}[Empirical error~\citep{ml_mohri}]
 Given a candidate function $f \in F$, a target concept $c \in C$, and a sample
@@ -999,14 +1023,17 @@ misclassification rate over samples drawn from $D$. We are now ready to present
 the the definition of probably approximate correct~(PAC) learning.
 
 \begin{definition}[PAC-learning~\citep{ml_mohri}]
-Let $O(n)$ be an upper bound on the space complexity of an input $x \in X$. A
-concept class is said to be PAC-learnable if there exists an algorithm $A$ and a
+Suppose that we are performing binary classification of inputs from an input
+space $X$, and let $C$ be the associated concept class. Let $O(n)$ be an upper
+bound on the space complexity of an input $x \in X$. Given an algorithm $A$ and
+a sample $S \sim D$, let $f_S \in F$ denote the candidate function found by $A$
+for $S$. Then $C$ is PAC-learnable if there exists an algorithm $A$ and a
 polynomial function $g : \reals{4} \to \reals{1}$ such that for any $\epsilon,
 \delta \in (0, 1]$, for all distributions $D$ over $X$, and for any target
-concept $c \in C$, the following holds for any sample $s \geq g(1/\epsilon,
-1/\delta, n, \size(c))$:
+concept $c \in C$, the following holds for any sample $S \sim D$ of size $s \geq
+g(1/\epsilon, 1/\delta, n, \size(c))$:
 \[
-	\Pr_{S \sim D} (R(f) \leq \epsilon) \geq 1 - \delta.
+	\Pr_{S \sim D} (R(f_S) \leq \epsilon) \geq 1 - \delta.
 \]
 If $A$ runs in $g(1/\epsilon, 1/\delta, n, \size(c))$, then $C$ is said to be
 efficiently PAC-learnable. In this case, $A$ is called a PAC-learning algorithm
@@ -1020,7 +1047,8 @@ is PAC-learnable if the sample size required to meet our goals is bounded by a
 polynomial function of $1/\epsilon$ and $1/\delta$. Roughly speaking, $A$ must
 find a function in $F$ that is \emph{approximately correct} with \emph{high
 probability}. But it must be able to do this using a sample size that is not
-``too large.''
+``too large''. The extension of space and time complexity to sample size
+requires this notion of ``high probability''.
 
 One of the goals of statistical learning theory is to derive upper bounds on the
 generalization error in various situations. When such an upper bound applies to
@@ -1150,6 +1178,8 @@ learning.
 
 \section{Characterizing Optimization Algorithms}
 
+\subsection{Goals of Optimization}
+
 We turn our focus to applying statistical learning theory to characterize the
 quality of optimization algorithms for machine learning. Let $f_{\text{ERM}}$ be
 given by~(\ref{eq:erm_srm_solutions}). During training, we only require that the
@@ -1159,8 +1189,9 @@ is within a fixed tolerance $\rho \in \reals{+}$ of that of $f_{\text{ERM}}$:
 	\hat{R}(\hat{f}) - \hat{R}(f_{\text{ERM}}) \leq \rho.
 	\label{eq:tol_eq}
 \end{equation}
-The expectation of the LHS of~(\ref{eq:tol_eq}) taken over $S \sim D$ is called
-the \emph{optimization error}~\citep{bousquet2008tradeoffs}, and is defined as
+The expectation of the LHS of~(\ref{eq:tol_eq}) taken over a sample $S \sim D$
+is called the \emph{optimization error}~\citep{bousquet2008tradeoffs}, and is
+defined as
 \[
 	\opterr \coloneqq R(\hat{f}) - R(f_{\text{ERM}}).
 \]
@@ -1188,7 +1219,7 @@ problem~\citep{bousquet2008tradeoffs}:
 \begin{aligned}
 	& \underset{F, \rho, s}{\text{minimize}} & &
 		\mathcal{E} = \apperr + \esterr + \opterr \\
-	& \text{subject to} & & \hspace{3.5em} s \leq s_{\text{max}} \\
+	& \text{subject to} & & \hspace{3.2em} s \leq s_{\text{max}} \\
 	& & & t(F, \rho, s) \leq t_{\text{max}}.
 \end{aligned}
 \label{eq:metaopt_program}
@@ -1216,7 +1247,7 @@ increase or a decrease is possible.\label{tab:metaopt_variables}}
 As stated in~\citet{bousquet2008tradeoffs}, ``the solution of the optimization
 program~(\ref{eq:metaopt_program}) depends critically on which budget constraint
 is active: [the] constraint $s < s_{\text{max}}$ on the number of examples, or
-[the] constraint $t < t_{\text{max}}$ on the training time.'' A
+[the] constraint $t < t_{\text{max}}$ on the training time''. A
 \emph{small-scale} problem is one that is constrained by the sample size. In
 this case, the computation time is not limited, so we can make $\opterr$
 negligible by choosing $\rho$ sufficiently small. Using the fact that $\esterr$
@@ -1265,6 +1296,8 @@ the additional assumption that
 	\label{eq:error_equiv}
 \end{equation}
 
+\subsection{Analysis of Optimization Algorithms}
+
 We now investigate the properties of four specific optimization algorithms.
 Assume that our empirical loss function $E$ is convex and twice differentiable
 (e.g. the sum-of-squares loss function). For convenience, we let $\theta \in
@@ -1279,7 +1312,7 @@ $\hat{y}_k^{\text{ERM}} \coloneqq w_{\text{ERM}} x_k + b_{\text{ERM}}$.
 
 The Hessian matrix $H_{\text{ERM}}$ and gradient covariance matrix
 $G_{\text{ERM}}$ evaluated at $\theta_{\text{ERM}}$ play an important role in
-our analyses~\citep{bousquet2008tradeoffs}. They are given by
+our analyses~\citep{bousquet2008tradeoffs}. They are defined as
 \[
 	H_{\text{ERM}} \coloneqq (\nabla_\theta^2 E)(\theta_{\text{ERM}})
 	= \frac{1}{s} \sum_{i = 1}^s (\nabla_\theta^2 e)(\hat{y}_k^{\text{ERM}}, y_k)
@@ -1305,17 +1338,29 @@ The condition number $\kappa \coloneqq
 \lambda_{\text{max}}/{\lambda_{\text{min}}}$ determines the difficulty of the
 optimization problem.
 
-The optimization algorithms used in machine learning can either use \emph{batch
-updates} or \emph{stochastic updates}. An algorithm that uses stochastic updates
-will apply an update to $\theta$ for each instance in $S$. On the other hand, an
-algorithm that uses batch updates will apply an update to $\theta$ every $r$
-iterations, where $r | s$. The derivative information computed by batch
-algorithms is averaged over the $r$ iterations. For the purposes of our
-discussion, we assume that the batch size is $s$.
+The optimization algorithms used in machine learning either operate on
+\emph{full batches} or \emph{mini-batches}. An full batch algorithm will only
+apply an update to $\theta$ after processing the entire training sample $S$. The
+derivative information computed by batch algorithms is averaged over the batch
+of instances. A mini-batch algorithm applies an update to $\theta$ every $r$
+iterations, where $r | s$. A \emph{stochastic} or \emph{online} algorithm uses a
+mini-batch size of one. The first two algorithms that we present are full batch
+algorithms, while the last two algorithms are stochastic.
+
+Mini-batch algorithms are often several times faster than full batch algorithms.
+This is because mini-batch algorithms are better able to exploit redundacy in
+the training sample $S$. \citet{lecun-98b} give an explanation for why this
+happens. Suppose that $|S| = 1000$, and consists of the same 100 instances
+replicated ten times in the same order. The average of the gradient over $S$ is
+equal to the average of the gradient over the first 100 instances. A full batch
+algorithm will compute the same gradient ten times before applying a single
+update. In this time, an algorithm with a mini-batch size of 100 would apply ten
+updates. While duplicate instances are rare in practice, there are often
+clusters of instances that are similar in some sense.
 
 Following the precedent of Stephen Wright, we refer to the algorithms below as
 \emph{gradient update} algorithms rather than as \emph{gradient descent}
-algorithms, because the search directions computed by the update rules are not
+algorithms, because the search directions used by the update rules are not
 necessary descent directions.
 \begin{itemize} 
 \item The gradient update (GU) algorithm uses the update rule
@@ -1391,14 +1436,14 @@ $O\left( \frac{n^2}{\epsilon^{1 / \alpha}} \log \frac{1}{\epsilon} \log\log
 	\frac{1}{\epsilon} \right)$ \\
 SGU &
 $O(n)$ &
-$\frac{\nu \kappa^2}{\rho} + o(\frac{1}{\rho})$ &
-$O(\frac{n \nu \kappa^2}{\rho})$ &
-$O(\frac{n \nu \kappa^2}{\epsilon})$ \\
+$\frac{\nu \kappa^2}{\rho} + o\left(\frac{1}{\rho}\right)$ &
+$O\left( \frac{n \nu \kappa^2}{\rho} \right)$ &
+$O\left( \frac{n \nu \kappa^2}{\epsilon} \right)$ \\
 2SGU &
 $O(n^2)$ &
-$\frac{\nu}{\rho} + o(\frac{1}{\rho})$ &
-$O(\frac{n \nu}{\rho})$ &
-$O(\frac{n \nu}{\epsilon})$ \\
+$\frac{\nu}{\rho} + o\left( \frac{1}{\rho} \right)$ &
+$O\left( \frac{n \nu}{\rho} \right)$ &
+$O\left( \frac{n \nu}{\epsilon} \right)$ \\
 \bottomrule
 \end{tabular}
 \caption{Asymptotic rates for the four algorithms discussed (adapted
@@ -1430,6 +1475,41 @@ shown that
 \end{equation}
 Substituing~(\ref{eq:rho_approx_eps}) and~(\ref{eq:s_assumption}) into the rates
 in the third column gives the rates in the fourth column.
+
+Table~\ref{tab:asymptotic_rates} contains a wealth of information regarding the
+properties of the four optimization algorithms. This information leads to the
+following conclusions for large-scale problems~\citep{bousquet2008tradeoffs}:
+\begin{itemize}
+\item Stochastic algorithms are more appropriate when there is less need to
+optimize accurately. This is the case in large-scale problems, or when the
+estimation rate $\alpha$ is small. Note that the performance of the stochastic
+algorithms does not depend on the estimation rate $\alpha$.
+
+\item Incorporating second-order information brings small improvements in
+$\mathcal{E}$. When minimizing $\mathcal{E}$, all four algorithms are dominated
+by the polynomial factor in $1/\epsilon$. The second-order methods only improve
+the logarithmic factors in $1/\epsilon$.
+
+\item Stochastic algorithms have the best generalization performance, despite
+being the worst optimization algorithms when viewed in the traditional sense.
+When minimizing $\mathcal{E}$, the batch algorithms have a dependence on
+$\alpha$ as well as the logarithmic factor in $1/\epsilon$.
+\end{itemize}
+For small-scale problems, $\opterr$ is negligible, so these conclusions do not
+necessarily apply.
+
+One caveat is that stochastic algorithms are more vulnerable than batch
+algorithms to ill-conditioning. The results for both stochastic algorithms
+depend on the constant~$\nu$. The factor of~$\kappa$ in the results for GU
+becomes~$\kappa^2$ in the results for SGU. As~$H_{\text{ERM}}$ becomes
+increasingly ill-conditioned, both $\kappa$ and $\nu$ are liable to increase
+rapidly. One of the goals of decorrelating the
+inputs~(Section~\ref{sec:pp_and_init}) is to prevent~$H_{\text{ERM}}$ from
+having large eigenvalues~\citep{lecun-98b}. In light of the results from
+Table~\ref{tab:asymptotic_rates}, the importance of decorrelating the inputs
+becomes even more apparent.
+
+\section{Optimization for Neural Networks}
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
