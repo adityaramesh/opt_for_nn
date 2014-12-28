@@ -145,26 +145,27 @@ $G$, in which the neurons are nodes and the synapses are edges. This rough
 biological conceptualization of neural communication leads to a mathematical
 structure that we will fashion into a model of computation.
 
-Our goal will now be to derive a mathematical description for $G$, so that the
+Our goal will now be to derive a mathematical description for~$G$, so that the
 resulting neural network can be used for function approximation. To emphasize
 that our notion of neural network has little to do with neuroscience, we will
-refer to the ``neurons'' in the network as nodes in $G$. We limit our discussion
+refer to the ``neurons'' in the network as nodes in~$G$. We limit our discussion
 to \emph{feed-forward} neural networks, which do not contain cycles.
-Consequently, $G$ must be a directed acyclic graph (DAG). Now suppose that we
-wish to use $G$ to approximate a function $f: \reals{m} \to \reals{n}$. If $f(x)
-= y$ for some $x \in \reals{m}$ and $y \in \reals{n}$, then our task will be to
-use $G$ to ``learn'' what $f$ does to transform $x$ into $y$.
+Consequently,~$G$ must be a directed acyclic graph~(DAG). Now suppose that we
+wish to use~$G$ to approximate a function~$f: \reals{m} \to \reals{n}$. If~$f(x)
+= y$ for some~$x \in \reals{m}$ and~$y \in \reals{n}$, then our task will be to
+use~$G$ to ``learn'' what~$f$ does to transform~$x$ into~$y$.
 
-Let us first impose some organizational strucuture on $G$. We delegate to a set
-$I$ of $m$ input nodes the task of broadcasting the components of $x$ to other
-nodes in $G$. In order for the neural network to be useful, the transmission of
-information must eventually cease at a set $O$ of $n$ output nodes. The
-information computed by each node in $O$ will correspond to a component of
-$\hat{y}$, the network's approximation to $y$. As things stand, $I$ and $O$ can
-consist of arbitrary nodes of $G$. It would help if we could hide the entangled
-mass of nodes of edges (aka \emph{connections}) involved in the communication
-between $I$ and $O$, and simply think of $I$ as $x$ and $O$ as $\hat{y}$.
-Fortunately, our existing definitions allow us to do far more than this.
+Let us first impose some organizational strucuture on~$G$. We delegate to a
+set~$I$ of~$m$ input nodes the task of broadcasting the components of~$x$ to
+other nodes in~$G$. In order for the neural network to be useful, the
+transmission of information must eventually cease at a set~$O$ of~$n$ output
+nodes. The information computed by each node in~$O$ will correspond to a
+component of~$\hat{y}$, the network's approximation to~$y$. As things stand,
+$I$~and~$O$ can consist of arbitrary nodes of~$G$. It would help if we could
+hide the entangled mass of nodes of edges (aka~\emph{connections}) involved in
+the communication between~$I$ and~$O$, and simply think of~$I$ as~$x$ and~$O$
+as~$\hat{y}$.  Fortunately, our existing definitions allow us to do far more
+than this.
 
 \begin{figure}
 \centering
@@ -199,24 +200,24 @@ Fortunately, our existing definitions allow us to do far more than this.
 	\subcaption{}\label{fig:simple_layered_dag}
 \end{minipage}
 \caption{In~\ref{fig:simple_dag}, we see a DAG, and
-in~\ref{fig:simple_layered_dag}, the representation of the DAG as a layered
-graph. Notice that the edges $A \rightarrow D$ and $C \rightarrow D$ are
+in~\ref{fig:simple_layered_dag}, the representation of the~DAG as a layered
+graph. Notice that the edges~$A \rightarrow D$ and~$C \rightarrow D$ are
 manifested as skip connections in the layered
 graph.\label{fig:layered_graph_drawing}}
 \end{figure}
 
-Any DAG can be rendered as a layered graph. In a layered graph, nodes are
+Any~DAG can be rendered as a layered graph. In a layered graph, nodes are
 arranged in horizontal rows, and only vertical connections in one direction,
 between nodes in different layers, are allowed. The process by which this is
 accomplished is called \emph{layered graph drawing} (see
-Figure~\ref{fig:layered_graph_drawing}). Since $G$ is a DAG, we can partition
-its nodes into an array of successive layers $L_0, \ldots, L_d$, where $d$ is
-the \emph{depth} of the neural network. The first layer, $L_0$, consists of the
-input nodes ordered from left to right based on the components of $x$ to which
+Figure~\ref{fig:layered_graph_drawing}). Since~$G$ is a~DAG, we can partition
+its nodes into an array of successive layers~$L_0, \ldots, L_d$, where~$d$ is
+the \emph{depth} of the neural network. The first layer,~$L_0$, consists of the
+input nodes ordered from left to right based on the components of~$x$ to which
 they correspond. It is called the \emph{input layer}. Not all output nodes
 necessarily belong to the last layer, so an \emph{output layer} need not exist
-in general. In our case, we assume it does, so $L_d$ must be the output layer.
-Layers in between $L_0$ and $L_d$ are called \emph{hidden layers}.
+in general. In our case, we assume it does, so~$L_d$ must be the output layer.
+Layers in between~$L_0$ and~$L_d$ are called \emph{hidden layers}.
 Figure~\ref{fig:two_layer_nn} depicts a small, two-layer neural network.
 
 \begin{figure}
@@ -287,14 +288,14 @@ are called \emph{units}, and edges between units (which must necessarily be from
 different layers) are called \emph{connections}. As in
 Figure~\ref{fig:simple_layered_dag}, connections between units in nonconsecutive
 layers can occur; these are called \emph{skip connections}. Consequently, in
-order for information to propagate from $L_k$ to $L_{k + 1}$, we may require the
-outputs of all units from $L_0$ to $L_{k - 1}$. Let $w \coloneqq |L_k|$ denote
-the \emph{width} of $L_k$. Rather than thinking about $L_k$ as a subgraph of
-$G$, we associate $L_k$ with a vector $z_k \in \reals{w}$. The value of
-component $z_{ki}$ is given by the output of the of the $i$th unit from the left
-end of $L_k$. It is now evident that the vector $x$ is transformed into
-$\hat{y}$ by a series of successive functions $\sigma_1, \ldots, \sigma_d$ given
-by
+order for information to propagate from~$L_k$ to~$L_{k + 1}$, we may require the
+outputs of all units from~$L_0$ to~$L_{k - 1}$. Let~$w \coloneqq |L_k|$ denote
+the \emph{width} of~$L_k$. Rather than thinking about~$L_k$ as a subgraph
+of~$G$, we associate~$L_k$ with a vector~$z_k \in \reals{w}$. The value of
+component~$z_{ki}$ is given by the output of the of the~$i$th unit from the left
+end of~$L_k$. It is now evident that the vector~$x$ is transformed
+into~$\hat{y}$ by a series of successive functions~$\sigma_1, \ldots, \sigma_d$
+given by
 \begin{align}
 \begin{split}
 	x \eqqcolon z_0 &\xmapsto{\sigma_1} z_1 \\
@@ -328,33 +329,33 @@ where $\sigma_k$ is realized by the units in $L_k$.
 \draw[-stealth] (c) -- node[sloped, above] {$\weight{(k - 1, 3)}{k1}$} (d);
 \end{tikzpicture}
 
-\caption{An illustration how the output of $(k, 1)$, a unit with three inputs
-from $L_{k - 1}$, is computed. In this case, $\parents(k, 1) = \{(k - 1, 1), (k
-- 1, 2), (k - 1, 3)\}$. First, the activation $a_{k1}$ is computed by forming a
-linear combination of the outputs of the units in $\parents(k, 1)$ with the
-corresponding weights to $(k, j)$, and adding the bias $b_{k1}$. Then, the
-output $z_{k1}$ is determined by applying the activation function $u_{k1}$ to
-$a_{k1}$.\label{fig:unit_output}}
+\caption{An illustration how the output of~$(k, 1)$, a unit with three inputs
+from~$L_{k - 1}$, is computed. In this case, $\parents(k, 1) = \{(k - 1, 1), (k
+- 1, 2), (k - 1, 3)\}$. First, the activation~$a_{k1}$ is computed by forming a
+linear combination of the outputs of the units in~$\parents(k, 1)$ with the
+corresponding weights to~$(k, j)$, and adding the bias~$b_{k1}$. Then, the
+output~$z_{k1}$ is determined by applying the activation function~$u_{k1}$
+to~$a_{k1}$.\label{fig:unit_output}}
 \end{figure}
 
-The $j$th unit in the input layer of a neural network simply returns the
-corresponding component $x_j$ of the input vector $x$. On the other hand, each
+The~$j$th unit in the input layer of a neural network simply returns the
+corresponding component~$x_j$ of the input vector~$x$. On the other hand, each
 unit in the hidden and output layers forms a linear combination of the inputs
 from previous layers to which it is connected, and adds a bias parameter to the
-result. Suppose that $L_k$ is not the input layer, so that $k > 0$. The $j$th
-unit in $L_k$ is denoted by $(k, j)$, and its activation $a_{kj}$ is defined as
+result. Suppose that~$L_k$ is not the input layer, so that~$k > 0$. The~$j$th
+unit in~$L_k$ is denoted by~$(k, j)$, and its activation~$a_{kj}$ is defined as
 \begin{equation}
 	a_{kj} \;\coloneqq \sum_{(l, i) \in \parents(k, j)} \weight{li}{kj} z_{li} + b_{kj}.
 	\label{eq:activation}
 \end{equation}
-Here, $\parents(k, j)$ denotes the parents of $(k, j)$, which are the units that
-have edges directed toward $(k, j)$. This notation allows us to easily
+Here,~$\parents(k, j)$ denotes the parents of~$(k, j)$, which are the units that
+have edges directed toward~$(k, j)$. This notation allows us to easily
 generalize our discussion to layered networks that incorporate skip connections.
-The number $\weight{li}{kj}$ is the \emph{weight} associated with the connection
-$(l, i) \rightarrow (k, j)$, and $b_{kj}$ the \emph{bias} associated with $(k,
-j)$. The quantity $z_{li}$ is the output of unit $(l, i)$, and is obtained by
-applying the unit's \emph{activation function} $u_{li} : \reals{1} \to
-\reals{1}$ to the unit's activation $a_{li}$:
+The number~$\weight{li}{kj}$ is the \emph{weight} associated with the
+connection~$(l, i) \rightarrow (k, j)$, and $b_{kj}$ the \emph{bias} associated
+with $(k, j)$. The quantity~$z_{li}$ is the output of unit~$(l, i)$, and is
+obtained by applying the unit's \emph{activation function} $u_{li} : \reals{1}
+\to \reals{1}$ to the unit's activation~$a_{li}$:
 \begin{equation}
 	z_{li} = u_{li}(a_{li}).
 	\label{eq:output}
@@ -362,16 +363,16 @@ applying the unit's \emph{activation function} $u_{li} : \reals{1} \to
 Figure~\ref{fig:unit_output} shows how the activation of a unit with three
 parents is computed.
 
-The process of computing the output vector $z_k$ corresponds to applying the
-function $\sigma_k$. If $w \coloneqq |L_k|$, then writing
+The process of computing the output vector~$z_k$ corresponds to applying the
+function~$\sigma_k$. If~$w \coloneqq |L_k|$, then writing
 \[
 	(z_0, \ldots, z_{k - 1}) \xmapsto{\sigma_k} z_k
 \]
-is shorthand for saying that we compute $z_k$ through $w$ simultaneous
-applications of~(\ref{eq:activation}), followed by $w$ simultaneous
+is shorthand for saying that we compute~$z_k$ through~$w$ simultaneous
+applications of~(\ref{eq:activation}), followed by~$w$ simultaneous
 applications of~(\ref{eq:output}). In order to compute the network's
-prediction $\hat{y} \in \reals{m}$ corresponding to an input $x \in \reals{n}$,
-we apply the functions $\sigma_1, \ldots, \sigma_d$ as described
+prediction~$\hat{y} \in \reals{m}$ corresponding to an input~$x \in \reals{n}$,
+we apply the functions~$\sigma_1, \ldots, \sigma_d$ as described
 by~(\ref{eq:forward_propagation}). This process is called \emph{forward
 propagation}.
 
@@ -450,33 +451,33 @@ derivatives.\label{fig:activation_plots}}
 \end{figure}
 
 So far in our discussion, we have avoided making specific choices for the
-activation function $u_{kj} : \reals{1} \to \reals{1}$ associated with unit $(k,
+activation function~$u_{kj} : \reals{1} \to \reals{1}$ associated with unit~$(k,
 j)$. Three of the most commonly-used activation functions in the literature are
 the identity, scaled $\tanh$, and linear threshold functions (see
 Figure~\ref{fig:activation_plots}). (In the neural network literature, linear
-threshold functions are called ``rectified linear units'' (ReLU), an instance of
+threshold functions are called ``rectified linear units''~(ReLU), an instance of
 specialized terminology that Mehryar Mohri despises.) Typically, all units in
 the same layer are associated with the same activation function. We therefore
-drop the redundant second index in the subscript of $u_{kj}$, and simply refer
-to the activation function as $u_k$.
+drop the redundant second index in the subscript of~$u_{kj}$, and simply refer
+to the activation function as~$u_k$.
 
-The choices for the constants $a$ and $b$ of the scaled $\tanh$ function are
+The choices for the constants~$a$ and~$b$ of the scaled $\tanh$ function are
 motivated by several reasons~\citep{lecun-98b}. Firstly, the scaled $\tanh$
 function is symmetric and approximately linear about the origin. If the inputs
-are decorrelated, our choices for $a$ and $b$ cause the variance of the scaled
+are decorrelated, our choices for~$a$ and~$b$ cause the variance of the scaled
 $\tanh$ function to be close to unity. This accelerates the convergence of
 optimization algorithms~(see Section~\ref{sec:pp_and_init}).
 
 Secondly, the choices for these constant helps prevent the \emph{vanishing
 gradient problem}. Using these constants causes the second derivative of the
-scaled $\tanh$ function to be maximized at $\pm 1$. This is intentional: $\pm 1$
+scaled $\tanh$ function to be maximized at~$\pm 1$. This is intentional: $\pm 1$
 are the binary target values that are typically used for classification in
-practice. Suppose that the asymptotes of the scaled $\tanh$ function had been at
-the $\pm 1$ instead of $\pm a$. Then the weights of the network would
-drastically increase, in order to produce the large activation values necessary
-to drive the outputs of $\tanh$ function to the target values at its asymptotes.
-The derivative of the scaled $\tanh$ function at these large activation values
-would be exponentially small~(see Figure~\ref{fig:tanh_der_plot}). Thus, a
+practice. Suppose that the asymptotes of the scaled $\tanh$ function had been
+at~$\pm 1$ instead of~$\pm a$. Then the weights of the network would drastically
+increase, in order to produce the large activation values necessary to drive the
+outputs of $\tanh$ function to the target values at its asymptotes.  The
+derivative of the scaled $\tanh$ function at these large activation values would
+be exponentially small~(see Figure~\ref{fig:tanh_der_plot}). Thus, a
 minimization algorithm using derivative information would be liable to ``get
 stuck''.
 
@@ -484,9 +485,9 @@ Finally, the choices for these constants allow us to intrepret the output of the
 network as a measure of confidence towards its classification. When an input is
 near the decision boundary separating instances in two classes, we would like
 the network to output a small confidence value to reflect this uncertainty. If
-the asymptotes of the scaled $\tanh$ function were at $\pm 1$, then the large
+the asymptotes of the scaled $\tanh$ function were at~$\pm 1$, then the large
 activation values would force the outputs to one of the two extreme values,
-regardless of the certainty of the classification. Our choices for $a$ and $b$
+regardless of the certainty of the classification. Our choices for~$a$ and~$b$
 avoid this problem.
 
 Unlike the scaled $\tanh$ function, the identity function is typically only used
@@ -514,13 +515,13 @@ attuned to presence the pattern.
 
 The success of neural networks in image recognition and acoustic modeling has
 been attributed to their ability to learn a \emph{hierarchy} of features. In
-these applications, the location of a layer $L_k$ in the network determines the
+these applications, the location of a layer~$L_k$ in the network determines the
 relative scale of the patterns in the input captured by the features. In some
 sense, the lowest layers of the network ``zoom in'' to the input to capture
 low-level, local details, while the highest layers of the network ``zoom out''
 to capture overarching, global patterns (see Figure~\ref{fig:cnn_features}). It
-is plausible that this phenomenon can occur, since each $\sigma_k$ synthesizes
-the information from layers $L_0, \ldots, L_{k - 1}$ to produce $z_k$.
+is plausible that this phenomenon can occur, since each~$\sigma_k$ synthesizes
+the information from layers~$L_0, \ldots, L_{k - 1}$ to produce $z_k$.
 
 \afterpage{%
 	\clearpage
@@ -547,81 +548,81 @@ the information from layers $L_0, \ldots, L_{k - 1}$ to produce $z_k$.
 
 The activation functions discussed so far are useful for learning the low- and
 mid-level features in the hierarchy. For learning high-level features,
-\emph{radial basis functions} (RBFs) are sometimes more
-appropriate~\citep{lecun-01a}. A radial basis function $\phi : \reals{1} \to
+\emph{radial basis functions}~(RBFs) are sometimes more
+appropriate~\citep{lecun-01a}. A radial basis function~$\phi : \reals{1} \to
 \reals{1}$ is a continuous function whose value depends only on the
-\emph{radius} from a prescribed center $c \in \reals{n}$. Suppose that we wish
-to approximate a function $f : \reals{n} \to \reals{1}$ whose values at the
-points $c_1, \ldots, c_m$ are known. By centering an RBF at each $c_i$, we can
-approximate $f$ using the function $s : \reals{n} \to \reals{1}$ given by
+\emph{radius} from a prescribed center~$c \in \reals{n}$. Suppose that we wish
+to approximate a function~$f : \reals{n} \to \reals{1}$ whose values at the
+points~$c_1, \ldots, c_m$ are known. By centering an~RBF at each~$c_i$, we can
+approximate~$f$ using the function $s : \reals{n} \to \reals{1}$ given by
 \begin{equation}
 	s(x) \coloneqq \sum_{i = 1}^m \lambda_i \phi(\|x - c_i\|_2),
 	\label{eq:rbf_sum}
 \end{equation}
-where $\lambda \in \reals{m}$ is an adjustable parameter vector. The most
+where~$\lambda \in \reals{m}$ is an adjustable parameter vector. The most
 commonly-used RBFs are the Euclidean and Gaussian basis functions. These
 functions are given by
 \[
 	r \mapsto r \quad\text{and}\quad r \mapsto \exp(-k r^2 / 2),
 \]
-respectively, where $k \in \reals{+}$.
+respectively, where~$k \in \reals{+}$.
 
 Since RBFs are used for learning high-level features, they are usually embedded
 into one of the topmost layers of the network. As an example, suppose that we
-wish to classify $32 \times 32$ black and white images of handwritten digits
+wish to classify~$32 \times 32$ black and white images of handwritten digits
 into ten classes, where each class corresponds to a number from zero to nine.
-Suppose that $L_k$ is a layer with $32^2$ units. By attaching a ten-unit layer
-$L_{k + 1}$ with RBF activation functions to $L_k$, we can generate ten scores
-from $z_k \in \reals{32 \times 32}$. The $i$th score is given by $(z_{k +
-1})_i$, and measures the confidence that the input $x \in \reals{n}$ belongs to
-the $i$th class.
+Suppose that~$L_k$ is a layer with~$32^2$ units. By attaching a ten-unit
+layer~$L_{k + 1}$ with RBF activation functions to~$L_k$, we can generate ten
+scores from~$z_k \in \reals{32 \times 32}$. The~$i$th score is given by~$(z_{k +
+1})_i$, and measures the confidence that the input~$x \in \reals{n}$ belongs to
+the~$i$th class.
 
-The idea is to get $z_k$ to match a \emph{prototype} for one of the classes as
-closely as possible. We can view the functions $\sigma_1, \ldots, \sigma_k$ as
-nonlinearly deconstructing and reassembling $x$ to match one of these
-prototypes. The ten prototypes $c_1, \ldots, c_{10}$, are initialized by running
-a clustering algorithm, such as $k$-means, on the training sample. Each
-prototype is treated as the center of an RBF, and is subsumed into the weights
+The idea is to get~$z_k$ to match a \emph{prototype} for one of the classes as
+closely as possible. We can view the functions~$\sigma_1, \ldots, \sigma_k$ as
+nonlinearly deconstructing and reassembling~$x$ to match one of these
+prototypes. The ten prototypes~$c_1, \ldots, c_{10}$, are initialized by running
+a clustering algorithm, such as~$k$-means, on the training sample. Each
+prototype is treated as the center of an~RBF, and is subsumed into the weights
 of the network. The proximity of $z_k$ to the $i$th prototype $c_i$ is given by
 $\phi(\|x - c_i\|)$, and is a measure of confidence that $x$ belongs to the
 $i$th class.
 
-If $\phi$ is a \emph{normalized RBF}, then the confidence scores are
-probabilities. A normalized RBF $\phi$ is the normalized form of another basis
-function $\psi$. Hence, the $i$th RBF is given by
+If~$\phi$ is a \emph{normalized RBF}, then the confidence scores are
+probabilities. A normalized RBF~$\phi$ is the normalized form of another basis
+function~$\psi$. Hence, the $i$th RBF is given by
 \begin{equation}
 	\phi(x) \coloneqq \frac{\psi(\|x - c_i\|)}
 		{\sum_{j = 1}^{10} \psi(\|x - c_j\|)}.
 	\label{eq:normalized_rbf}
 \end{equation}
-Now the ten outputs, $\phi(\|x - c_i\|)$, $i \in [1, 10]$, form a discrete
+Now the ten outputs,~$\phi(\|x - c_i\|)$, $i \in [1, 10]$, form a discrete
 probability distribution over the classes.
 
 \subsection{Classification and Regression}
 
 We have seen that a neural network is a biologically-inspired nonlinear function
 controlled by two adjustable vectors of parameters: the weights $w$ and the
-biases $b$. Now consider a sample $S \coloneqq \{(x_1, y_1), \ldots, (x_s,
-y_s)\}$, where each $x_k \in \reals{n}$ is an input vector, and each $y_k$ is
-the target vector that we aim to predict when we are given $x_k$. We focus on
+biases~$b$. Now consider a sample~$S \coloneqq \{(x_1, y_1), \ldots, (x_s,
+y_s)\}$, where each~$x_k \in \reals{n}$ is an input vector, and each~$y_k$ is
+the target vector that we aim to predict when we are given~$x_k$. We focus on
 two categories of tasks that we can perform using neural networks:
-classification and regression. For regression, we have $y_k \in \reals{m}$, so
+classification and regression. For regression, we have~$y_k \in \reals{m}$, so
 the output layer consists of a single unit.
 
 For classification, two encoding schemes are possible. The first scheme can only
-be used for \emph{unary classification}, in which we wish to classify $x_k$ into
+be used for \emph{unary classification}, in which we wish to classify~$x_k$ into
 one of several mutually-exclusive classes. In this scheme, each class is
-associated with an index, so $y_k, \hat{y}_k \in \integers{1}$. These values are
+associated with an index, so~$y_k, \hat{y}_k \in \integers{1}$. These values are
 called a \emph{place codes}. A special case of unary classification is
-\emph{binary classification}, in which we seek to place $x_k$ into one of two
+\emph{binary classification}, in which we seek to place~$x_k$ into one of two
 mutually-exclusive classes. When using place codes, the output layer consists of
 a single unit.
 
 The second scheme can be used for unary classification as well as
-\emph{multiclass classification}, in which the $x_k$ can belong to one or more
-classes. This time, $y_k \in \{0, 1\}^m$ and $\hat{y}_k \in \reals{m}$. These
-values are called \emph{distributed codes}. The component $(y_k)_i$ is one if
-$x_k$ belongs to the $i$th class, and zero otherwise. On the other hand,
+\emph{multiclass classification}, in which the~$x_k$ can belong to one or more
+classes. This time,~$y_k \in \{0, 1\}^m$ and $\hat{y}_k \in \reals{m}$. These
+values are called \emph{distributed codes}. The component!$(y_k)_i$ is one
+if~$x_k$ belongs to the $i$th class, and zero otherwise. On the other hand,
 $(\hat{y}_k)_i$ is a measure of confidence that $x_k$ belongs to the the $i$th
 class. Whether a larger value indicate increased or decreased confidence varies
 based on convention.
@@ -724,33 +725,33 @@ number of classes grows.
 \draw[-stealth] (c5)--(d5);
 \draw[-stealth] (target)--(d6);
 \end{tikzpicture}
-\caption{A visualization of how the $k$th instance $(x_k, y_k)$ is fed into the
+\caption{A visualization of how the $k$th instance~$(x_k, y_k)$ is fed into the
 two-layer neural network from
 Figure~\ref{fig:two_layer_nn}.\label{fig:nn_with_loss}}
 \end{figure}
 
 Our goal is now to formulate the objective for the minimization algorithm used
 to adjust the weights and biases. To do this, we need a function that measures
-how well the network's prediction $\hat{y}_k \in \reals{m}$ for $x_k \in
-\reals{n}$ matches the target value $y_k \in \reals{m}$. This function is called
+how well the network's prediction~$\hat{y}_k \in \reals{m}$ for $x_k \in
+\reals{n}$ matches the target value~$y_k \in \reals{m}$. This function is called
 the \emph{loss function} or \emph{cost function} (see
 Figure~\ref{fig:nn_with_loss}). The choice of the loss function depends on the
 type of problem we would like to solve.
 
 One way to arrive at the loss function is to assign a probabilistic
-interpretation to the network outputs~\citep{ml_bishop}. Let $w$ and $b$ be the
+interpretation to the network outputs~\citep{ml_bishop}. Let~$w$ and~$b$ be the
 vectors of weights and biases of the network. By choosing an explicit
-representation for the conditional distribution $p(y_k \given x_k, w, b)$, we
-are led to a canonical loss function corresponding to this choice. Let $X =
-\{x_1, \ldots, x_s\}$ and $Y = \{y_1, \ldots, y_s\}$. If we assume that the
-instances $(x_k, y_k) \in S$ are iid, then we can apply the chain rule to write
+representation for the conditional distribution~$p(y_k \given x_k, w, b)$, we
+are led to a canonical loss function corresponding to this choice. Let~$X =
+\{x_1, \ldots, x_s\}$ and~$Y = \{y_1, \ldots, y_s\}$. If we assume that the
+instances~$(x_k, y_k) \in S$ are iid, then we can apply the chain rule to write
 \[
 	p(Y \given X, w, b) = \prod_{k = 1}^s p(y_k \given x_k, w, b).
 	\label{eq:likelihood_function}
 \]
 The LHS of~(\ref{eq:likelihood_function}) is called the likelihood function. The
 canonical loss function is obtained by maximizing the likelihood function over
-the $w$ and $b$. Maximizing the likelihood function is equivalent to minimizing
+the~$w$ and~$b$. Maximizing the likelihood function is equivalent to minimizing
 its negative logarithm, which is given by
 \begin{equation}
 	-\ln{p(Y \given X, w, b)} = -\sum_{k = 1}^s \ln{p(y_k \given x_k, w, b)}.
@@ -762,13 +763,13 @@ For regression, it is often appropriate to assume that
 \[
 	p(y_k \given x_k, w, b) = N(y_k \given \hat{y}_k, \beta^{-1}),
 \]
-where $N$ is the normal distribution, which for mean $\mu$ and variance
-$\sigma^2$ is defined as
+where~$N$ is the normal distribution, which for mean~$\mu$ and
+variance~$\sigma^2$ is defined as
 \[
 	N(x \given \mu, \sigma^2) \coloneqq \frac{1}{\sqrt{2 \pi \sigma^2}}
 		\exp\left( -\frac{1}{2 \sigma^2} (x - \mu)^2 \right).
 \]
-The value $\hat{y}_k$ is the network's prediction for $x_k$, and $\beta$ is the
+The value~$\hat{y}_k$ is the network's prediction for~$x_k$, and~$\beta$ is the
 precision (inverse variance) of the Gaussian noise. The corresponding NLL
 function is given by
 \[
@@ -783,17 +784,17 @@ This leaves us with the sum-of-squares loss function, which is given by
 	= \sum_{k = 1}^s e(\hat{y}_k, y_k),
 	\label{eq:sum_of_squares}
 \end{equation}
-where $e$ is the per-instance loss function
+where~$e$ is the per-instance loss function
 \[
 	e(\hat{y}_k, y_k) \coloneqq \frac{1}{2} \left(\hat{y}_k - y_k\right)^2.
 \]
 
 The sum-of-squares error function is generally inappropriate for classification.
-We adopt the use of distributed codes, so $y_k \in \{0, 1\}^m$ and $\hat{y}_k
-\in \reals{m}$. We further suppose that the components of $\hat{y}_k$ determine
-a discrete probability distribution over the classes. For convenience, we define
-$y_{ki} \coloneqq (y_k)_i$ and $\hat{y}_{ki} \coloneqq (\hat{y}_k)_i$. Our
-assumption is that the conditional distribution is categorical, and given by
+We adopt the use of distributed codes, so~$y_k \in \{0, 1\}^m$ and $\hat{y}_k
+\in \reals{m}$. We further suppose that the components of~$\hat{y}_k$ determine
+a discrete probability distribution over the classes. For convenience, we
+define~$y_{ki} \coloneqq (y_k)_i$ and~$\hat{y}_{ki} \coloneqq (\hat{y}_k)_i$.
+Our assumption is that the conditional distribution is categorical, and given by
 \[
 	p(y_k \given x_k, w, b) = \prod_{i = 1}^m \left(\hat{y}_{ki}\right)^{y_{ki}}.
 \]
@@ -804,12 +805,12 @@ and does not have any constant terms that we can discard. So we define
 	= -\sum_{k = 1}^s \sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}
 	= \sum_{k = 1}^s e(\hat{y}_k, y_k),
 \]
-where $e$ is the per-instance loss function
+where~$e$ is the per-instance loss function
 \[
 	e(\hat{y}_k, y_k) \coloneqq -\sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}.
 \]
-In the special case where we are performing binary classification, with $y_k \in
-\{0, 1\}$ and $\hat{y}_k \in \reals{1}$, we can write
+In the special case where we are performing binary classification, with~$y_k \in
+\{0, 1\}$ and~$\hat{y}_k \in \reals{1}$, we can write
 \[
 	p(y_k \given x_k, w, b) = \left(\hat{y}_k\right)^{y_k}
 		\left(1 - \hat{y}_k\right)^{1 - y_k}
@@ -822,17 +823,17 @@ and
 
 The cross-entropy loss function is almost exclusively used with a special
 activation function for the output layer of the network. This activation
-function is the \emph{softmax} function; for $z \in \reals{m}$, it is given by
+function is the \emph{softmax} function; for~$z \in \reals{m}$, it is given by
 \begin{equation}
 	\phi(z_i) = \frac{\exp(z_i)}{\sum_{j = 1}^m \exp(z_j)}.
 	\label{eq:softmax}
 \end{equation}
 This is a normalized RBF of the form given by~(\ref{eq:normalized_rbf}). It
 follows that using~(\ref{eq:softmax}) as the output activation function will
-guarantee that the components of $\hat{y}_k$ determine a discrete probability
+guarantee that the components of~$\hat{y}_k$ determine a discrete probability
 distribution over the classes. For binary classification, (\ref{eq:softmax})
-reduces to the \emph{logistic sigmoid} function upon setting the component
-$\hat{y}_{k2}$, which corresponds to the second class, to zero:
+reduces to the \emph{logistic sigmoid} function upon setting the
+component~$\hat{y}_{k2}$, which corresponds to the second class, to zero:
 \begin{align*}
 	\phi(\hat{y}_1)
 	&= \frac{\exp(\hat{y}_1)}{\exp(\hat{y}_1) + \exp(\hat{y}_2)} \\
@@ -847,14 +848,14 @@ sigmoid function to more than two classes.
 
 Preprocessing the data can have drastic effects on convergence of the
 optimization algorithm used for learning. However, normalizing the features (the
-components of an input $x_k \in \reals{n}$) must be done with great care, so as
+components of an input~$x_k \in \reals{n}$) must be done with great care, so as
 not to destroy useful information encoded by the relative magnitudes of a
 feature. Suppose that it is equally important that we predict the target value
-for any input $x_k$ from our training sample $D$. This is \emph{not} the case,
+for any input~$x_k$ from our training sample~$D$. This is \emph{not} the case,
 for instance, when we wish to predict whether the person corresponding to an
-input $x_k$ has a rare disease. Then it can be beneficial to center and scale
-the features by subtracting the mean vector $\mu$ and scaling by the variance
-vector $\sigma$. Specifically, each input $x_k$ is normalized by computing
+input~$x_k$ has a rare disease. Then it can be beneficial to center and scale
+the features by subtracting the mean vector~$\mu$ and scaling by the variance
+vector~$\sigma$. Specifically, each input~$x_k$ is normalized by computing
 \begin{equation}
 	\bar{x}_k \coloneqq \frac{x_k - \mu}{\sigma}.
 	\label{eq:center_and_scale}
@@ -865,22 +866,22 @@ possible~\citep{lecun-98b}. Doing so decouples the updates to the individual
 weights of the network during the optimization process, which accelerates
 convergence. \citet{lecun-98b} give an intuitive explanation for why
 decorrelating the inputs can be beneficial. Consider the extreme case where all
-components of the inputs are positive. Let $(1, j)$ be a unit in the second
-layer of the network, and let $\tilde{x}_k$ consist of the components of $x_k$
-corresponding to $\parents{(1, j)}$ (see Figure~\ref{fig:two_layer_nn}). Let
-$\delta$ be the scalar error computed for $(1, j)$ using the techniques
+components of the inputs are positive. Let~$(1, j)$ be a unit in the second
+layer of the network, and let~$\tilde{x}_k$ consist of the components of~$x_k$
+corresponding to~$\parents{(1, j)}$ (see Figure~\ref{fig:two_layer_nn}).
+Let~$\delta$ be the scalar error computed for $(1, j)$ using the techniques
 discussed in Section~\ref{sec:computing_derivatives}. Then a na\"{i}ve
-first-order optimization algorithm will update the weights to $(1, j)$ by an
-amount proportional to $\delta \tilde{x}_k$. Thus, the weights to $(1, j)$ will
-either \emph{all} increase or \emph{all} decrease (depending on the
-$\sign(\delta)$) after each update. This makes finding a good weight
-configuration difficult. A more sophisticated approach to decorrelating the
-inputs involves PCA~\citep{lecun-98b, krizhevsky2012imagenet}.
+first-order optimization algorithm will update the weights to~$(1, j)$ by an
+amount proportional to~$\delta \tilde{x}_k$. Thus, the weights to~$(1, j)$ will
+either \emph{all} increase or \emph{all} decrease (depending on~$\sign(\delta)$)
+after each update. This makes finding a good weight configuration difficult. A
+more sophisticated approach to decorrelating the inputs involves
+PCA~\citep{lecun-98b, krizhevsky2012imagenet}.
 
 The initial values of the weights can have a significant impact on both
 convergence speed and generalization error. Suppose that we use the scaled
 $\tanh$ activation function. In order to avoid vanishing gradient problem, we
-would like the activation values to remain in the range $[-1, 1]$, which is
+would like the activation values to remain in the range~$[-1, 1]$, which is
 within the linear region of the scaled $\tanh$ function. One way of enforcing
 this is to require that the activation values have zero mean and unit
 variance~\citep{lecun-98b}.
@@ -890,8 +891,8 @@ to~(\ref{eq:center_and_scale}), so that
 \[
 	\E(x_i) = 0 \quad\text{and}\quad \Var(x_i) = 1,
 \]
-for each $i \in [1, n]$. From~(\ref{eq:activation}), we know that the activation
-of $(1, j)$ is given by
+for each~$i \in [1, n]$. From~(\ref{eq:activation}), we know that the activation
+of~$(1, j)$ is given by
 \[
 	a_{1j} \;\coloneqq \sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}.
 \]
@@ -906,10 +907,10 @@ and the biases have zero mean, then we have
 \end{align*}
 Thus, our requirement that the activation values have zero mean is satisfied.
 
-We now describe how to enforce that $\Var(a_{1j}) = 1$. Let $f \coloneqq
+We now describe how to enforce that~$\Var(a_{1j}) = 1$. Let $f \coloneqq
 |\text{Pa}(1, j)|$, and suppose that all weights have the same standard
-deviation $\sigma$. The value $f$ is called the \emph{fan-in} of $(1, j)$. To
-solve for the value of $\sigma$ that forces $\Var(a_{1j}) = 1$, we compute
+deviation~$\sigma$. The value~$f$ is called the \emph{fan-in} of~$(1, j)$. To
+solve for the value of~$\sigma$ that forces~$\Var(a_{1j}) = 1$, we compute
 \begin{align*}
 	\Var(a_{1j})
 	&= \Var\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}\Bigg) \\
@@ -970,34 +971,34 @@ TODO
 \subsection{Generalization and PAC-learning}
 
 Our initial goal when motivating the discussion for neural networks was to
-``learn'' what a given function $f: \reals{n} \to \reals{m}$ does to transform
-$x \in \reals{n}$ to $y \in \reals{m}$. But what exactly does it mean to learn?
-So far, we have neglected to provide a definition for what it means for an
-algorithm ``learn'' a model to solve a given problem. A rigorous definition for
-learning is given in the field of statistical learning theory. This definition
-will have widespread consequences in shaping our criteria used to determine when
-an optimization algorithm is good.
+``learn'' what a given function~$f: \reals{n} \to \reals{m}$ does to
+transform~$x \in \reals{n}$ to~$y \in \reals{m}$. But what exactly does it mean
+to learn?  So far, we have neglected to provide a definition for what it means
+for an algorithm ``learn'' a model to solve a given problem. A rigorous
+definition for learning is given in the field of statistical learning theory.
+This definition will have widespread consequences in shaping our criteria used
+to determine when an optimization algorithm is good.
 
-When performing binary classification, each training instance $(x_k, y_k) \in S$
+When performing binary classification, each training instance~$(x_k, y_k) \in S$
 is implicitly associated with a target \emph{concept} that we wish to learn.
-This concept is a mapping $c$ from the input space $X$ to the output space $Y
-\coloneqq \{0, 1\}$, such that $y_k = c(x_k)$. The set of all concepts
+This concept is a mapping~$c$ from the input space~$X$ to the output space~$Y
+\coloneqq \{0, 1\}$, such that~$y_k = c(x_k)$. The set of all concepts
 associated with our classification task is called the \emph{concept class}, and
-is denoted by $C$. A concept can be something simple, such as the set of
-axis-aligned rectangles in $\reals{2}$, or something exceedingly complex, such
-as the manifold of human faces in $\reals{256 \times 256}$, the space of $256
+is denoted by~$C$. A concept can be something simple, such as the set of
+axis-aligned rectangles in~$\reals{2}$, or something exceedingly complex, such
+as the manifold of human faces in~$\reals{256 \times 256}$, the space of~$256
 \times 256$ black and white images. We assume that all instances are drawn iid
-from some unknown distribution $D$ over $X$.
+from some unknown distribution~$D$~over~$X$.
 
-Suppose that we are given a family of candidate functions $F$, such that $f : X
-\to \{0, 1\}$ for every $f \in F$. The task of our learning algorithm is to
-minimize the probability of a misclassification from an instance $x \sim D$.
+Suppose that we are given a family of candidate functions~$F$, such that~$f : X
+\to \{0, 1\}$ for every~$f \in F$. The task of our learning algorithm is to
+minimize the probability of a misclassification from an instance~$x \sim D$.
 This leads to the following definition for \emph{generalization error}.
 
 \begin{definition}[Generalization error~\citep{ml_mohri}]
-Given a candidate function $f \in F$, a target concept $c \in C$, and an
-underlying distribution $D$, the \emph{generalization error} or \emph{risk} of
-$f$ is defined as
+Given a candidate function~$f \in F$, a target concept~$c \in C$, and an
+underlying distribution~$D$, the \emph{generalization error} or \emph{risk}
+of~$f$ is defined as
 \[
 	R(f) \coloneqq \Pr_{x \sim D}(f(x) \neq c(x)) =
 		\E_{x \sim D} \left(\ind{f(x) \neq c(x)}\right).
@@ -1006,51 +1007,51 @@ $f$ is defined as
 
 The generalization error is not a quantity that we can directly measure.
 Instead, we must work with the \emph{empirical error}, the average number of
-misclassifications over our training sample $S \sim D$.
+misclassifications over our training sample~$S \sim D$.
 
 \begin{definition}[Empirical error~\citep{ml_mohri}]
-Given a candidate function $f \in F$, a target concept $c \in C$, and a sample
-$S \coloneqq \{(x_1, y_k), \ldots, (x_s, y_s)\} \sim D$, the \emph{empirical
-error} or \emph{empirical risk} of $f$ is defined as
+Given a candidate function~$f \in F$, a target concept~$c \in C$, and a
+sample~$S \coloneqq \{(x_1, y_k), \ldots, (x_s, y_s)\} \sim D$, the
+\emph{empirical error} or \emph{empirical risk} of~$f$ is defined as
 \[
 	\hat{R}(f) \coloneqq \frac{1}{s} \sum_{i = 1}^s \ind{f(x) \neq c(x)}.
 \]
 \end{definition}
 
 There is a simple relationship between the empirical and generalization errors.
-Let $f \in F$.  Using the linearity of expectations and the fact that $S$ is
-drawn iid from $D$, it is easy to show that
+Let~$f \in F$.  Using the linearity of expectations and the fact that~$S$ is
+drawn iid from~$D$, it is easy to show that
 \[
 	\E_{S \sim D} (\hat{R}(f)) = R(f).
 \]
-In other words, the generalization error of $f$ is simply the average
-misclassification rate over samples drawn from $D$. We are now ready to present
+In other words, the generalization error of~$f$ is simply the average
+misclassification rate over samples drawn from~$D$. We are now ready to present
 the the definition of probably approximate correct~(PAC) learning.
 
 \begin{definition}[PAC-learning~\citep{ml_mohri}]
 Suppose that we are performing binary classification of inputs from an input
-space $X$, and let $C$ be the associated concept class. Let $O(n)$ be an upper
-bound on the space complexity of an input $x \in X$. Given an algorithm $A$ and
-a sample $S \sim D$, let $f_S \in F$ denote the candidate function found by $A$
-for $S$. Then $C$ is PAC-learnable if there exists an algorithm $A$ and a
-polynomial function $g : \reals{4} \to \reals{1}$ such that for any $\epsilon,
-\delta \in (0, 1]$, for all distributions $D$ over $X$, and for any target
-concept $c \in C$, the following holds for any sample $S \sim D$ of size $s \geq
+space~$X$, and let~$C$ be the associated concept class. Let~$O(n)$ be an upper
+bound on the space complexity of an input~$x \in X$. Given an algorithm~$A$ and
+a sample~$S \sim D$, let~$f_S \in F$ denote the candidate function found by~$A$
+for~$S$. Then~$C$ is PAC-learnable if there exists an algorithm~$A$ and a
+polynomial function~$g : \reals{4} \to \reals{1}$ such that for any~$\epsilon,
+\delta \in (0, 1]$, for all distributions~$D$~over~$X$, and for any target
+concept~$c \in C$, the following holds for any sample~$S \sim D$ of size~$s \geq
 g(1/\epsilon, 1/\delta, n, \size(c))$:
 \[
 	\Pr_{S \sim D} (R(f_S) \leq \epsilon) \geq 1 - \delta.
 \]
-If $A$ runs in $g(1/\epsilon, 1/\delta, n, \size(c))$, then $C$ is said to be
-efficiently PAC-learnable. In this case, $A$ is called a PAC-learning algorithm
-for $C$.
+If $A$ runs in~$g(1/\epsilon, 1/\delta, n, \size(c))$, then~$C$ is said to be
+efficiently PAC-learnable. In this case, $A$~is called a PAC-learning algorithm
+for~$C$.
 \end{definition}
 
 The definition for PAC-learning is verbose, but the underlying intuition is
-simple. Suppose that we have a target generalization error $\epsilon$ that we
-wish to attain with probability $1 - \delta$ on any sample $S \sim D$. Then $C$
+simple. Suppose that we have a target generalization error~$\epsilon$ that we
+wish to attain with probability~$1 - \delta$ on any sample~$S \sim D$. Then~$C$
 is PAC-learnable if the sample size required to meet our goals is bounded by a
-polynomial function of $1/\epsilon$ and $1/\delta$. Roughly speaking, $A$ must
-find a function in $F$ that is \emph{approximately correct} with \emph{high
+polynomial function of~$1/\epsilon$ and~$1/\delta$. Roughly speaking, $A$ must
+find a function in~$F$ that is \emph{approximately correct} with \emph{high
 probability}. But it must be able to do this using a sample size that is not
 ``too large''. The extension of space and time complexity to sample size
 requires this notion of ``high probability''.
@@ -1059,33 +1060,34 @@ One of the goals of statistical learning theory is to derive upper bounds on the
 generalization error in various situations. When such an upper bound applies to
 the particular situation at hand, we know that it is possible, at least in
 principle, to learn efficiently. Many of these upper bounds take the following
-form. Let $\delta \in (0, 1]$ be our target confidence, and let $s$ be the size
-of the training samples drawn from $D$. Then with probability $1 - \delta$, it
-holds for any $f \in F$ that
+form. Let~$\delta \in (0, 1]$ be our target confidence, and let~$s$ be the size
+of the training samples drawn from~$D$. Then with probability~$1 - \delta$, it
+holds for any~$f \in F$ that
 \begin{equation}
 	R(f) \leq \hat{R}(f) + c \sqrt{\frac{\capacity(F)}{s}},
 	\label{eq:generalization_bound}
 \end{equation}
-where $c \in \reals{+}$ and $\capacity(F)$ is a quantity that measures the
+where~$c \in \reals{+}$ and~$\capacity(F)$ is a quantity that measures the
 complexity of our chosen family of functions. When we apply the
-bound~(\ref{eq:generalization_bound}), we often subsume auxiliary constants into
-$c$. So two occurrences of $c$ do not necessary represent the same constant
+bound~(\ref{eq:generalization_bound}), we often subsume auxiliary constants
+into~$c$. So two occurrences of~$c$ do not necessary represent the same constant
 value.
 
 \subsection{ERM vs SRM}
+\label{sec:erm_vs_srm}
 
 The central idea of statistical learning theory is that learning is a tradeoff
 between minimizing the training error and the complexity of the family of
-functions used to model $C$. These quantities correspond to the first and second
+functions used to model~$C$. These quantities correspond to the first and second
 terms on the RHS of~(\ref{eq:generalization_bound}), respectively. This tradeoff
 can be expressed in another way that is particularly illuminating. Let
 \[
 	f^\star \coloneqq \argmin_{f} R(f) \quad\text{and}\quad
 	f_F^\star \coloneqq \argmin_{f \in F} R(f).
 \]
-In other words, $R(f^\star)$ is the best we can ever hope to do, while
-$R(f_F^\star)$ is the best we can do using our chosen family $F$. Given a
-function $f \in F$, we define the \emph{excess error} $\mathcal{E}$ as
+In other words, $R(f^\star)$~is the best we can ever hope to do, while
+$R(f_F^\star)$~is the best we can do using our chosen family $F$. Given a
+function~$f \in F$, we define the \emph{excess error}~$\mathcal{E}$ as
 \begin{equation}
 	\mathcal{E} \coloneqq R(f) - R(f^\star)
 		= (R(f_F^\star) - R(f^\star)) + (R(f) - R(f_F^\star))
@@ -1098,23 +1100,23 @@ where
 	\quad\text{and}\quad
 	\esterr = R(f) - R(f_F^\star)
 \]
-The quantity $\apperr$ is called the \emph{approximation error}, and measures
-how well functions in $F$ can approximate functions in $C$. It is generally
-intractible, as we have no way of estimating it. The quantity $\esterr$ is
-called the \emph{estimation error}, and measures the performance of $f$ relative
-to that of the best-in-class hypothesis $f_F^\star$. It is easy to show that
-$\esterr$ is bounded above by the second term on the RHS
+The quantity~$\apperr$ is called the \emph{approximation error}, and measures
+how well functions in~$F$ can approximate functions in~$C$. It is generally
+intractible, as we have no way of estimating it. The quantity~$\esterr$ is
+called the \emph{estimation error}, and measures the performance of~$f$ relative
+to that of the best-in-class hypothesis~$f_F^\star$. It is easy to show
+that~$\esterr$ is bounded above by the second term on the RHS
 of~(\ref{eq:generalization_bound}). Equation~\ref{eq:app_est_decomp} tells us
-that the quality of a candidate function $f$ is determined by the sum of these
+that the quality of a candidate function~$f$ is determined by the sum of these
 errors.
 
 Reducing the training error causes the estimation error to decrease, while
 reducing the complexity term causes the approximation error to decrease. But
 reducing the approximation error often requires increasing $\capacity(F)$, and
 this increases the complexity term. On the other hand, reducing the complexity
-term requires decreasing $\capacity(F)$, inhibiting our ability to approximate
-$C$. This increases the training error. The interplay between these two errors
-is called the \emph{approximation-estimation tradeoff}.
+term requires decreasing $\capacity(F)$, inhibiting our ability to
+approximate~$C$. This increases the training error. The interplay between these
+two errors is called the \emph{approximation-estimation tradeoff}.
 
 \begin{figure}
 \centering
@@ -1127,16 +1129,16 @@ of the training error and the complexity term.\label{fig:srm_graph}}
 \end{figure}
 
 Minimizing only the training error while ignoring the complexity term is called
-\emph{empirical risk minimization} (ERM), and is inadvisable on both theoretical
+\emph{empirical risk minimization}~(ERM), and is inadvisable on both theoretical
 and practical grounds. An alternative procedure that contols $\capacity(F)$ is
-called \emph{structural risk minimization} (SRM). Let $c \in \reals{+}$, and
+called \emph{structural risk minimization}~(SRM). Let~$c \in \reals{+}$, and
 define
 \begin{equation}
 	F_\lambda \coloneqq \{ f \in F : \complexity(f) \leq c \},
 	\label{eq:regularized_family}
 \end{equation}
-where $\complexity(f)$ is a measure of complexity of $f$. Consequently, $F_a
-\subseteq F_b$ whenever $a, b \in \reals{+}$ such that $a < b$. ERM and SRM seek
+where $\complexity(f)$ is a measure of complexity of~$f$. Consequently, $F_a
+\subseteq F_b$ whenever~$a, b \in \reals{+}$ such that~$a < b$. ERM~and~SRM seek
 to find the functions given by
 \begin{equation}
 	f_{\text{ERM}} \coloneqq \argmin_{f \in F} \hat{R}(f)
@@ -1145,7 +1147,7 @@ to find the functions given by
 		\hat{R}(f),
 	\label{eq:erm_srm_solutions}
 \end{equation}
-respectively. The SRM procedure finds a function in $F$ that minimizes the
+respectively. The SRM procedure finds a function in~$F$ that minimizes the
 generalization bound~(\ref{eq:generalization_bound}) (see
 Figure~\ref{fig:srm_graph}). We can transform second equation
 in~(\ref{eq:erm_srm_solutions}) into an unconstrained minimization problem by
@@ -1155,29 +1157,29 @@ using the penalty method. This gives
 		\left(\hat{R}(f) + \lambda\complexity(f)\right).
 	\label{eq:srm_penalty}
 \end{equation}
-The Lagrange multiplier $\lambda$ called the the \emph{regularization
+The Lagrange multiplier~$\lambda$ called the the \emph{regularization
 parameter}, and penalizes more complex functions. We can now conduct our search
-over $\lambda$ instead of over $c$. If $H$ is a vector space, then we can define
-$\complexity(f) \coloneqq \|f\|$ for some norm ${\|\cdot\|}$. Note that SRM
+over~$\lambda$ instead of over~$c$. If~$H$ is a vector space, then we can define
+$\complexity(f) \coloneqq \|f\|$ for some norm~${\|\cdot\|}$. Note that SRM
 involves finding the solution to several ERM subproblems, and is intractible in
 general. In practice, we find an approximate SRM solution by using
-cross-validation to choose $\lambda^\star$ from a finite sequence $\{ \lambda_k
+cross-validation to choose~$\lambda^\star$ from a finite sequence~$\{ \lambda_k
 \}_{k = 1}^r$.
 
 As an example, suppose that we are are performing least-squares regression,
-where $X = \reals{n}$ and $Y \in \reals{1}$. Let $S$ be a training sample
-consisting of $s$ instances. We define
+where~$X = \reals{n}$ and~$Y \in \reals{1}$. Let~$S$ be a training sample
+consisting of~$s$ instances. We define
 \[
 	F \coloneqq \{ x \mapsto \trans{w}x + b : w \in \reals{n}, b \in
 		\reals{1} \},
 	\label{eq:affine_family}
 \]
-and assume let $E$ be the sum-of-squares error given
+and assume let~$E$ be the sum-of-squares error given
 by~(\ref{eq:sum_of_squares}). According to the theory developed so far, choosing
 $f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let $\complexity(f)
 \coloneqq \|w\|_2$ for any $f \in F$. A better idea would be to try sequence of
-values for $\lambda$ in~(\ref{eq:srm_penalty}), such as $\{ \lambda_k \}_{k =
--5}^5$, where $\lambda_k \coloneqq 2^k$. The results from statistical learning
+values for~$\lambda$ in~(\ref{eq:srm_penalty}), such as~$\{ \lambda_k \}_{k =
+-5}^5$, where~$\lambda_k \coloneqq 2^k$. The results from statistical learning
 theory shape our understanding of how we should solve problems in machine
 learning.
 
@@ -1186,21 +1188,21 @@ learning.
 \subsection{Goals of Optimization}
 
 We turn our focus to applying statistical learning theory to characterize the
-quality of optimization algorithms for machine learning. Let $f_{\text{ERM}}$ be
+quality of optimization algorithms for machine learning. Let~$f_{\text{ERM}}$ be
 given by~(\ref{eq:erm_srm_solutions}). During training, we only require that the
-optimization algorithm produce a function $\hat{f} \in F$, whose empirical error
-is within a fixed tolerance $\rho \in \reals{+}$ of that of $f_{\text{ERM}}$:
+optimization algorithm produce a function~$\hat{f} \in F$, whose empirical error
+is within a fixed tolerance~$\rho \in \reals{+}$ of that of~$f_{\text{ERM}}$:
 \begin{equation}
 	\hat{R}(\hat{f}) - \hat{R}(f_{\text{ERM}}) \leq \rho.
 	\label{eq:tol_eq}
 \end{equation}
-The expectation of the LHS of~(\ref{eq:tol_eq}) taken over a sample $S \sim D$
+The expectation of the LHS of~(\ref{eq:tol_eq}) taken over a sample~$S \sim D$
 is called the \emph{optimization error}~\citep{bousquet2008tradeoffs}, and is
 defined as
 \[
 	\opterr \coloneqq R(\hat{f}) - R(f_{\text{ERM}}).
 \]
-We can now express the excess error of $\hat{f}$ as
+We can now express the excess error of~$\hat{f}$ as
 \begin{align}
 	\mathcal{E}
 	&= (R(f_F^\star) - R(f^\star)) + (R(f_{\text{ERM}}) - R(f_F^\star)) +
@@ -1210,15 +1212,15 @@ We can now express the excess error of $\hat{f}$ as
 \end{align}
 
 In practice, the quality of the solution to a machine learning problem is
-determined by monetary cost (which determines the maximum sample size
-$s_{\text{max}}$) and human patience (which determines the limit on
-computation time $t_{\text{max}}$). The definition for PAC-learning is one way
+determined by monetary cost (which determines the maximum sample
+size~$s_{\text{max}}$) and human patience (which determines the limit on
+computation time~$t_{\text{max}}$). The definition for PAC-learning is one way
 of characterizing when one might be satisfied with the performance of a learning
-algorithm with respect to these constraints. Let $t(F, \rho, s)$ represent the
-time required by the optimization algorithm to find a function $\hat{f} \in F$
-satisfying $\opterr \leq \rho$, given a sample of size $s$. Minimizing the
-excess error in~(\ref{eq:excess_error}) subject to the constraints on
-$s_{\text{max}}$ and $t_{\text{max}}$ yields the following meta-optimization
+algorithm with respect to these constraints. Let~$t(F, \rho, s)$ represent the
+time required by the optimization algorithm to find a function~$\hat{f} \in F$
+satisfying~$\opterr \leq \rho$, given a sample of size~$s$. Minimizing the
+excess error in~(\ref{eq:excess_error}) subject to the constraints
+on~$s_{\text{max}}$ and~$t_{\text{max}}$ yields the following meta-optimization
 problem~\citep{bousquet2008tradeoffs}:
 \begin{equation}
 \begin{aligned}
@@ -1230,7 +1232,7 @@ problem~\citep{bousquet2008tradeoffs}:
 \label{eq:metaopt_program}
 \end{equation}
 Table~\ref{tab:metaopt_variables} shows how the errors and computing time are
-affected when $\capacity(F)$, $\rho$, and $s$ are increased.
+affected when $\capacity(F)$, $\rho$, and~$s$ are increased.
 
 \begin{table}
 \centering
@@ -1244,28 +1246,30 @@ $\opterr$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
 $t$ & $\uparrow$ & $\uparrow$ & $\downarrow$ \\
 \bottomrule
 \end{tabular}
-\caption{The effects of increasing $\capacity(F)$, $s$, and $\rho$ on the three
+\caption{The effects of increasing $\capacity(F)$, $s$, and~$\rho$ on the three
 errors and computing time. The symbol $\updownarrow$ indicates that either an
 increase or a decrease is possible.\label{tab:metaopt_variables}}
 \end{table}
 
 As stated in~\citet{bousquet2008tradeoffs}, ``the solution of the optimization
 program~(\ref{eq:metaopt_program}) depends critically on which budget constraint
-is active: [the] constraint $s < s_{\text{max}}$ on the number of examples, or
-[the] constraint $t < t_{\text{max}}$ on the training time''. A
+is active: [the] constraint~$s < s_{\text{max}}$ on the number of examples, or
+[the] constraint~$t < t_{\text{max}}$ on the training time''. A
 \emph{small-scale} problem is one that is constrained by the sample size. In
-this case, the computation time is not limited, so we can make $\opterr$
-negligible by choosing $\rho$ sufficiently small. Using the fact that $\esterr$
+this case, the computation time is not limited, so we can make~$\opterr$
+negligible by choosing~$\rho$ sufficiently small. Using the fact that~$\esterr$
 is bounded above by the second term of~(\ref{eq:generalization_bound}), we have
 \begin{equation}
 	\mathcal{E} = \apperr + \esterr \leq \apperr + c
 		\sqrt{\frac{\capacity(F)}{s}}.
 	\label{eq:small_scale_bound}
 \end{equation}
-A \emph{large-scale} problem is one that is constrained by the maximum computing
-time. In this case, performing approximate optimization by choosing $\rho > 0$
-improves generalization, because we can process more training instances in the
-allotted time. Using~(\ref{eq:generalization_bound}), it is easy to show that
+Hence minimizing~$\mathcal{E}$ boils down to the discussion in
+Section~\ref{sec:erm_vs_srm}. A~\emph{large-scale} problem is one that is
+constrained by the maximum computing time. In this case, performing approximate
+optimization by choosing~$\rho > 0$ improves generalization, because we can
+process more training instances in the allotted time.
+Using~(\ref{eq:generalization_bound}), it is easy to show that
 \begin{equation}
 	\mathcal{E}
 	= \apperr + \esterr + \opterr
@@ -1276,7 +1280,7 @@ allotted time. Using~(\ref{eq:generalization_bound}), it is easy to show that
 Unfortunately, the bounds~(\ref{eq:small_scale_bound})
 and~(\ref{eq:large_scale_bound}) are too pessimistic, and do not accurately
 reflect reality. In order to proceed with our analysis, we make some simpliyfing
-assumptions. First, we assume that $F$ is the family of affine functions given
+assumptions. First, we assume that $F$~is the family of affine functions given
 by~(\ref{eq:affine_family}). In this special case, the generalization
 bound~(\ref{eq:generalization_bound}) simplifies to
 \[
@@ -1291,7 +1295,7 @@ applied~\citep{bousquet2008tradeoffs}. It is given by
 		\rho \right),
 	\label{eq:fast_rate_bound}
 \end{equation}
-where $\alpha \in [1/2, 1]$ is a constant that depends on a variance bound on
+where~$\alpha \in [1/2, 1]$ is a constant that depends on a variance bound on
 the loss function. Since the three components of the excess error should
 decrease at approximately the same rate~\citep{bousquet2008tradeoffs}, we make
 the additional assumption that
@@ -1304,20 +1308,20 @@ the additional assumption that
 \subsection{Analysis of Optimization Algorithms}
 
 We now investigate the properties of four specific optimization algorithms.
-Assume that our empirical loss function $E$ is convex and twice differentiable
-(e.g. the sum-of-squares loss function). For convenience, we let $\theta \in
-\reals{2n}$, where the first $n$ components of $\theta$ refer to a weight vector
-$w \in \reals{n}$ and the last $n$ components of $\theta$ refer to a bias vector
-$b \in \reals{n}$. Thus $\theta = (w, b)$, for some $w, b \in \reals{n}$. We
-define $E(\theta) \coloneqq E(w, b)$. Since $E$ is convex, it has a unique
-minimum in terms of $\theta$. Let $\theta_{\text{ERM}} \coloneqq
+Assume that our empirical loss function~$E$ is convex and twice differentiable
+(e.g. the sum-of-squares loss function). For convenience, we let~$\theta \in
+\reals{2n}$, where the first~$n$ components of~$\theta$ refer to a weight
+vector~$w \in \reals{n}$ and the last~$n$ components of~$\theta$ refer to a bias
+vector~$b \in \reals{n}$. Thus~$\theta = (w, b)$, for some~$w, b \in \reals{n}$.
+We define~$E(\theta) \coloneqq E(w, b)$. Since~$E$ is convex, it has a unique
+minimum in terms of~$\theta$. Let~$\theta_{\text{ERM}} \coloneqq
 (w_{\text{ERM}}, b_{\text{ERM}})$ be the parameter vector corresponding to
-$f_{\text{ERM}}$. For a given input $x_k \in \reals{n}$, we define
+$f_{\text{ERM}}$. For a given input~$x_k \in \reals{n}$, we define
 $\hat{y}_k^{\text{ERM}} \coloneqq w_{\text{ERM}} x_k + b_{\text{ERM}}$.
 
-The Hessian matrix $H_{\text{ERM}}$ and gradient covariance matrix
-$G_{\text{ERM}}$ evaluated at $\theta_{\text{ERM}}$ play an important role in
-our analyses~\citep{bousquet2008tradeoffs}. They are defined as
+The Hessian matrix~$H_{\text{ERM}}$ and gradient covariance
+matrix~$G_{\text{ERM}}$ evaluated at~$\theta_{\text{ERM}}$ play an important
+role in our analyses~\citep{bousquet2008tradeoffs}. They are defined as
 \[
 	H_{\text{ERM}} \coloneqq (\nabla_\theta^2 E)(\theta_{\text{ERM}})
 	= \frac{1}{s} \sum_{i = 1}^s (\nabla_\theta^2 e)(\hat{y}_k^{\text{ERM}}, y_k)
@@ -1331,32 +1335,33 @@ and
 		\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)
 		\trans{\left((\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)\right)},
 \end{align*}
-where $e$ is the per-instance loss function associated with $E$. We assume that
-there exist constants $\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$ and
-$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample size $s
-\in \naturals{1}$ such that, with probability at least $1 - \delta$, we have
+where~$e$ is the per-instance loss function associated with~$E$. We assume that
+there exist constants~$\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$
+and~$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample
+size~$s \in \naturals{1}$ such that, with probability at least~$1 - \delta$, we
+have
 \[
 	\tr(G_{\text{ERM}} (H_{\text{ERM}})^{-1}) \leq \nu \quad\text{and}\quad
 	\operatorname{Sp}(H_{\text{ERM}}) \subset [\lambda_{\text{min}}, \lambda_{\text{max}}].
 \]
-The condition number $\kappa \coloneqq
+The condition number~$\kappa \coloneqq
 \lambda_{\text{max}}/{\lambda_{\text{min}}}$ determines the difficulty of the
 optimization problem.
 
 The optimization algorithms used in machine learning either operate on
 \emph{full batches} or \emph{mini-batches}. An full batch algorithm will only
-apply an update to $\theta$ after processing the entire training sample $S$. The
+apply an update to~$\theta$ after processing the entire training sample~$S$. The
 derivative information computed by batch algorithms is averaged over the batch
-of instances. A mini-batch algorithm applies an update to $\theta$ every $r$
-iterations, where $r | s$. A \emph{stochastic} or \emph{online} algorithm uses a
+of instances. A mini-batch algorithm applies an update to $\theta$ every~$r$
+iterations, where~$r | s$. A \emph{stochastic} or \emph{online} algorithm uses a
 mini-batch size of one. The first two algorithms that we present are full batch
 algorithms, while the last two algorithms are stochastic.
 
 Mini-batch algorithms are often several times faster than full batch algorithms.
 This is because mini-batch algorithms are better able to exploit redundacy in
-the training sample $S$. \citet{lecun-98b} give an explanation for why this
-happens. Suppose that $|S| = 1000$, and consists of the same 100 instances
-replicated ten times in the same order. The average of the gradient over $S$ is
+the training sample~$S$. \citet{lecun-98b} give an explanation for why this
+happens. Suppose that~$|S| = 1000$, and consists of the same~100 instances
+replicated ten times in the same order. The average of the gradient over~$S$ is
 equal to the average of the gradient over the first 100 instances. A full batch
 algorithm will compute the same gradient ten times before applying a single
 update. In this time, an algorithm with a mini-batch size of 100 would apply ten
@@ -1368,48 +1373,48 @@ Following the precedent of Stephen Wright, we refer to the algorithms below as
 algorithms, because the search directions used by the update rules are not
 necessary descent directions.
 \begin{itemize} 
-\item The gradient update (GU) algorithm uses the update rule
+\item The gradient update~(GU) algorithm uses the update rule
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - \eta (\nabla_\theta E)(\theta_k)
 	= \theta_k - \frac{\eta}{s} \sum_{i = 1}^s
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
 \]
-When $\eta = 1/\lambda_{\text{max}}$, this algorithm requires $O(\kappa \log(1 /
+When~$\eta = 1/\lambda_{\text{max}}$, this algorithm requires~$O(\kappa \log(1 /
 \rho))$ updates to reach accuracy~$\rho$.
 
-\item The second-order gradient update (2GU) algorithm uses the update rule
+\item The second-order gradient update~(2GU) algorithm uses the update rule
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - (H_{\text{ERM}})^{-1} (\nabla_\theta E)(\theta_k)
 	= \theta_k - \frac{(H_{\text{ERM}})^{-1}}{s} \sum_{i = 1}^s
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k)
 \]
-Note that the Hessian is \emph{not} evaluated at each $\theta_k$: we assume that
-we know $H_{\text{ERM}}$ in advance, and use the same matrix at each iteration.
-In general, this algorithm requires $O(\log\log(1 / \rho))$ iterations to reach
+Note that the Hessian is \emph{not} evaluated at each~$\theta_k$: we assume that
+we know~$H_{\text{ERM}}$ in advance, and use the same matrix at each iteration.
+In general, this algorithm requires~$O(\log\log(1 / \rho))$ iterations to reach
 accuracy~$\rho$.
 
-\item Given an instance $(x_k, y_k) \in S$, the stochastic gradient update (SGU)
+\item Given an instance~$(x_k, y_k) \in S$, the stochastic gradient update~(SGU)
 algorithm uses the update rule
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - \frac{\eta}{k}
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k).
 \]
-If $\eta = 1/\lambda_{\text{min}}$, this algorithm requires $\nu \kappa^2 / \rho
+If~$\eta = 1/\lambda_{\text{min}}$, this algorithm requires~$\nu \kappa^2 / \rho
 + o(1 / \rho)$ iterations, on average, to reach accuracy~$\rho$.
 
-\item Given an instance $(x_k, y_k) \in S$, the second-order stochastic gradient
-update algorithm (2SGU) uses the update rule
+\item Given an instance~$(x_k, y_k) \in S$, the second-order stochastic gradient
+update algorithm~(2SGU) uses the update rule
 \[
 	\theta_{k + 1}
 	\coloneqq \theta_k - \frac{(H_{\text{ERM}})^{-1}}{k}
 		(\nabla_\theta e)(\hat{y}_k^{\text{ERM}}, y_k).
 \]
-This algorithm requires $\eta / \rho + o(1 / \rho)$ iterations, on average, to
+This algorithm requires~$\eta / \rho + o(1 / \rho)$ iterations, on average, to
 reach accuracy~$\rho$. Note that, unlike~2GU, the use of second-order
-information does not weaken the dependence on $\rho$.
+information does not weaken the dependence on~$\rho$.
 \end{itemize}
 
 \begin{table}
@@ -1466,8 +1471,8 @@ that
 	\rho \approx \left(\frac{n}{s}\log\frac{s}{n}\right)^\alpha.
 	\label{eq:rho_assumption}
 \end{equation}
-Substituting this value of $\rho$ into the bound~(\ref{eq:fast_rate_bound}) and
-comparing the result to $c(\apperr + \epsilon)$ shows that
+Substituting this value of~$\rho$ into the bound~(\ref{eq:fast_rate_bound}) and
+comparing the result to~$c(\apperr + \epsilon)$ shows that
 \begin{equation}
 	\rho \approx \epsilon.
 	\label{eq:rho_approx_eps}
@@ -1487,28 +1492,28 @@ following conclusions for large-scale problems~\citep{bousquet2008tradeoffs}:
 \begin{itemize}
 \item Stochastic algorithms are more appropriate when there is less need to
 optimize accurately. This is the case in large-scale problems, or when the
-estimation rate $\alpha$ is small. Note that the performance of the stochastic
-algorithms does not depend on the estimation rate $\alpha$.
+estimation rate~$\alpha$ is small. Note that the performance of the stochastic
+algorithms does not depend on the estimation rate~$\alpha$.
 
 \item Hastily incorporating second-order information into gradient update
-methods may only bring small improvements in $\mathcal{E}$. When minimizing
-$\mathcal{E}$, all four algorithms are dominated by the polynomial factor in
-$1/\epsilon$. The second-order methods shown here only improve the logarithmic
-factors in $1/\epsilon$.
+methods may only bring small improvements in~$\mathcal{E}$. When
+minimizing~$\mathcal{E}$, all four algorithms are dominated by the polynomial
+factor in~$1/\epsilon$. The second-order methods shown here only improve the
+logarithmic factors in~$1/\epsilon$.
 
 \item Stochastic algorithms have the best generalization performance, despite
 being the worst optimization algorithms when viewed in the traditional sense.
-When minimizing $\mathcal{E}$, the batch algorithms have a dependence on
-$\alpha$ as well as the logarithmic factor in $1/\epsilon$.
+When minimizing~$\mathcal{E}$, the batch algorithms have a dependence
+on~$\alpha$ as well as the logarithmic factor in~$1/\epsilon$.
 \end{itemize}
-For small-scale problems, $\opterr$ is negligible, so these conclusions do not
+For small-scale problems, $\opterr$~is negligible, so these conclusions do not
 necessarily apply.
 
 One caveat is that stochastic algorithms are more vulnerable than batch
 algorithms to ill-conditioning. The results for both stochastic algorithms
 depend on the constant~$\nu$. The factor of~$\kappa$ in the results for GU
 becomes~$\kappa^2$ in the results for SGU. As~$H_{\text{ERM}}$ becomes
-increasingly ill-conditioned, both $\kappa$ and $\nu$ are liable to increase
+increasingly ill-conditioned, both $\kappa$~and~$\nu$ are liable to increase
 rapidly. One of the goals of decorrelating the
 inputs~(Section~\ref{sec:pp_and_init}) is to prevent~$H_{\text{ERM}}$ from
 having large eigenvalues~\citep{lecun-98b}. In light of the results from
@@ -1517,7 +1522,7 @@ becomes even more apparent.
 
 \section{Optimization Algorithms for Neural Networks}
 
-\subsection{Challenges in Training Neural Networks}
+\subsection{Challenges of Large-Scale Optimization}
 
 Deep neural networks are used today to solve challenging problems in computer
 vision, natural language processing, and several other fields. Training these
@@ -1550,18 +1555,19 @@ eigenvalue of the Hessian matrix to unity~\citep{lecun-98b}. In other words,
 \[
 	\eta_i^\star \coloneqq \frac{r}{\lambda_i},
 \]
-where $r$ is the size of the mini-batch. Intuitively, this means that we would
-like to amplify $\eta_i$ along directions of low curvature, and decay $\eta_i$
+where~$r$ is the size of the mini-batch. Intuitively, this means that we would
+like to amplify~$\eta_i$ along directions of low curvature, and decay~$\eta_i$
 along directions of high curvature.
 
-A small neural network has on the order of $10^6$ parameters. This means that
-the gradient vector has $10^6$ elements, while the Hessian matrix has $10^{12}$
-elements. Even for a small network, computing the spectrum of the Hessian, let
-alone the Hessian itself, is completely intractible. \citet{lecun-98b} give
-several techniques for estimating the maximum eigenvalue of the Hessian matrix,
-but dividing all of the learning rates by this quantity would unnecessarily
-retard progress. This means that first-order algorithms must somehow deal with
-pathological curvature without access to second-order information.
+A small neural network has on the order of $10^6$~parameters. This means that
+the gradient vector has $10^6$~elements, while the Hessian matrix has
+$10^{12}$~elements. Even for a small network, computing the spectrum of the
+Hessian, let alone the Hessian itself, is completely intractible.
+\citet{lecun-98b} give several techniques for estimating the maximum eigenvalue
+of the Hessian matrix, but dividing all of the learning rates by this quantity
+would unnecessarily retard progress. This means that first-order algorithms must
+somehow deal with pathological curvature without access to second-order
+information.
 
 Unsurprisingly, the most successful first-order optimization algorithms do this
 by making innovative use of first-order information. These techniques use a
@@ -1573,8 +1579,8 @@ successful second-order algorithms that have been adapted for use with neural
 networks: limited-memory BFGS~(L-BFGS) and ``Hessian free
 optimization''~(HF)~\citep{martens2010deep, ngiam2011optimization,
 sutskever2013importance}. These second-order algorithms seem to make effective
-use of the curvature information of the Hessian matrix in order to explore
-regions of the parameter space that are inaccessible to first-order methods.
+use of the curvature information from Hessian matrix in order to explore regions
+of the parameter space that are inaccessible to first-order methods.
 
 \subsection{First-Order Optimization Algorithms}
 
@@ -1586,12 +1592,32 @@ regions of the parameter space that are inaccessible to first-order methods.
 \caption{Hierarchy of the first-order optimization techniques and algorithms.
 An arrow from one block to another means that the algorithm represented by the
 first block uses or is based on the technique or algorithm represented by the
-second. Here, CM stands for ``classical Nesterov momentum'', NAG for ``Nesterov
-accelerated momentum'', and DH for ``diagonal
+second. Here, CM~stands for ``classical momentum'', NAG~for ``Nesterov
+accelerated momentum'', and DH~for ``diagonal
 Hessian''.\label{fig:first_order_hierarchy}}
 \end{figure}
 
-
+Accelerated gradient methods have been the subject of much of the recent work in
+convex optimization theory~\citep{sutskever2013importance}. Much of this work
+has involved the analysis of classical momentum~(CM) and Nesterov accelerated
+gradient~(NAG). For the purposes of our discussion, let~$E$ denote the loss
+function, $\theta$~the parameters of the model, and~$k$ the current iteration.
+Define
+\[
+	g_k \coloneqq (\nabla_\theta E)(\theta_k)
+	\quad\text{and}\quad
+	H_k \coloneqq (\nabla^2_\theta E)(\theta_k).
+\]
+The~CM update is given by
+\begin{align*}
+	v_{k + 1} &\coloneqq \mu v_k - \eta g_k \\
+	\theta_{t + 1} &\coloneqq \theta_k + v_{t + 1},
+\end{align*}
+where~$\mu \in [0, 1]$ is the \emph{momentum} parameter. The idea behind
+momentum is to ``smooth out'' the highly oscillatory path of stochastic updates
+using an exponentially-decaying average of past gradients. This dampens the wild
+oscillations that are characteristic of the unstable nature of SGU~methods. It
+also amplifies the gradient along directions of low curvature. Using CM can 
 
 % TODO: line search is unexplored aspect
 

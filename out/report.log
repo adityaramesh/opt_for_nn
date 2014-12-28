@@ -1,4 +1,4 @@
-This is LuaTeX, Version beta-0.79.1 (TeX Live 2014/MacPorts 2014_3) (rev 4971)  (format=lualatex 2014.9.7)  27 DEC 2014 22:09
+This is LuaTeX, Version beta-0.79.1 (TeX Live 2014/MacPorts 2014_3) (rev 4971)  (format=lualatex 2014.9.7)  28 DEC 2014 11:16
  restricted \write18 enabled.
 **source/report.tex
 (./source/report.tex
@@ -1423,9 +1423,9 @@ luaotfload | load : auto-selecting default features for script: dflt(load luc: /
 Users/aditya/.texlive2014/texmf-var/luatex-cache/generic/fonts/otf/texgyrepagell
 a-regular.luc)
 luaotfload | load : auto-selecting default features for script: dflt
-luaotfload: font no 21 (TeXGyrePagella-Regular) defines feature c2sc for script 
+luaotfload: font no 21 (TeXGyrePagella-Regular) defines feature cpsp for script 
 latn
-luaotfload: font no 21 (TeXGyrePagella-Regular) defines feature c2sc for script 
+luaotfload: font no 21 (TeXGyrePagella-Regular) defines feature cpsp for script 
 latn
 \g_fontspec_family_TeX Gyre Pagella_int=\count346
 luaotfload | load : auto-selecting default features for script: dflt
@@ -1501,9 +1501,9 @@ luaotfload | load : auto-selecting default features for script: dflt(load luc: /
 Users/aditya/.texlive2014/texmf-var/luatex-cache/generic/fonts/otf/sourcecodepro
 -regular.luc)
 luaotfload | load : auto-selecting default features for script: dflt
-luaotfload: font no 26 (SourceCodePro-Regular) defines feature ss02 for script l
+luaotfload: font no 26 (SourceCodePro-Regular) defines feature mark for script l
 atn
-luaotfload: font no 26 (SourceCodePro-Regular) defines feature ss02 for script l
+luaotfload: font no 26 (SourceCodePro-Regular) defines feature mark for script l
 atn
 \g_fontspec_family_Source Code Pro_int=\count347
 luaotfload | load : auto-selecting default features for script: dflt
@@ -2207,7 +2207,7 @@ luaotfload | load : no defaults for script "latn", falling back to "dflt" [14]
 File: graphics/srm_graph.png Graphic file (type png)
 
 <use graphics/srm_graph.png>
-Package pdftex.def Info: graphics/srm_graph.png used on input line 1123.
+Package pdftex.def Info: graphics/srm_graph.png used on input line 1124.
 (pdftex.def)             Requested size: 436.38335pt x 268.9385pt.
  [16] [17<./graphics/srm_graph.png>] [18] [19]
 [20]
@@ -2220,19 +2220,19 @@ File: graphics/first_order_hierarchy.pdf Graphic file (type pdf)
 
 <use graphics/first_order_hierarchy.pdf>
 Package pdftex.def Info: graphics/first_order_hierarchy.pdf used on input line 1
-585.
+588.
 (pdftex.def)             Requested size: 401.49901pt x 354.32288pt.
- (./out/report.bbl [23] [24<./graphics/first_order_hierarchy.pdf>]) [25] (./out
+ [23] (./out/report.bbl [24<./graphics/first_order_hierarchy.pdf>]) [25] (./out
 /report.aux))
 
 Here is how much of LuaTeX's memory you used:
- 45329 strings out of 494816
+ 45330 strings out of 494816
  125070,1648299 words of node,token memory allocated
- 4260 words of node memory still in use:
+ 4263 words of node memory still in use:
    152 hlist, 20 vlist, 7 rule, 62 math, 79 glue, 72 kern, 91 glyph, 131 attribu
 te, 86 glue_spec, 125 attribute_list, 1 write nodes
-   avail lists: 2:16937,3:4906,4:2012,5:368,6:3461,7:116,9:709,10:305
- 47206 multiletter control sequences out of 65536+600000
+   avail lists: 2:16937,3:4909,4:2009,5:368,6:3461,7:116,9:709,10:315
+ 47207 multiletter control sequences out of 65536+600000
  254 fonts using 16873119 bytes
  69i,24n,78p,760b,2032s stack positions out of 5000i,500n,10000p,200000b,100000s
 {/opt/local/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</opt/local/share/te
@@ -2248,7 +2248,7 @@ f-texlive/fonts/type1/public/mathpazo/fplmr.pfb><</opt/local/share/texmf-texlive
 /fonts/type1/public/mathpazo/fplmri.pfb><</opt/local/share/texmf-texlive/fonts/t
 ype1/urw/palatino/uplr8a.pfb><</opt/local/share/texmf-texlive/fonts/type1/urw/pa
 latino/uplri8a.pfb>
-Output written on report.pdf (25 pages, 26072349 bytes).
+Output written on report.pdf (25 pages, 26073816 bytes).
 
 PDF statistics: 228 PDF objects out of 1000 (max. 8388607)
  152 compressed objects within 2 object streams
