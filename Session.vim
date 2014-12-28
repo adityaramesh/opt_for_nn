@@ -892,10 +892,10 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +1160 source/report.tex
+badd +864 source/report.tex
 badd +9 ~/education/fall_2014/numerical_optimization/submissions/ps_6/src/report/ps_6.tex
 badd +26 source/scratch.tex
-badd +60 references/main.bib
+badd +81 references/main.bib
 badd +1975 references/lecun.bib
 argglobal
 silent! argdel *
@@ -1017,12 +1017,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1084 - ((25 * winheight(0) + 26) / 52)
+let s:l = 386 - ((25 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1084
-normal! 019|
+386
+normal! 09|
 wincmd w
 argglobal
 edit source/report.tex
@@ -1131,12 +1131,12 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1348 - ((25 * winheight(0) + 26) / 52)
+let s:l = 1581 - ((29 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1348
-normal! 0
+1581
+normal! 017|
 wincmd w
 2wincmd w
 exe 'vert 1resize ' . ((&columns * 101 + 102) / 204)

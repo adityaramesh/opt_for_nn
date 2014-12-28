@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{12}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -61,6 +61,21 @@ Vinod Nair and Geoffrey~E Hinton.
 \newblock Rectified linear units improve restricted boltzmann machines.
 \newblock In \emph{Proceedings of the 27th International Conference on Machine
   Learning (ICML-10)}, pages 807--814, 2010.
+
+\bibitem[Ngiam et~al.(2011)Ngiam, Coates, Lahiri, Prochnow, Le, and
+  Ng]{ngiam2011optimization}
+Jiquan Ngiam, Adam Coates, Ahbik Lahiri, Bobby Prochnow, Quoc~V Le, and
+  Andrew~Y Ng.
+\newblock On optimization methods for deep learning.
+\newblock In \emph{Proceedings of the 28th International Conference on Machine
+  Learning (ICML-11)}, pages 265--272, 2011.
+
+\bibitem[Sutskever et~al.(2013)Sutskever, Martens, Dahl, and
+  Hinton]{sutskever2013importance}
+Ilya Sutskever, James Martens, George Dahl, and Geoffrey Hinton.
+\newblock On the importance of initialization and momentum in deep learning.
+\newblock In \emph{Proceedings of the 30th International Conference on Machine
+  Learning (ICML-13)}, pages 1139--1147, 2013.
 
 \bibitem[Zeiler and Fergus(2014)]{zeiler2014visualizing}
 Matthew~D Zeiler and Rob Fergus.

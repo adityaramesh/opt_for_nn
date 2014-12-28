@@ -17,12 +17,17 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of $(k, 1)$, a unit with three inputs from $L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation $a_{k1}$ is computed by forming a linear combination of the outputs of the units in $\operatorname  {Pa}(k, 1)$ with the corresponding weights to $(k, j)$, and adding the bias $b_{k1}$. Then, the output $z_{k1}$ is determined by applying the activation function $u_{k1}$ to $a_{k1}$.\relax }}{4}}
 \newlabel{fig:unit_output}{{1.3}{4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Activation Functions and Feature Learning}{4}}
+\newlabel{sec:act_func_and_feature_learning}{{1.2}{4}}
 \citation{nair2010rectified}
 \citation{krizhevsky2012imagenet}
 \newlabel{fig:tanh_plot}{{1.4a}{5}}
 \newlabel{sub@fig:tanh_plot}{{a}{5}}
 \newlabel{fig:linear_threshold_plot}{{1.4b}{5}}
 \newlabel{sub@fig:linear_threshold_plot}{{b}{5}}
+\newlabel{fig:tanh_der_plot}{{1.4c}{5}}
+\newlabel{sub@fig:tanh_der_plot}{{c}{5}}
+\newlabel{fig:linear_threshold_der_plot}{{1.4d}{5}}
+\newlabel{sub@fig:linear_threshold_der_plot}{{d}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1.4}{\ignorespaces Plots of two of the most common activation functions and their derivatives.\relax }}{5}}
 \newlabel{fig:activation_plots}{{1.4}{5}}
 \citation{lecun-01a}
@@ -101,16 +106,28 @@
 \newlabel{eq:rho_approx_eps}{{3.10}{21}}
 \newlabel{eq:s_assumption}{{3.11}{21}}
 \citation{lecun-98b}
+\citation{martens2010deep}
+\citation{lecun-98b}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization Algorithms for Neural Networks}{22}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Challenges in Training Neural Networks}{22}}
+\citation{lecun-98b}
+\citation{lecun-98b}
+\citation{martens2010deep,ngiam2011optimization,sutskever2013importance}
 \bibstyle{plainnat}
 \bibdata{references/main,references/lecun}
 \bibcite{ml_bishop}{{1}{2006}{{Bishop}}{{}}}
 \bibcite{bousquet2008tradeoffs}{{2}{2008}{{Bousquet and Bottou}}{{}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}First-Order Optimization Algorithms}{23}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Second-Order Optimization Algorithms}{23}}
 \bibcite{glorot2010understanding}{{3}{2010}{{Glorot and Bengio}}{{}}}
 \bibcite{krizhevsky2012imagenet}{{4}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
 \bibcite{lecun-98b}{{5}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
 \bibcite{lecun-01a}{{6}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization for Neural Networks}{22}}
 \bibcite{martens2010deep}{{7}{2010}{{Martens}}{{}}}
 \bibcite{ml_mohri}{{8}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
 \bibcite{nair2010rectified}{{9}{2010}{{Nair and Hinton}}{{}}}
-\bibcite{zeiler2014visualizing}{{10}{2014}{{Zeiler and Fergus}}{{}}}
+\bibcite{ngiam2011optimization}{{10}{2011}{{Ngiam et~al.}}{{Ngiam, Coates, Lahiri, Prochnow, Le, and Ng}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM stands for ``classical Nesterov momentum'', NAG for ``Nesterov accelerated momentum'', and DH for ``diagonal Hessian''.\relax }}{24}}
+\newlabel{fig:first_order_hierarchy}{{4.1}{24}}
+\bibcite{sutskever2013importance}{{11}{2013}{{Sutskever et~al.}}{{Sutskever, Martens, Dahl, and Hinton}}}
+\bibcite{zeiler2014visualizing}{{12}{2014}{{Zeiler and Fergus}}{{}}}

@@ -1,4 +1,4 @@
-
+%
 % File Name:	report.tex
 % Author:	Aditya Ramesh
 % Date:		05/18/2013
@@ -376,6 +376,7 @@ by~(\ref{eq:forward_propagation}). This process is called \emph{forward
 propagation}.
 
 \subsection{Activation Functions and Feature Learning}
+\label{sec:act_func_and_feature_learning}
 
 \begin{figure}[t]
 \centering
@@ -425,7 +426,8 @@ propagation}.
 	/ (cosh(4 * x / 3) + 1)^2};
 	\end{axis}
 	\end{tikzpicture}}
-	\caption{Plot of the derivative of the function in~\ref{fig:tanh_plot}.}
+	\caption{Plot of the derivative of the function
+	in~\ref{fig:tanh_plot}.\label{fig:tanh_der_plot}}
 \end{subfigure}\hspace{0.5cm}%
 \begin{subfigure}{0.4\textwidth}
 	\centering
@@ -441,7 +443,7 @@ propagation}.
 	\end{axis}
 	\end{tikzpicture}}
 	\caption{Plot of the derivative of the function
-	in~\ref{fig:linear_threshold_plot}.}
+	in~\ref{fig:linear_threshold_plot}.\label{fig:linear_threshold_der_plot}}
 \end{subfigure}
 \caption{Plots of two of the most common activation functions and their
 derivatives.\label{fig:activation_plots}}
@@ -474,8 +476,9 @@ the $\pm 1$ instead of $\pm a$. Then the weights of the network would
 drastically increase, in order to produce the large activation values necessary
 to drive the outputs of $\tanh$ function to the target values at its asymptotes.
 The derivative of the scaled $\tanh$ function at these large activation values
-would be exponentially small.  Thus, a minimization algorithm using derivative
-information would be liable to ``get stuck''.
+would be exponentially small~(see Figure~\ref{fig:tanh_der_plot}). Thus, a
+minimization algorithm using derivative information would be liable to ``get
+stuck''.
 
 Finally, the choices for these constants allow us to intrepret the output of the
 network as a measure of confidence towards its classification. When an input is
@@ -936,9 +939,11 @@ minimization algorithm, the distributions of the activation values at each layer
 evolve. For deep networks with many layers, the vanishing gradient problem is
 greatly compounded. In particular, the greater the depth of a layer in the
 network, the greater the tendency of the activation values to cluster around
-zero or become very large~\citep{glorot2010understanding}. The subtle numerical
-issues resulting from these complex interactions largely determines whether,
-when, and how a given minimization algorithm will converge.
+zero or become very large~\citep{glorot2010understanding}. This causes the
+vanishing gradient problem discussed in
+Section~\ref{sec:act_func_and_feature_learning}. The subtle numerical issues
+resulting from these complex interactions largely determines whether, when, and
+how a given minimization algorithm will converge.
 
 The use of a good weight initialization scheme can help mitigate the undesirable
 saturation of the activation values~\citep{glorot2010understanding}. Several
@@ -1485,10 +1490,11 @@ optimize accurately. This is the case in large-scale problems, or when the
 estimation rate $\alpha$ is small. Note that the performance of the stochastic
 algorithms does not depend on the estimation rate $\alpha$.
 
-\item Incorporating second-order information brings small improvements in
-$\mathcal{E}$. When minimizing $\mathcal{E}$, all four algorithms are dominated
-by the polynomial factor in $1/\epsilon$. The second-order methods only improve
-the logarithmic factors in $1/\epsilon$.
+\item Hastily incorporating second-order information into gradient update
+methods may only bring small improvements in $\mathcal{E}$. When minimizing
+$\mathcal{E}$, all four algorithms are dominated by the polynomial factor in
+$1/\epsilon$. The second-order methods shown here only improve the logarithmic
+factors in $1/\epsilon$.
 
 \item Stochastic algorithms have the best generalization performance, despite
 being the worst optimization algorithms when viewed in the traditional sense.
@@ -1509,7 +1515,87 @@ having large eigenvalues~\citep{lecun-98b}. In light of the results from
 Table~\ref{tab:asymptotic_rates}, the importance of decorrelating the inputs
 becomes even more apparent.
 
-\section{Optimization for Neural Networks}
+\section{Optimization Algorithms for Neural Networks}
+
+\subsection{Challenges in Training Neural Networks}
+
+Deep neural networks are used today to solve challenging problems in computer
+vision, natural language processing, and several other fields. Training these
+networks is prototypical of the large-scale problems discussed in the previous
+section. Our guidelines suggest that for such problems, optimization algorithms
+based on steepest descent should use mini-batches, and carefully evaluate the
+tradeoffs of incorporating second-order information. Almost all optimization
+algorithms used to train deep neural networks abide by these constraints.
+
+First-order algorithms must effectively deal with the vanishing gradient problem
+and the issue of ``pathological curvature''~\citep{martens2010deep}. In
+Section~\ref{sec:pp_and_init}, we mentioned that activation values in deeper
+layers of a network have a greater tendency to cluster around zero or very large
+values. Since the gradients in one layer depend multiplicatively on those in the
+next, the vanishing gradient problem usually affects the lowest levels most
+severely. We also saw that when features of the input are correlated, the weight
+updates are no longer decoupled. Both of these phenomena suggest that
+\emph{each} weight and bias in the network should be given its own learning
+rate~\citep{lecun-98b}, something that is usually not done for traditional
+optimization problems.
+
+The asymptotic rates for the stochastic algorithms in
+Table~\ref{tab:asymptotic_rates} suggest vulnerability to ill-conditioning of
+the Hessian, especially when second-order information is not used. The problem
+is in fact much more serious than this. Suppose that each weight and bias in the
+network is given its own learning rate. By viewing the full batch gradient
+update rule as a discrete time dynamical system, it can be shown that the
+optimal learning rate for the $i$th parameter scales the corresponding
+eigenvalue of the Hessian matrix to unity~\citep{lecun-98b}. In other words,
+\[
+	\eta_i^\star \coloneqq \frac{r}{\lambda_i},
+\]
+where $r$ is the size of the mini-batch. Intuitively, this means that we would
+like to amplify $\eta_i$ along directions of low curvature, and decay $\eta_i$
+along directions of high curvature.
+
+A small neural network has on the order of $10^6$ parameters. This means that
+the gradient vector has $10^6$ elements, while the Hessian matrix has $10^{12}$
+elements. Even for a small network, computing the spectrum of the Hessian, let
+alone the Hessian itself, is completely intractible. \citet{lecun-98b} give
+several techniques for estimating the maximum eigenvalue of the Hessian matrix,
+but dividing all of the learning rates by this quantity would unnecessarily
+retard progress. This means that first-order algorithms must somehow deal with
+pathological curvature without access to second-order information.
+
+Unsurprisingly, the most successful first-order optimization algorithms do this
+by making innovative use of first-order information. These techniques use a
+combination of the following three ingredients: momentum, a window of past
+updates, and the diagonal of the Hessian matrix (which can actually be computed
+efficiently). Despite the efficacy of these techniques, there is a small but
+definite gap in the performance between first-order algorithms and the two most
+successful second-order algorithms that have been adapted for use with neural
+networks: limited-memory BFGS~(L-BFGS) and ``Hessian free
+optimization''~(HF)~\citep{martens2010deep, ngiam2011optimization,
+sutskever2013importance}. These second-order algorithms seem to make effective
+use of the curvature information of the Hessian matrix in order to explore
+regions of the parameter space that are inaccessible to first-order methods.
+
+\subsection{First-Order Optimization Algorithms}
+
+\begin{figure}[t]
+\centering
+\resizebox{0.5\textwidth}{!}{%
+	\includegraphics{graphics/first_order_hierarchy.pdf}
+}
+\caption{Hierarchy of the first-order optimization techniques and algorithms.
+An arrow from one block to another means that the algorithm represented by the
+first block uses or is based on the technique or algorithm represented by the
+second. Here, CM stands for ``classical Nesterov momentum'', NAG for ``Nesterov
+accelerated momentum'', and DH for ``diagonal
+Hessian''.\label{fig:first_order_hierarchy}}
+\end{figure}
+
+
+
+% TODO: line search is unexplored aspect
+
+\subsection{Second-Order Optimization Algorithms}
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
