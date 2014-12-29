@@ -1,58 +1,75 @@
 \relax 
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction to Neural Networks}{1}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Representation}{1}}
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction to Neural Networks}{1}{section.1}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.1}Representation}{1}{subsection.1.1}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:simple_dag}{{1.1a}{2}}
-\newlabel{sub@fig:simple_dag}{{a}{2}}
-\newlabel{fig:simple_layered_dag}{{1.1b}{2}}
-\newlabel{sub@fig:simple_layered_dag}{{b}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces In\nobreakspace {}1.1a\hbox {}, we see a DAG, and in\nobreakspace {}1.1b\hbox {}, the representation of the\nobreakspace {}DAG as a layered graph. Notice that the edges\nobreakspace {}$A \rightarrow D$ and\nobreakspace {}$C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }}{2}}
-\newlabel{fig:layered_graph_drawing}{{1.1}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces A small, two-layer neural network. The pair $(k, j)$ is used to denote the $j$th unit in layer $k$.\relax }}{3}}
-\newlabel{fig:two_layer_nn}{{1.2}{3}}
-\newlabel{eq:forward_propagation}{{1.1}{3}}
-\newlabel{eq:activation}{{1.2}{3}}
-\newlabel{eq:output}{{1.3}{3}}
+\newlabel{fig:simple_dag}{{1.1a}{2}{\relax }{figure.caption.1}{}}
+\newlabel{sub@fig:simple_dag}{{a}{2}{\relax }{figure.caption.1}{}}
+\newlabel{fig:simple_layered_dag}{{1.1b}{2}{\relax }{figure.caption.1}{}}
+\newlabel{sub@fig:simple_layered_dag}{{b}{2}{\relax }{figure.caption.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces In\nobreakspace {}\ref  {fig:simple_dag}, we see a DAG, and in\nobreakspace {}\ref  {fig:simple_layered_dag}, the representation of the\nobreakspace {}DAG as a layered graph. Notice that the edges\nobreakspace {}$A \rightarrow D$ and\nobreakspace {}$C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }}{2}{figure.caption.1}}
+\newlabel{fig:layered_graph_drawing}{{1.1}{2}{In~\ref {fig:simple_dag}, we see a DAG, and in~\ref {fig:simple_layered_dag}, the representation of the~DAG as a layered graph. Notice that the edges~$A \rightarrow D$ and~$C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }{figure.caption.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces A small, two-layer neural network. The pair $(k, j)$ is used to denote the $j$th unit in layer $k$.\relax }}{3}{figure.caption.2}}
+\newlabel{fig:two_layer_nn}{{1.2}{3}{A small, two-layer neural network. The pair $(k, j)$ is used to denote the $j$th unit in layer $k$.\relax }{figure.caption.2}{}}
+\newlabel{eq:forward_propagation}{{1.1}{3}{Representation}{equation.1.1}{}}
+\newlabel{eq:activation}{{1.2}{3}{Representation}{equation.1.2}{}}
+\newlabel{eq:output}{{1.3}{3}{Representation}{equation.1.3}{}}
 \citation{lecun-98b}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of\nobreakspace {}$(k, 1)$, a unit with three inputs from\nobreakspace {}$L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation\nobreakspace {}$a_{k1}$ is computed by forming a linear combination of the outputs of the units in\nobreakspace {}$\operatorname  {Pa}(k, 1)$ with the corresponding weights to\nobreakspace {}$(k, j)$, and adding the bias\nobreakspace {}$b_{k1}$. Then, the output\nobreakspace {}$z_{k1}$ is determined by applying the activation function\nobreakspace {}$u_{k1}$ to\nobreakspace {}$a_{k1}$.\relax }}{4}}
-\newlabel{fig:unit_output}{{1.3}{4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Activation Functions and Feature Learning}{4}}
-\newlabel{sec:act_func_and_feature_learning}{{1.2}{4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of\nobreakspace {}$(k, 1)$, a unit with three inputs from\nobreakspace {}$L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation\nobreakspace {}$a_{k1}$ is computed by forming a linear combination of the outputs of the units in\nobreakspace {}$\operatorname  {Pa}(k, 1)$ with the corresponding weights to\nobreakspace {}$(k, j)$, and adding the bias\nobreakspace {}$b_{k1}$. Then, the output\nobreakspace {}$z_{k1}$ is determined by applying the activation function\nobreakspace {}$u_{k1}$ to\nobreakspace {}$a_{k1}$.\relax }}{4}{figure.caption.3}}
+\newlabel{fig:unit_output}{{1.3}{4}{An illustration how the output of~$(k, 1)$, a unit with three inputs from~$L_{k - 1}$, is computed. In this case, $\parents (k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation~$a_{k1}$ is computed by forming a linear combination of the outputs of the units in~$\parents (k, 1)$ with the corresponding weights to~$(k, j)$, and adding the bias~$b_{k1}$. Then, the output~$z_{k1}$ is determined by applying the activation function~$u_{k1}$ to~$a_{k1}$.\relax }{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Activation Functions and Feature Learning}{4}{subsection.1.2}}
+\newlabel{sec:act_func_and_feature_learning}{{1.2}{4}{Activation Functions and Feature Learning}{subsection.1.2}{}}
 \citation{nair2010rectified}
 \citation{krizhevsky2012imagenet}
-\newlabel{fig:tanh_plot}{{1.4a}{5}}
-\newlabel{sub@fig:tanh_plot}{{a}{5}}
-\newlabel{fig:linear_threshold_plot}{{1.4b}{5}}
-\newlabel{sub@fig:linear_threshold_plot}{{b}{5}}
-\newlabel{fig:tanh_der_plot}{{1.4c}{5}}
-\newlabel{sub@fig:tanh_der_plot}{{c}{5}}
-\newlabel{fig:linear_threshold_der_plot}{{1.4d}{5}}
-\newlabel{sub@fig:linear_threshold_der_plot}{{d}{5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.4}{\ignorespaces Plots of two of the most common activation functions and their derivatives.\relax }}{5}}
-\newlabel{fig:activation_plots}{{1.4}{5}}
+\newlabel{fig:tanh_plot}{{1.4a}{5}{Plot of $f(x) \coloneqq a \tanh (b x)$, where $a \coloneqq 1.7159$ and $b \coloneqq 2/3$.\relax }{figure.caption.4}{}}
+\newlabel{sub@fig:tanh_plot}{{a}{5}{Plot of $f(x) \coloneqq a \tanh (b x)$, where $a \coloneqq 1.7159$ and $b \coloneqq 2/3$.\relax }{figure.caption.4}{}}
+\newlabel{fig:linear_threshold_plot}{{1.4b}{5}{Plot of $f(x) \coloneqq \max (0, x)$.\newline \relax }{figure.caption.4}{}}
+\newlabel{sub@fig:linear_threshold_plot}{{b}{5}{Plot of $f(x) \coloneqq \max (0, x)$.\newline \relax }{figure.caption.4}{}}
+\newlabel{fig:tanh_der_plot}{{1.4c}{5}{Plot of the derivative of the function in~\ref {fig:tanh_plot}.\relax }{figure.caption.4}{}}
+\newlabel{sub@fig:tanh_der_plot}{{c}{5}{Plot of the derivative of the function in~\ref {fig:tanh_plot}.\relax }{figure.caption.4}{}}
+\newlabel{fig:linear_threshold_der_plot}{{1.4d}{5}{Plot of the derivative of the function in~\ref {fig:linear_threshold_plot}.\relax }{figure.caption.4}{}}
+\newlabel{sub@fig:linear_threshold_der_plot}{{d}{5}{Plot of the derivative of the function in~\ref {fig:linear_threshold_plot}.\relax }{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.4}{\ignorespaces Plots of two of the most common activation functions and their derivatives.\relax }}{5}{figure.caption.4}}
+\newlabel{fig:activation_plots}{{1.4}{5}{Plots of two of the most common activation functions and their derivatives.\relax }{figure.caption.4}{}}
 \citation{lecun-01a}
-\newlabel{eq:rbf_sum}{{1.4}{6}}
+\newlabel{eq:rbf_sum}{{1.4}{6}{Activation Functions and Feature Learning}{equation.1.4}{}}
 \citation{zeiler2014visualizing}
 \citation{zeiler2014visualizing}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.5}{\ignorespaces Visualization of the hierarchy of features in a fully-trained convolutional network for image classification, taken from\nobreakspace {}\citet  {zeiler2014visualizing}. For each of the first five layers of the network, a selection of the highest activation values in the layer is shown alongside the corresponding input images. Note that in general, visualizing features in a meaningful way is very difficult. \relax }}{7}}
-\newlabel{fig:cnn_features}{{1.5}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.5}{\ignorespaces Visualization of the hierarchy of features in a fully-trained convolutional network for image classification, taken from\nobreakspace {}\citet  {zeiler2014visualizing}. For each of the first five layers of the network, a selection of the highest activation values in the layer is shown alongside the corresponding input images. Note that in general, visualizing features in a meaningful way is very difficult. \relax }}{7}{figure.caption.5}}
+\newlabel{fig:cnn_features}{{1.5}{7}{Visualization of the hierarchy of features in a fully-trained convolutional network for image classification, taken from~\citet {zeiler2014visualizing}. For each of the first five layers of the network, a selection of the highest activation values in the layer is shown alongside the corresponding input images. Note that in general, visualizing features in a meaningful way is very difficult. \relax }{figure.caption.5}{}}
 \citation{lecun-98b}
-\newlabel{eq:normalized_rbf}{{1.5}{8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Classification and Regression}{8}}
+\newlabel{eq:normalized_rbf}{{1.5}{8}{Activation Functions and Feature Learning}{equation.1.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Classification and Regression}{8}{subsection.1.3}}
 \citation{ml_bishop}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.6}{\ignorespaces A visualization of how the $k$th instance\nobreakspace {}$(x_k, y_k)$ is fed into the two-layer neural network from Figure\nobreakspace {}1.2\hbox {}.\relax }}{9}}
-\newlabel{fig:nn_with_loss}{{1.6}{9}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}The Loss Function}{9}}
-\newlabel{eq:likelihood_function}{{1.4}{9}}
-\newlabel{eq:nll}{{1.6}{9}}
-\newlabel{eq:sum_of_squares}{{1.7}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.6}{\ignorespaces A visualization of how the $k$th instance\nobreakspace {}$(x_k, y_k)$ is fed into the two-layer neural network from Figure\nobreakspace {}\ref  {fig:two_layer_nn}.\relax }}{9}{figure.caption.6}}
+\newlabel{fig:nn_with_loss}{{1.6}{9}{A visualization of how the $k$th instance~$(x_k, y_k)$ is fed into the two-layer neural network from Figure~\ref {fig:two_layer_nn}.\relax }{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.4}The Loss Function}{9}{subsection.1.4}}
+\newlabel{eq:likelihood_function}{{1.4}{9}{The Loss Function}{figure.caption.6}{}}
+\newlabel{eq:nll}{{1.6}{9}{The Loss Function}{equation.1.6}{}}
+\newlabel{eq:sum_of_squares}{{1.7}{10}{The Loss Function}{equation.1.7}{}}
 \citation{lecun-98b}
 \citation{lecun-98b}
 \citation{lecun-98b,krizhevsky2012imagenet}
-\newlabel{eq:softmax}{{1.8}{11}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Data Preprocessing and Initialization}{11}}
-\newlabel{sec:pp_and_init}{{1.5}{11}}
-\newlabel{eq:center_and_scale}{{1.9}{11}}
+\newlabel{eq:softmax}{{1.8}{11}{The Loss Function}{equation.1.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.5}Data Preprocessing and Initialization}{11}{subsection.1.5}}
+\newlabel{sec:pp_and_init}{{1.5}{11}{Data Preprocessing and Initialization}{subsection.1.5}{}}
+\newlabel{eq:center_and_scale}{{1.9}{11}{Data Preprocessing and Initialization}{equation.1.9}{}}
 \citation{lecun-98b}
 \citation{lecun-98b,krizhevsky2012imagenet}
 \citation{glorot2010understanding}
@@ -61,99 +78,108 @@
 \citation{krizhevsky2012imagenet}
 \citation{ml_mohri}
 \citation{ml_mohri}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Computing Derivatives}{14}}
-\newlabel{sec:computing_derivatives}{{1.6}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Convolutional Networks}{14}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Concepts from Statistical Learning Theory}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Generalization and PAC-learning}{14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.6}Computing Derivatives}{14}{subsection.1.6}}
+\newlabel{sec:computing_derivatives}{{1.6}{14}{Computing Derivatives}{subsection.1.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {1.7}Convolutional Networks}{14}{subsection.1.7}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Concepts from Statistical Learning Theory}{14}{section.2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Generalization and PAC-learning}{14}{subsection.2.1}}
 \citation{ml_mohri}
-\newlabel{eq:generalization_bound}{{2.1}{15}}
+\newlabel{eq:generalization_bound}{{2.1}{15}{Generalization and PAC-learning}{equation.2.1}{}}
 \citation{ml_mohri}
 \citation{ml_mohri}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}ERM vs SRM}{16}}
-\newlabel{sec:erm_vs_srm}{{2.2}{16}}
-\newlabel{eq:app_est_decomp}{{2.2}{16}}
-\newlabel{eq:regularized_family}{{2.3}{16}}
-\newlabel{eq:erm_srm_solutions}{{2.4}{16}}
-\newlabel{eq:srm_penalty}{{2.5}{16}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}ERM vs SRM}{16}{subsection.2.2}}
+\newlabel{sec:erm_vs_srm}{{2.2}{16}{ERM vs SRM}{subsection.2.2}{}}
+\newlabel{eq:app_est_decomp}{{2.2}{16}{ERM vs SRM}{equation.2.2}{}}
+\newlabel{eq:regularized_family}{{2.3}{16}{ERM vs SRM}{equation.2.3}{}}
+\newlabel{eq:erm_srm_solutions}{{2.4}{16}{ERM vs SRM}{equation.2.4}{}}
+\newlabel{eq:srm_penalty}{{2.5}{16}{ERM vs SRM}{equation.2.5}{}}
 \citation{bousquet2008tradeoffs}
-\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Visualization of the SRM procedure (adapted from\nobreakspace {}\citet  {ml_mohri}). The SRM procedure minimizes an upper bound of the generalization error that is a sum of the training error and the complexity term.\relax }}{17}}
-\newlabel{fig:srm_graph}{{2.1}{17}}
-\newlabel{eq:affine_family}{{2.2}{17}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Characterizing Optimization Algorithms}{17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Goals of Optimization}{17}}
-\newlabel{eq:tol_eq}{{3.1}{17}}
-\citation{bousquet2008tradeoffs}
-\citation{bousquet2008tradeoffs}
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The effects of increasing $\operatorname  {capacity}(F)$, $s$, and\nobreakspace {}$\rho $ on the three errors and computing time. The symbol $\delimiter "326C33F $ indicates that either an increase or a decrease is possible.\relax }}{18}}
-\newlabel{tab:metaopt_variables}{{3.1}{18}}
-\newlabel{eq:excess_error}{{3.3}{18}}
-\newlabel{eq:metaopt_program}{{3.4}{18}}
-\newlabel{eq:small_scale_bound}{{3.5}{18}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Visualization of the SRM procedure (adapted from\nobreakspace {}\citet  {ml_mohri}). The SRM procedure minimizes an upper bound of the generalization error that is a sum of the training error and the complexity term.\relax }}{17}{figure.caption.7}}
+\newlabel{fig:srm_graph}{{2.1}{17}{Visualization of the SRM procedure (adapted from~\citet {ml_mohri}). The SRM procedure minimizes an upper bound of the generalization error that is a sum of the training error and the complexity term.\relax }{figure.caption.7}{}}
+\newlabel{eq:affine_family}{{2.2}{17}{ERM vs SRM}{equation.2.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Characterizing Optimization Algorithms}{17}{section.3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Goals of Optimization}{17}{subsection.3.1}}
+\newlabel{eq:tol_eq}{{3.1}{17}{Goals of Optimization}{equation.3.1}{}}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The effects of increasing $\operatorname  {capacity}(F)$, $s$, and\nobreakspace {}$\rho $ on the three errors and computing time. The symbol $\delimiter "326C33F $ indicates that either an increase or a decrease is possible.\relax }}{18}{table.caption.8}}
+\newlabel{tab:metaopt_variables}{{3.1}{18}{The effects of increasing $\capacity (F)$, $s$, and~$\rho $ on the three errors and computing time. The symbol $\updownarrow $ indicates that either an increase or a decrease is possible.\relax }{table.caption.8}{}}
+\newlabel{eq:excess_error}{{3.3}{18}{Goals of Optimization}{equation.3.3}{}}
+\newlabel{eq:metaopt_program}{{3.4}{18}{Goals of Optimization}{equation.3.4}{}}
+\newlabel{eq:small_scale_bound}{{3.5}{18}{Goals of Optimization}{equation.3.5}{}}
 \citation{bousquet2008tradeoffs}
-\newlabel{eq:large_scale_bound}{{3.6}{19}}
-\newlabel{eq:fast_rate_bound}{{3.7}{19}}
-\newlabel{eq:error_equiv}{{3.8}{19}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Analysis of Optimization Algorithms}{19}}
+\citation{bousquet2008tradeoffs}
+\citation{bousquet2008tradeoffs}
+\newlabel{eq:large_scale_bound}{{3.6}{19}{Goals of Optimization}{equation.3.6}{}}
+\newlabel{eq:fast_rate_bound}{{3.7}{19}{Goals of Optimization}{equation.3.7}{}}
+\newlabel{eq:error_equiv}{{3.8}{19}{Goals of Optimization}{equation.3.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Analysis of Optimization Algorithms}{19}{subsection.3.2}}
 \citation{lecun-98b}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
-\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces Asymptotic rates for the four algorithms discussed (adapted from\nobreakspace {}\citet  {bousquet2008tradeoffs}).\relax }}{21}}
-\newlabel{tab:asymptotic_rates}{{3.2}{21}}
-\newlabel{eq:rho_assumption}{{3.9}{21}}
-\newlabel{eq:rho_approx_eps}{{3.10}{21}}
-\newlabel{eq:s_assumption}{{3.11}{21}}
+\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces Asymptotic rates for the four algorithms discussed (adapted from\nobreakspace {}\citet  {bousquet2008tradeoffs}).\relax }}{21}{table.caption.9}}
+\newlabel{tab:asymptotic_rates}{{3.2}{21}{Asymptotic rates for the four algorithms discussed (adapted from~\citet {bousquet2008tradeoffs}).\relax }{table.caption.9}{}}
+\newlabel{eq:rho_assumption}{{3.9}{21}{Analysis of Optimization Algorithms}{equation.3.9}{}}
+\newlabel{eq:rho_approx_eps}{{3.10}{21}{Analysis of Optimization Algorithms}{equation.3.10}{}}
+\newlabel{eq:s_assumption}{{3.11}{21}{Analysis of Optimization Algorithms}{equation.3.11}{}}
 \citation{lecun-98b}
 \citation{martens2010deep}
 \citation{lecun-98b}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization Algorithms for Neural Networks}{22}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Challenges of Large-Scale Optimization}{22}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization Algorithms for Neural Networks}{22}{section.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Challenges of Large-Scale Optimization}{22}{subsection.4.1}}
 \citation{lecun-98b}
 \citation{lecun-98b}
 \citation{martens2010deep,ngiam2011optimization,sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Momentum}{23}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Momentum}{23}{subsection.4.2}}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
-\newlabel{fig:cm_update}{{4.1a}{24}}
-\newlabel{sub@fig:cm_update}{{a}{24}}
-\newlabel{fig:nag_update}{{4.1b}{24}}
-\newlabel{sub@fig:nag_update}{{b}{24}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Illustration of the two momentum-based update rules (adapted from\nobreakspace {}\citet  {sutskever2013importance}).\relax }}{24}}
-\newlabel{fig:momentum_updates}{{4.1}{24}}
+\newlabel{fig:cm_update}{{4.1a}{24}{The CM update rule.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:cm_update}{{a}{24}{The CM update rule.\relax }{figure.caption.10}{}}
+\newlabel{fig:nag_update}{{4.1b}{24}{The NAG update rule.\relax }{figure.caption.10}{}}
+\newlabel{sub@fig:nag_update}{{b}{24}{The NAG update rule.\relax }{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Illustration of the two momentum-based update rules (adapted from\nobreakspace {}\citet  {sutskever2013importance}).\relax }}{24}{figure.caption.10}}
+\newlabel{fig:momentum_updates}{{4.1}{24}{Illustration of the two momentum-based update rules (adapted from~\citet {sutskever2013importance}).\relax }{figure.caption.10}{}}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
-\citation{becker-lecun-89}
+\citation{lecun-98b}
+\citation{lecun-98b}
 \citation{schaul-icml-13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}First-Order Optimization Algorithms}{25}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM\nobreakspace {}stands for ``classical momentum'', NAG\nobreakspace {}for ``Nesterov accelerated momentum'', and DH\nobreakspace {}for ``diagonal Hessian''.\relax }}{26}}
-\newlabel{fig:first_order_hierarchy}{{4.2}{26}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}First-Order Optimization Algorithms}{25}{subsection.4.3}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM\nobreakspace {}stands for ``classical momentum'', NAG\nobreakspace {}for ``Nesterov accelerated momentum'', and DH\nobreakspace {}for ``diagonal Hessian''.\relax }}{26}{figure.caption.11}}
+\newlabel{fig:first_order_hierarchy}{{4.2}{26}{Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM~stands for ``classical momentum'', NAG~for ``Nesterov accelerated momentum'', and DH~for ``diagonal Hessian''.\relax }{figure.caption.11}{}}
+\citation{krizhevsky2012imagenet}
+\citation{schaul-icml-13}
 \citation{schaul-icml-13}
 \citation{schaul-icml-13}
 \citation{hinton-nnml-2014}
 \citation{hinton-nnml-2014}
+\citation{hinton-nnml-2014,climin-rmsprop}
+\citation{hinton-nnml-2014}
+\citation{zeiler2012adadelta}
+\citation{zeiler2012adadelta}
 \bibstyle{plainnat}
 \bibdata{references/main,references/lecun}
 \bibcite{becker-lecun-89}{{1}{1989}{{Becker and LeCun}}{{}}}
 \bibcite{ml_bishop}{{2}{2006}{{Bishop}}{{}}}
 \bibcite{bousquet2008tradeoffs}{{3}{2008}{{Bousquet and Bottou}}{{}}}
-\bibcite{glorot2010understanding}{{4}{2010}{{Glorot and Bengio}}{{}}}
-\bibcite{hinton-nnml-2014}{{5}{2014}{{Hinton et~al.}}{{Hinton, Srivastava, and Swersky}}}
-\bibcite{krizhevsky2012imagenet}{{6}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
-\bibcite{lecun-98b}{{7}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
-\bibcite{lecun-01a}{{8}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
-\bibcite{martens2010deep}{{9}{2010}{{Martens}}{{}}}
-\bibcite{ml_mohri}{{10}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
-\bibcite{nair2010rectified}{{11}{2010}{{Nair and Hinton}}{{}}}
-\bibcite{ngiam2011optimization}{{12}{2011}{{Ngiam et~al.}}{{Ngiam, Coates, Lahiri, Prochnow, Le, and Ng}}}
-\bibcite{schaul-icml-13}{{13}{2013}{{Schaul et~al.}}{{Schaul, Zhang, and LeCun}}}
-\bibcite{sutskever2013importance}{{14}{2013}{{Sutskever et~al.}}{{Sutskever, Martens, Dahl, and Hinton}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Second-Order Optimization Algorithms}{28}}
-\bibcite{zeiler2014visualizing}{{15}{2014}{{Zeiler and Fergus}}{{}}}
+\bibcite{climin-rmsprop}{{4}{2013}{{climin developers}}{{}}}
+\bibcite{glorot2010understanding}{{5}{2010}{{Glorot and Bengio}}{{}}}
+\bibcite{hinton-nnml-2014}{{6}{2014}{{Hinton et~al.}}{{Hinton, Srivastava, and Swersky}}}
+\bibcite{krizhevsky2012imagenet}{{7}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
+\bibcite{lecun-98b}{{8}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
+\bibcite{lecun-01a}{{9}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
+\bibcite{martens2010deep}{{10}{2010}{{Martens}}{{}}}
+\bibcite{ml_mohri}{{11}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Second-Order Optimization Algorithms}{29}{subsection.4.4}}
+\bibcite{nair2010rectified}{{12}{2010}{{Nair and Hinton}}{{}}}
+\bibcite{ngiam2011optimization}{{13}{2011}{{Ngiam et~al.}}{{Ngiam, Coates, Lahiri, Prochnow, Le, and Ng}}}
+\bibcite{schaul-icml-13}{{14}{2013}{{Schaul et~al.}}{{Schaul, Zhang, and LeCun}}}
+\bibcite{sutskever2013importance}{{15}{2013}{{Sutskever et~al.}}{{Sutskever, Martens, Dahl, and Hinton}}}
+\bibcite{zeiler2012adadelta}{{16}{2012}{{Zeiler}}{{}}}
+\bibcite{zeiler2014visualizing}{{17}{2014}{{Zeiler and Fergus}}{{}}}

@@ -1,4 +1,4 @@
-\begin{thebibliography}{15}
+\begin{thebibliography}{17}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -25,6 +25,14 @@ Olivier Bousquet and L{\'e}on Bottou.
 \newblock The tradeoffs of large scale learning.
 \newblock In \emph{Advances in neural information processing systems}, pages
   161--168, 2008.
+
+\bibitem[climin developers(2013)]{climin-rmsprop}
+climin developers.
+\newblock rmsprop.
+\newblock
+  \url{http://climin.readthedocs.org/en/latest/rmsprop.html\#tieleman2012rmsprop},
+  2013.
+\newblock Accessed: 2014-11-15.
 
 \bibitem[Glorot and Bengio(2010)]{glorot2010understanding}
 Xavier Glorot and Yoshua Bengio.
@@ -95,6 +103,11 @@ Ilya Sutskever, James Martens, George Dahl, and Geoffrey Hinton.
 \newblock On the importance of initialization and momentum in deep learning.
 \newblock In \emph{Proceedings of the 30th International Conference on Machine
   Learning (ICML-13)}, pages 1139--1147, 2013.
+
+\bibitem[Zeiler(2012)]{zeiler2012adadelta}
+Matthew~D Zeiler.
+\newblock Adadelta: An adaptive learning rate method.
+\newblock \emph{arXiv preprint arXiv:1212.5701}, 2012.
 
 \bibitem[Zeiler and Fergus(2014)]{zeiler2014visualizing}
 Matthew~D Zeiler and Rob Fergus.

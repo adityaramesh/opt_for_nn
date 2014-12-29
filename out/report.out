@@ -1,0 +1,19 @@
+\BOOKMARK [1][-]{section.1}{Introduction to Neural Networks}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Representation}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{Activation Functions and Feature Learning}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Classification and Regression}{section.1}% 4
+\BOOKMARK [2][-]{subsection.1.4}{The Loss Function}{section.1}% 5
+\BOOKMARK [2][-]{subsection.1.5}{Data Preprocessing and Initialization}{section.1}% 6
+\BOOKMARK [2][-]{subsection.1.6}{Computing Derivatives}{section.1}% 7
+\BOOKMARK [2][-]{subsection.1.7}{Convolutional Networks}{section.1}% 8
+\BOOKMARK [1][-]{section.2}{Concepts from Statistical Learning Theory}{}% 9
+\BOOKMARK [2][-]{subsection.2.1}{Generalization and PAC-learning}{section.2}% 10
+\BOOKMARK [2][-]{subsection.2.2}{ERM vs SRM}{section.2}% 11
+\BOOKMARK [1][-]{section.3}{Characterizing Optimization Algorithms}{}% 12
+\BOOKMARK [2][-]{subsection.3.1}{Goals of Optimization}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.2}{Analysis of Optimization Algorithms}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{Optimization Algorithms for Neural Networks}{}% 15
+\BOOKMARK [2][-]{subsection.4.1}{Challenges of Large-Scale Optimization}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.2}{Momentum}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.3}{First-Order Optimization Algorithms}{section.4}% 18
+\BOOKMARK [2][-]{subsection.4.4}{Second-Order Optimization Algorithms}{section.4}% 19

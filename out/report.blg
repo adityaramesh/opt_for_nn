@@ -5,45 +5,45 @@ The style file: plainnat.bst
 Database file #1: references/main.bib
 Database file #2: references/lecun.bib
 Warning--empty note in hinton-nnml-2014
-You've used 15 entries,
+You've used 17 entries,
             2773 wiz_defined-function locations,
-            681 strings with 7469 characters,
-and the built_in function-call counts, 8344 in all, are:
-= -- 761
-> -- 438
-< -- 17
-+ -- 146
-- -- 131
-* -- 598
-:= -- 1188
-add.period$ -- 51
-call.type$ -- 15
-change.case$ -- 85
-chr.to.int$ -- 15
-cite$ -- 31
-duplicate$ -- 430
-empty$ -- 705
-format.name$ -- 156
-if$ -- 1857
+            690 strings with 7753 characters,
+and the built_in function-call counts, 8945 in all, are:
+= -- 815
+> -- 458
+< -- 19
++ -- 154
+- -- 137
+* -- 626
+:= -- 1284
+add.period$ -- 58
+call.type$ -- 17
+change.case$ -- 93
+chr.to.int$ -- 17
+cite$ -- 35
+duplicate$ -- 464
+empty$ -- 767
+format.name$ -- 164
+if$ -- 1985
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 16
-newline$ -- 85
-num.names$ -- 64
-pop$ -- 210
+missing$ -- 17
+newline$ -- 96
+num.names$ -- 72
+pop$ -- 231
 preamble$ -- 1
-purify$ -- 72
+purify$ -- 78
 quote$ -- 0
-skip$ -- 357
+skip$ -- 382
 stack$ -- 0
-substring$ -- 350
-swap$ -- 116
+substring$ -- 354
+swap$ -- 118
 text.length$ -- 10
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 155
+type$ -- 177
 warning$ -- 1
-while$ -- 75
+while$ -- 81
 width$ -- 0
-write$ -- 206
+write$ -- 232
 (There was 1 warning)

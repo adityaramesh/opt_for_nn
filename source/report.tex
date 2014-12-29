@@ -64,6 +64,7 @@
 
 % Bibliography management.
 \usepackage{natbib}
+\usepackage{hyperref}
 
 % Basic math and figure configuration.
 \usepackage{array}
@@ -1614,8 +1615,8 @@ Define
 \]
 The~CM update rule is given by
 \begin{align*}
-	v_{k + 1} &\coloneqq \mu v_k - \eta g_k \\
-	\theta_{k + 1} &\coloneqq \theta_k + v_{k + 1},
+	s_{k + 1} &\coloneqq \mu s_k - \eta g_k \\
+	\theta_{k + 1} &\coloneqq \theta_k + s_{k + 1},
 \end{align*}
 where~$\mu \in [0, 1]$ is the \emph{momentum} parameter~(see
 Figure~\ref{fig:cm_update}). The idea behind momentum is to ``smooth out'' the
@@ -1635,28 +1636,28 @@ that point~(see Figure~\ref{fig:nag_update}). This subtle change makes a large
 difference in practice. The NAG update rule can be written
 as~\citep{sutskever2013importance}:
 \begin{align*}
-	\bar{\theta}_{k + 1} &\coloneqq \theta_k + \mu v_k \\
-	v_{k + 1} &\coloneqq \mu v_k - \eta \bar{g}_{k + 1} \\
-	\theta_{k + 1} &\coloneqq \theta_k + v_{k + 1}.
+	\hat{\theta}_{k + 1} &\coloneqq \theta_k + \mu s_k \\
+	s_{k + 1}            &\coloneqq \mu s_k - \eta \hat{g}_{k + 1} \\
+	\theta_{k + 1}       &\coloneqq \theta_k + s_{k + 1}.
 \end{align*}
 To see why NAG can be more effective than CM, suppose that~$E$ briefly decreases
-along~$v_k$, but soon begins to rapidly increase. Subtracting $-\eta \bar{g}_k$
-from the momentum term helps us ``steer away'' from this poor update, whereas
-subtracting $-\eta g_k$ does not~(see Figure~\ref{fig:momentum_updates}). The
-correction applied by CM will only occur at the next iteration, by which time we
-will have already moved along this bad update. In a deterministic setting for a
-smooth, convex function, NAG achieves a global convergence rate of~$O(1 / k^2)$,
-compared to convergence rate of~$O(1 / k)$ for steepest
-descent~\citep{sutskever2013importance}.
+along~$s_k$, but soon begins to rapidly increase. Subtracting $-\eta \hat{g}_{k
++ 1}$ from the momentum term helps us ``steer away'' from this poor update,
+whereas subtracting $-\eta g_k$ does not~(see
+Figure~\ref{fig:momentum_updates}). The correction applied by CM will only occur
+at the next iteration, by which time we will have already moved along this bad
+update. In a deterministic setting for a smooth, convex function, NAG achieves a
+global convergence rate of~$O(1 / k^2)$, compared to convergence rate of~$O(1 /
+k)$ for steepest descent~\citep{sutskever2013importance}.
 
 Figure~\ref{fig:momentum_updates} suggests that there is a relationship between
-CM and~NAG. Suppose that~$v_k$ is an eigenvector of a quadratic function with
+CM and~NAG. Suppose that~$s_k$ is an eigenvector of a quadratic function with
 positive-definite Hessian matrix $H$. Then the NAG~update is equivalent to a~CM
 update with momentum parameter
 \[
 	\mu_{\text{CM}} = \mu_{\text{NAG}} (1 - \eta \lambda),
 \]
-where~$\lambda$ is the eigenvalue of~$H$ corresponding to~$v_k$ and~$\eta \in
+where~$\lambda$ is the eigenvalue of~$H$ corresponding to~$s_k$ and~$\eta \in
 [0, 1 / \lambda]$~\citep{sutskever2013importance}. If~$\eta \approx 0$,
 then~$\eta \lambda \approx 0$ for all~$\lambda \in \spectrum(H)$, and the
 NAG~update is approximately the same as the CM~update. On the other hand,
@@ -1698,49 +1699,58 @@ Hessian''.\label{fig:first_order_hierarchy}}
 \end{figure}
 
 All of the successful first-order optimization algorithms for neural networks
-make use of~CM or~NAG~(see \ref{fig:first_order_hierarchy}). The first algorithm
-that we present is based partly on a diagonal approximation to the
-Levenberg-Marquardt algorithm~\citet{becker-lecun-89}, which leads to the update
-rule
+make use momentum in some form~(see \ref{fig:first_order_hierarchy}). The first
+algorithm that we present is called DH~(for ``diagonal Hessian''), and is based
+on a diagonal approximation to the Levenberg-Marquardt
+algorithm~\citep{lecun-98b}.  In the spirit of~CM, DH~updates an exponentially
+decaying average~$\bar{h}_k \in \reals{n}$ of the diagonal of the Hessian
+matrix. We define the division and absolute value operations for vectors so that
+they are carried out elementwise.  The update rule for~DH is given by
 \begin{align*}
-	\theta_{k + 1} \coloneqq \theta_k - \frac{\eta}{\diag(H_k) + \epsilon} \;g_k.
+	\bar{h}_{k + 1} &\coloneqq (1 - \tau) \bar{h}_k + \tau |\text{diag}(H_k)| + \epsilon \\
+	\theta_{k + 1}  &\coloneqq \theta_k - \frac{\eta}{\bar{h}_{k + 1}} \;g_k,
 \end{align*}
-Here, $\epsilon \in \reals{+}$ is a constant chosen to improve the conditioning
-of the denominator.
+where the \emph{decay} parameter~$\tau \in [0, 1]$ controls the ``momentum'' in
+the running average, and~$\epsilon \in \reals{n}$ is a nonnegative constant
+vector chose to prevent the effective learning rate from growing too large.
+Using~$\diag(H_k)$ to scale the individual learning rates can outperform
+carefully annealed versions of~SGU that use global learning
+rates~\citep{lecun-98b}.
 
-The first algorithm is called ``variance-based stochastic gradient
-descent''~(vSGD), and is derived by optimizing the expected per-sample loss $e$
-based on a local quadratic model with diagonal Hessian
-matrix~\citep{schaul-icml-13}. Let~$e$ be the constant vector of ones, and
-let~$\odot$ denote the elementwise product operation. When we raise a vector to
-a power or divide two vectors, it is implied that the operation is carried out
-elementwise. Throughout the optimization process, we maintain exponentially
+The ``variance-based stochastic gradient descent''~(vSGD) also
+uses~$\diag(H_k)$, but incorporates several other features for added robustness.
+It is derived by optimizing the expected value of the per-sample loss based on a
+local quadratic model with diagonal Hessian matrix~\citep{schaul-icml-13}.
+Let~$e \in \reals{n}$ be the constant vector of ones, and let~$\odot$ denote the
+elementwise product operation. We define exponentiation for vectors so that the
+operation is carried out elementwise. The~vSGD algorithm maintains exponentially
 decaying averages of the gradient, squared gradient, and Hessian diagonal
-vectors (denoted by~$\bar{g}$, $\bar{v}$, and~$\bar{h}$, respectively). This is
-the link between vSGD and~CM. The aforementioned vectors are updated according
-to the rules
+vectors~$\bar{g}, \bar{v}, \bar{h} \in \reals{n}$. These vectors are updated
+according to the rules
 \begin{align*}
-	\bar{g}_{k + 1} &\coloneqq (e - \mu^{-1}) \odot \bar{g}_k + \mu^{-1} \odot g_k \\
-	\bar{v}_{k + 1} &\coloneqq (e - \mu^{-1}) \odot \bar{v}_k + \mu^{-1} \odot (g_k)^2 \\
-	\bar{h}_{k + 1} &\coloneqq (e - \mu^{-1}) \odot \bar{h}_k + \mu^{-1} \odot \diag(H_k).
+	\bar{g}_{k + 1} &\coloneqq (e - \tau^{-1}) \odot \bar{g}_k + \tau^{-1} \odot g_k \\
+	\bar{v}_{k + 1} &\coloneqq (e - \tau^{-1}) \odot \bar{v}_k + \tau^{-1} \odot (g_k)^2 \\
+	\bar{h}_{k + 1} &\coloneqq (e - \tau^{-1}) \odot \bar{h}_k + \tau^{-1} \odot \diag(H_k)
+		+ \epsilon,
 \end{align*}
-The learning rate $\eta$ and momentum parameter $\mu$ are also vectors, and are
-updated according to the rules
+where~$\epsilon \in \reals{n}$. The learning rate and decay parameters~$\eta,
+\tau \in \reals{n}$ are updated according to the rules
 \begin{align*}
-	\eta_{k + 1} &\coloneqq \frac{(\bar{g}_k)^2}{\bar{h}_k \odot \bar{v}_k}
-		= (\bar{h}_k)^{-1} \odot \frac{(\bar{g}_k)^2}{\bar{v}_k} \\
-	\mu_{k + 1}  &\coloneqq \left( e - \frac{(\bar{g}_k)^2}{\bar{v}_k} \right)
-		\odot \mu_k + 1.
+	\eta_{k + 1} &\coloneqq \frac{(\bar{g}_{k + 1})^2}
+		{\bar{h}_{k + 1} \odot \bar{v}_{k + 1}}
+	= (\bar{h}_{k + 1})^{-1} \odot
+		\frac{(\bar{g}_{k + 1})^2}{\bar{v}_{k + 1}} \\
+	\tau_{k + 1} &\coloneqq \left( e - \frac{(\bar{g}_{k + 1})^2}{\bar{v}_{k + 1}} \right)
+		\odot \tau_{k + 1} + 1.
 \end{align*}
-The factor~$(\bar{g}_k)^2 / \bar{v}_k$ in the update to~$\eta$ scales the
-learning rate to compensate for the vanishing gradient problem, while the
-factor~$(\bar{h}_k)^{-1}$ attempts to correct for pathological curvature. If
-a component of $\bar{h}_k$ is too small, we replace it by a fixed
-constant~$\epsilon \in \reals{+}$. The update to~$\mu$ is chosen such that the
-momentum increases when the step size decreases, and decreases when the step
-size increases. Lastly, the update to~$\theta$ is given by
+The factor~$(\bar{g}_{k + 1})^2 / \bar{v}_{k + 1}$ in the update to~$\eta$
+scales the learning rate to compensate for the vanishing gradient problem, while
+the factor~$(\bar{h}_{k + 1})^{-1}$ attempts to correct for pathological
+curvature. The update to~$\tau$ is chosen such that the momentum increases when
+the step size decreases, and decreases when the step size increases. Lastly, the
+update to~$\theta$ is given by
 \[
-	\theta_{k + 1} \coloneqq \theta_k - \eta_k \odot g_k.
+	\theta_{k + 1} \coloneqq \theta_k - \eta_{k + 1} \odot g_k.
 \]
 
 While the vSGD update rule is complex, it is designed to work effectively with a
@@ -1749,11 +1759,12 @@ ten or a hundred hyperparameters, and were often sensitive to the values chosen
 for them. Additionally, first-order methods often require careful annealing of
 the learning rate to yield acceptable results, or sometimes to converge at
 all~\citep{krizhevsky2012imagenet}. The vSGD algorithm only has a single
-parameter that needs to be set, and the learning rate automatically converges to
-zero as the value of the loss function becomes optimal. If the objective
-function is nonstationary and the data changes, vSGD will ramp up the learning
-rate in response~\citep{schaul-2013-icml}. This makes vSGD suitable for online
-learning problems.
+parameter that needs to be set~(hence the name of the paper ``No More Pesky
+Learning Rates''), and the learning rate automatically converges to zero as the
+value of the loss function becomes optimal. If the objective function is
+nonstationary and the data changes, vSGD will ramp up the learning rate in
+response~\citep{schaul-icml-13}. This makes vSGD suitable for online learning
+problems.
 
 The vSGD algorithm works best when initialized with a \emph{slow start}
 heuristic~\citep{schaul-icml-13}. By this, we mean that the parameter updates
@@ -1779,9 +1790,10 @@ where~$\eta_1 = \eta_2 = e$, and
 \[
 	(\eta_{k + 1})_i \coloneqq
 	\begin{cases} 
-	\max(\eta_{\text{max}}, \gamma_e \eta_k) &
+	\max(\eta_{\text{max}}, \gamma_e (\eta_k)_i) &
 		\text{if $\sign((g_{k - 1})_i) = \sign((g_k)_i)$} \\
-	\min(\eta_{\text{min}}, \gamma_c \eta_k) & \text{otherwise.}
+	\min(\eta_{\text{min}}, \gamma_c (\eta_k)_i) &
+		\text{otherwise.}
 	\end{cases}
 \]
 The constants $\gamma_c, \gamma_e \in \reals{+}$ are the \emph{contraction} and
@@ -1794,7 +1806,7 @@ are~$\eta_{\text{min}} = 10^{-6}$ and~$\eta_{\text{max}} = 50$.
 The RPROP algorithm's strategy of only using the signs of the gradient vector is
 also its limitation: RPROP cannot be used with mini-batches. The signs of the
 gradient vector are only meaningful if the gradient over the current batch is a
-good approximation of the true gradient of the the loss function $E$, which is
+good approximation of the true gradient of the the loss function~$E$, which is
 evaluated over the entire training sample. To see how things can go wrong,
 suppose that RPROP were used as a stochastic algorithm. If the gradient of a
 parameter~$\theta_i$ is~$+0.1$ for nine instances and~$-0.9$ for one instance,
@@ -1803,23 +1815,61 @@ increase~$\theta_i$ nine times, and only decrease~$\theta_i$
 once~\citep{hinton-nnml-2014}.
 
 The RMSPROP algorithm addresses this deficiency by scaling each component of the
-gradient by its \emph{root mean square} of its exponentially decaying average.
+gradient by the \emph{root mean square} of its exponentially decaying average.
 This leads to the update rule
 \begin{align*}
-	
+	\bar{v}_{k + 1} &\coloneqq (1 - \tau) \bar{v}_k + \tau (g_k)^2 + \epsilon \\
+	\theta_{k + 1}  &\coloneqq \theta_k - \frac{\eta}{\sqrt{\bar{v}_{k + 1}}} \; g_k,
+\end{align*}
+where~$\epsilon \in \reals{n}$ and~$\tau, \eta \in \reals{+}$ such that~$\tau
+\in [0, 1]$. The square root operation is performed elementwise. Incorporating
+NAG into RMSPROP can sometimes be beneficial~\citep{hinton-nnml-2014,
+climin-rmsprop}. This leads to the update rule
+\begin{align*}
+	\bar{v}_{k + 1}      &\coloneqq (1 - \tau) \bar{v}_k + \tau (g_k)^2 + \epsilon \\
+	\hat{\theta}_{k + 1} &\coloneqq \theta_k + \mu s_k \\
+	s_{k + 1}            &\coloneqq \frac{\eta}{\sqrt{\bar{v}_k}} \; \hat{g}_{k + 1} \\
+	\theta_{k + 1}       &\coloneqq \theta_k + s_{k + 1}.
+\end{align*}
+For reasons that are currently unknown, the use of momentum with RMSPROP does
+not help as much as it usually does for other first-order
+algorithms~\citep{hinton-nnml-2014}.
+
+The ADADELTA algorithm~\citep{zeiler2012adadelta} is a modification of the
+ADAGRAD algorithm based on RMSPROP, although Zeiler did not seem to know of
+RMSPROP by that name at the time of publication. The ADAGRAD algorithm uses the
+update rule
+\begin{align*}
+	\bar{v}_{k + 1} &\coloneqq \bar{v}_k + (g_k)^2 + \epsilon \\
+	\theta_{k + 1}  &\coloneqq \theta_k - \frac{\eta}{\sqrt{\bar{v}_{k + 1}}} \; g_k,
+\end{align*}
+where~$\epsilon \in \reals{n}$ and~$\eta \in \reals{+}$. This update rule is the
+same as that of RMSPROP, except that the average of the gradient vector is not
+exponentially decaying. Consequently, the learning rates can only decrease over
+time. If~$\eta$ is chosen too small, then progress will be painfully slow.
+ADADELTA makes the running average of~$(g_k)^2$ exponentially decreasing, and
+also multiplies the step by the root mean square of the average of the past
+updates~(see \citet{zeiler2012adadelta} for the motivation behind why this is
+done). These modifications lead to the update rule
+\begin{align*}
+	\bar{v}_{k + 1} &\coloneqq (1 - \tau) \bar{v}_k + \tau (g_k)^2 + \epsilon \\
+	s_{k + 1}       &\coloneqq \sqrt{\frac{\bar{s}_k}{\bar{v}_{k + 1}}} \; g_k \\
+	\bar{s}_{k + 1} &\coloneqq (1 - \tau) \bar{s}_k + \tau (s_{k + 1})^2 + \epsilon \\
+	\theta_{k + 1}  &\coloneqq \theta_k - s_{k + 1}.
 \end{align*}
 
-%The ADADELTA algorithm~\citep{zeiler2012adadelta} is an improvement to the
-%ADAGRAD algorithm, which uses the update rule
-%\begin{align*}
-%	\bar{g}_{k + 1} &\coloneqq \bar{g}_k + (g_k)^2 \\
-%	\theta_{k + 1}  &\coloneqq \theta_k - \frac{\eta}{\sqrt{\bar{g}_{k + 1}}} g_k,
-%\end{align*}
-%where the square root operation is performed elementwise.
+The ADADELTA algorithm possesses many of the same properties as vSGD. The
+numerator~$s_k$ of the step plays the same role as momentum, while the
+denominator~$\bar{v}_{k + 1}$ scales the learning rates to compensate for the
+vanishing gradient problem. Since the value~$s_k$ lags behind by an iteration,
+ADADELTA is robust to sudden changes in the gradient, much in the same way
+as~NAG. As the value of the loss function approaches its optimal value, 
 
 % TODO: line search is unexplored aspect.
 
 \subsection{Second-Order Optimization Algorithms}
+
+TODO
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
