@@ -892,11 +892,11 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
   let s:wipebuf = bufnr('%')
 endif
 set shortmess=aoO
-badd +864 source/report.tex
+badd +387 source/report.tex
 badd +9 ~/education/fall_2014/numerical_optimization/submissions/ps_6/src/report/ps_6.tex
 badd +26 source/scratch.tex
 badd +81 references/main.bib
-badd +1975 references/lecun.bib
+badd +1 references/lecun.bib
 argglobal
 silent! argdel *
 argadd ~/education/fall_2014/numerical_optimization/project/source/report.tex
@@ -1131,11 +1131,11 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1535 - ((25 * winheight(0) + 26) / 52)
+let s:l = 1767 - ((43 * winheight(0) + 26) / 52)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1535
+1767
 normal! 0
 wincmd w
 2wincmd w

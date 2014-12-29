@@ -1,9 +1,17 @@
-\begin{thebibliography}{12}
+\begin{thebibliography}{15}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Becker and LeCun(1989)]{becker-lecun-89}
+S.~Becker and Y.~LeCun.
+\newblock Improving the convergence of back-propagation learning with
+  second-order methods.
+\newblock In D.~Touretzky, G.~Hinton, and T.~Sejnowski, editors, \emph{Proc. of
+  the 1988 Connectionist Models Summer School}, pages 29--37, San Mateo, 1989.
+  Morgan Kaufman.
 
 \bibitem[Bishop(2006)]{ml_bishop}
 Christopher~M. Bishop.
@@ -24,6 +32,11 @@ Xavier Glorot and Yoshua Bengio.
   networks.
 \newblock In \emph{International Conference on Artificial Intelligence and
   Statistics}, pages 249--256, 2010.
+
+\bibitem[Hinton et~al.(2014)Hinton, Srivastava, and Swersky]{hinton-nnml-2014}
+Geoff Hinton, Nitish Srivastava, and Kevin Swersky.
+\newblock Neural networks for machine learning.
+\newblock 2014.
 
 \bibitem[Krizhevsky et~al.(2012)Krizhevsky, Sutskever, and
   Hinton]{krizhevsky2012imagenet}
@@ -69,6 +82,12 @@ Jiquan Ngiam, Adam Coates, Ahbik Lahiri, Bobby Prochnow, Quoc~V Le, and
 \newblock On optimization methods for deep learning.
 \newblock In \emph{Proceedings of the 28th International Conference on Machine
   Learning (ICML-11)}, pages 265--272, 2011.
+
+\bibitem[Schaul et~al.(2013)Schaul, Zhang, and LeCun]{schaul-icml-13}
+Tom Schaul, Sixin Zhang, and Yann LeCun.
+\newblock No more pesky learning rates.
+\newblock In \emph{Proc. International Conference on Machine learning
+  (ICML'13)}, 2013.
 
 \bibitem[Sutskever et~al.(2013)Sutskever, Martens, Dahl, and
   Hinton]{sutskever2013importance}

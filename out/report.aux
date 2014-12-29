@@ -6,7 +6,7 @@
 \newlabel{sub@fig:simple_dag}{{a}{2}}
 \newlabel{fig:simple_layered_dag}{{1.1b}{2}}
 \newlabel{sub@fig:simple_layered_dag}{{b}{2}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces In\nobreakspace {}1.1a\hbox {}, we see a DAG, and in\nobreakspace {}1.1b\hbox {}, the representation of the DAG as a layered graph. Notice that the edges $A \rightarrow D$ and $C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }}{2}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.1}{\ignorespaces In\nobreakspace {}1.1a\hbox {}, we see a DAG, and in\nobreakspace {}1.1b\hbox {}, the representation of the\nobreakspace {}DAG as a layered graph. Notice that the edges\nobreakspace {}$A \rightarrow D$ and\nobreakspace {}$C \rightarrow D$ are manifested as skip connections in the layered graph.\relax }}{2}}
 \newlabel{fig:layered_graph_drawing}{{1.1}{2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1.2}{\ignorespaces A small, two-layer neural network. The pair $(k, j)$ is used to denote the $j$th unit in layer $k$.\relax }}{3}}
 \newlabel{fig:two_layer_nn}{{1.2}{3}}
@@ -14,7 +14,7 @@
 \newlabel{eq:activation}{{1.2}{3}}
 \newlabel{eq:output}{{1.3}{3}}
 \citation{lecun-98b}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of $(k, 1)$, a unit with three inputs from $L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation $a_{k1}$ is computed by forming a linear combination of the outputs of the units in $\operatorname  {Pa}(k, 1)$ with the corresponding weights to $(k, j)$, and adding the bias $b_{k1}$. Then, the output $z_{k1}$ is determined by applying the activation function $u_{k1}$ to $a_{k1}$.\relax }}{4}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.3}{\ignorespaces An illustration how the output of\nobreakspace {}$(k, 1)$, a unit with three inputs from\nobreakspace {}$L_{k - 1}$, is computed. In this case, $\operatorname  {Pa}(k, 1) = \{(k - 1, 1), (k - 1, 2), (k - 1, 3)\}$. First, the activation\nobreakspace {}$a_{k1}$ is computed by forming a linear combination of the outputs of the units in\nobreakspace {}$\operatorname  {Pa}(k, 1)$ with the corresponding weights to\nobreakspace {}$(k, j)$, and adding the bias\nobreakspace {}$b_{k1}$. Then, the output\nobreakspace {}$z_{k1}$ is determined by applying the activation function\nobreakspace {}$u_{k1}$ to\nobreakspace {}$a_{k1}$.\relax }}{4}}
 \newlabel{fig:unit_output}{{1.3}{4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.2}Activation Functions and Feature Learning}{4}}
 \newlabel{sec:act_func_and_feature_learning}{{1.2}{4}}
@@ -40,7 +40,7 @@
 \newlabel{eq:normalized_rbf}{{1.5}{8}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.3}Classification and Regression}{8}}
 \citation{ml_bishop}
-\@writefile{lof}{\contentsline {figure}{\numberline {1.6}{\ignorespaces A visualization of how the $k$th instance $(x_k, y_k)$ is fed into the two-layer neural network from Figure\nobreakspace {}1.2\hbox {}.\relax }}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1.6}{\ignorespaces A visualization of how the $k$th instance\nobreakspace {}$(x_k, y_k)$ is fed into the two-layer neural network from Figure\nobreakspace {}1.2\hbox {}.\relax }}{9}}
 \newlabel{fig:nn_with_loss}{{1.6}{9}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {1.4}The Loss Function}{9}}
 \newlabel{eq:likelihood_function}{{1.4}{9}}
@@ -85,7 +85,7 @@
 \newlabel{eq:tol_eq}{{3.1}{17}}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
-\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The effects of increasing $\operatorname  {capacity}(F)$, $s$, and $\rho $ on the three errors and computing time. The symbol $\delimiter "326C33F $ indicates that either an increase or a decrease is possible.\relax }}{18}}
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces The effects of increasing $\operatorname  {capacity}(F)$, $s$, and\nobreakspace {}$\rho $ on the three errors and computing time. The symbol $\delimiter "326C33F $ indicates that either an increase or a decrease is possible.\relax }}{18}}
 \newlabel{tab:metaopt_variables}{{3.1}{18}}
 \newlabel{eq:excess_error}{{3.3}{18}}
 \newlabel{eq:metaopt_program}{{3.4}{18}}
@@ -115,21 +115,45 @@
 \citation{lecun-98b}
 \citation{martens2010deep,ngiam2011optimization,sutskever2013importance}
 \citation{sutskever2013importance}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}First-Order Optimization Algorithms}{23}}
+\citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Momentum}{23}}
+\citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\newlabel{fig:cm_update}{{4.1a}{24}}
+\newlabel{sub@fig:cm_update}{{a}{24}}
+\newlabel{fig:nag_update}{{4.1b}{24}}
+\newlabel{sub@fig:nag_update}{{b}{24}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Illustration of the two momentum-based update rules (adapted from\nobreakspace {}\citet  {sutskever2013importance}).\relax }}{24}}
+\newlabel{fig:momentum_updates}{{4.1}{24}}
+\citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\citation{becker-lecun-89}
+\citation{schaul-icml-13}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}First-Order Optimization Algorithms}{25}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM\nobreakspace {}stands for ``classical momentum'', NAG\nobreakspace {}for ``Nesterov accelerated momentum'', and DH\nobreakspace {}for ``diagonal Hessian''.\relax }}{26}}
+\newlabel{fig:first_order_hierarchy}{{4.2}{26}}
+\citation{schaul-icml-13}
+\citation{schaul-icml-13}
+\citation{hinton-nnml-2014}
+\citation{hinton-nnml-2014}
 \bibstyle{plainnat}
 \bibdata{references/main,references/lecun}
-\bibcite{ml_bishop}{{1}{2006}{{Bishop}}{{}}}
-\bibcite{bousquet2008tradeoffs}{{2}{2008}{{Bousquet and Bottou}}{{}}}
-\bibcite{glorot2010understanding}{{3}{2010}{{Glorot and Bengio}}{{}}}
-\bibcite{krizhevsky2012imagenet}{{4}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
-\bibcite{lecun-98b}{{5}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block uses or is based on the technique or algorithm represented by the second. Here, CM\nobreakspace {}stands for ``classical momentum'', NAG\nobreakspace {}for ``Nesterov accelerated momentum'', and DH\nobreakspace {}for ``diagonal Hessian''.\relax }}{24}}
-\newlabel{fig:first_order_hierarchy}{{4.1}{24}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Second-Order Optimization Algorithms}{24}}
-\bibcite{lecun-01a}{{6}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
-\bibcite{martens2010deep}{{7}{2010}{{Martens}}{{}}}
-\bibcite{ml_mohri}{{8}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
-\bibcite{nair2010rectified}{{9}{2010}{{Nair and Hinton}}{{}}}
-\bibcite{ngiam2011optimization}{{10}{2011}{{Ngiam et~al.}}{{Ngiam, Coates, Lahiri, Prochnow, Le, and Ng}}}
-\bibcite{sutskever2013importance}{{11}{2013}{{Sutskever et~al.}}{{Sutskever, Martens, Dahl, and Hinton}}}
-\bibcite{zeiler2014visualizing}{{12}{2014}{{Zeiler and Fergus}}{{}}}
+\bibcite{becker-lecun-89}{{1}{1989}{{Becker and LeCun}}{{}}}
+\bibcite{ml_bishop}{{2}{2006}{{Bishop}}{{}}}
+\bibcite{bousquet2008tradeoffs}{{3}{2008}{{Bousquet and Bottou}}{{}}}
+\bibcite{glorot2010understanding}{{4}{2010}{{Glorot and Bengio}}{{}}}
+\bibcite{hinton-nnml-2014}{{5}{2014}{{Hinton et~al.}}{{Hinton, Srivastava, and Swersky}}}
+\bibcite{krizhevsky2012imagenet}{{6}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
+\bibcite{lecun-98b}{{7}{1998}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
+\bibcite{lecun-01a}{{8}{2001}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
+\bibcite{martens2010deep}{{9}{2010}{{Martens}}{{}}}
+\bibcite{ml_mohri}{{10}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
+\bibcite{nair2010rectified}{{11}{2010}{{Nair and Hinton}}{{}}}
+\bibcite{ngiam2011optimization}{{12}{2011}{{Ngiam et~al.}}{{Ngiam, Coates, Lahiri, Prochnow, Le, and Ng}}}
+\bibcite{schaul-icml-13}{{13}{2013}{{Schaul et~al.}}{{Schaul, Zhang, and LeCun}}}
+\bibcite{sutskever2013importance}{{14}{2013}{{Sutskever et~al.}}{{Sutskever, Martens, Dahl, and Hinton}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Second-Order Optimization Algorithms}{28}}
+\bibcite{zeiler2014visualizing}{{15}{2014}{{Zeiler and Fergus}}{{}}}

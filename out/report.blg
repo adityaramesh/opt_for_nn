@@ -4,44 +4,46 @@ The top-level auxiliary file: out/report.aux
 The style file: plainnat.bst
 Database file #1: references/main.bib
 Database file #2: references/lecun.bib
-You've used 12 entries,
+Warning--empty note in hinton-nnml-2014
+You've used 15 entries,
             2773 wiz_defined-function locations,
-            663 strings with 6932 characters,
-and the built_in function-call counts, 6939 in all, are:
-= -- 640
-> -- 346
-< -- 15
-+ -- 116
-- -- 104
-* -- 487
-:= -- 970
-add.period$ -- 41
-call.type$ -- 12
-change.case$ -- 68
-chr.to.int$ -- 12
-cite$ -- 24
-duplicate$ -- 362
-empty$ -- 595
-format.name$ -- 124
-if$ -- 1557
+            681 strings with 7469 characters,
+and the built_in function-call counts, 8344 in all, are:
+= -- 761
+> -- 438
+< -- 17
++ -- 146
+- -- 131
+* -- 598
+:= -- 1188
+add.period$ -- 51
+call.type$ -- 15
+change.case$ -- 85
+chr.to.int$ -- 15
+cite$ -- 31
+duplicate$ -- 430
+empty$ -- 705
+format.name$ -- 156
+if$ -- 1857
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 14
-newline$ -- 70
-num.names$ -- 50
-pop$ -- 174
+missing$ -- 16
+newline$ -- 85
+num.names$ -- 64
+pop$ -- 210
 preamble$ -- 1
-purify$ -- 58
+purify$ -- 72
 quote$ -- 0
-skip$ -- 305
+skip$ -- 357
 stack$ -- 0
-substring$ -- 324
-swap$ -- 106
-text.length$ -- 9
+substring$ -- 350
+swap$ -- 116
+text.length$ -- 10
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 122
-warning$ -- 0
-while$ -- 63
+type$ -- 155
+warning$ -- 1
+while$ -- 75
 width$ -- 0
-write$ -- 168
+write$ -- 206
+(There was 1 warning)
