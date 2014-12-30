@@ -19,26 +19,6 @@
 % underlying concepts are very simple.
 % - TODO: mention some exciting applications of neural networks in the
 % introduction/abstract?
-% - TODO: ensure that the paper flows smoothly from beginning to end and has a
-% solid structure. Take out material that isn't central to the ideas we are
-% trying to discuss.
-% - TODO: Change title.
-%
-% 	- First-order methods.
-% 		- Stochastic gradient update (SGU).
-% 		- Refer to this paper for accelerated first-order methods:
-% 		https://www.cs.cmu.edu/~ggordon/10725-F12/slides/09-acceleration.pdf 
-% 		- SGU + Nesterov momentum.
-% 		- Nestrov accelerated gradient
-% 		- Adagrad.
-% 		- Adadelta.
-% 		- Rmsprop.
-% 		- vSGD.
-% 		- Effect of line search.
-% 	- Second-order methods.
-% 	  	- L-BFGS.
-% 	  	- Levenberg-Marquardt.
-% 	  	- Conjugate gradient.
 %
 % - Experiments.
 % 	- How images are mapped to the input layer of CNNs.
@@ -1552,8 +1532,9 @@ the Hessian matrix, especially when second-order information is not used. The
 problem is in fact much more serious than this. Suppose that each weight and
 bias in the network is given its own learning rate. By viewing the full batch
 gradient update rule as a discrete time dynamical system, it can be shown that
-the optimal learning rate for the $i$th parameter scales the corresponding
-eigenvalue of the Hessian matrix to unity~\citep{lecun-98b}. In other words,
+the optimal learning rate for the $i$th parameter $\theta_i$ scales the
+corresponding eigenvalue of the Hessian matrix to unity~\citep{lecun-98b}. That
+is, the optimal value of the learning rate for $\theta_i$ is given by
 \[
 	\eta_i^\star \coloneqq \frac{r}{\lambda_i},
 \]
@@ -1607,12 +1588,14 @@ convex optimization theory~\citep{sutskever2013importance}. Much of this work
 has involved the analysis of classical momentum~(CM) and Nesterov accelerated
 gradient~(NAG). For the purposes of our discussion, let~$E$ denote the loss
 function, $\theta$~the parameters of the model, and~$k$ the current iteration.
-Define
+The value of~$\theta$ at convergence is denoted by~$\theta^\star$. Lastly, we
+define
 \[
 	g_k \coloneqq (\nabla_\theta E)(\theta_k)
 	\quad\text{and}\quad
 	H_k \coloneqq (\nabla^2_\theta E)(\theta_k).
 \]
+
 The~CM update rule is given by
 \begin{align*}
 	s_{k + 1} &\coloneqq \mu s_k - \eta g_k \\
@@ -1624,7 +1607,7 @@ highly oscillatory path of stochastic updates using an exponentially-decaying
 average of past gradients. This dampens the wild oscillations that are
 characteristic of the unstable nature of SGU~algorithms. It also amplifies the
 gradient along directions of low curvature. In a deterministic setting, CM
-requires~$\sqrt{\kappa}$ times fewer iterations than steepest descent to reach a
+requires $\sqrt{\kappa}$~times fewer iterations than steepest descent to reach a
 solution of accuracy~$\rho$, where~$\kappa$ is defined as
 in~Table~\ref{tab:asymptotic_rates}~\citep{sutskever2013importance}.  Hence, CM
 reduces the vulnerability of first-order algorithms to ill-conditioning of the
@@ -1655,7 +1638,7 @@ CM and~NAG. Suppose that~$s_k$ is an eigenvector of a quadratic function with
 positive-definite Hessian matrix $H$. Then the NAG~update is equivalent to a~CM
 update with momentum parameter
 \[
-	\mu_{\text{CM}} = \mu_{\text{NAG}} (1 - \eta \lambda),
+	\mu_{\text{CM}} \coloneqq \mu_{\text{NAG}} (1 - \eta \lambda),
 \]
 where~$\lambda$ is the eigenvalue of~$H$ corresponding to~$s_k$ and~$\eta \in
 [0, 1 / \lambda]$~\citep{sutskever2013importance}. If~$\eta \approx 0$,
@@ -1667,21 +1650,21 @@ throttle the momentum parameter along directions of high curvature, adding a
 measure of stability that is absent in~CM.
 
 When training deep neural networks, the local convergence properties of
-optimization algorithms are largely irrelevant. Because the parameter space for
+optimization algorithms are largely irrelevant. Since the parameter space for
 deep neural networks is so vast and complex, the ``transitory
 period''~\citep{sutskever2013importance} before local convergence sets in lasts
 for almost the entire duration of the optimization process. It is in this
 setting that the advantage of using momentum becomes clear.
 
 Suppose that we are optimizing a smooth, convex function~$f : \reals{1} \to
-\reals{1}$ using stochastic first-order algorithms. Without momentum (e.g. using
+\reals{1}$ using stochastic first-order algorithms. Without momentum (i.e. using
 vanilla SGU), we have a convergence rate of~$O(\ell / k + \sigma / \sqrt{k})$,
 where~$\ell$ is the Lipschitz constant and $\sigma$~is the variance in the
 gradient estimate.  With momentum, the convergence rate is~$O(\ell / k^2 +
 \sigma / \sqrt{k})$~\citep{sutskever2013importance}. Since $f$~is convex, the
 first term is dominant during the transitory period, and momentum gives us a
-clear advantage. As the iterates approach the minimizer, the second term takes
-effect, and both algorithms have approximately the same performance.
+clear advantage. As $\theta_k \to \theta^\star$, the second term takes effect,
+and both algorithms have approximately the same performance.
 
 \subsection{First-Order Optimization Algorithms}
 
@@ -1692,27 +1675,26 @@ effect, and both algorithms have approximately the same performance.
 }
 \caption{Hierarchy of the first-order optimization techniques and algorithms.
 An arrow from one block to another means that the algorithm represented by the
-first block uses or is based on the technique or algorithm represented by the
-second. Here, CM~stands for ``classical momentum'', NAG~for ``Nesterov
-accelerated momentum'', and DH~for ``diagonal
-Hessian''.\label{fig:first_order_hierarchy}}
+first block is based on the one represented by the second. Here, CM~stands for
+``classical momentum'', NAG~for ``Nesterov accelerated momentum'', and DH~for
+``diagonal Hessian''.\label{fig:first_order_hierarchy}}
 \end{figure}
 
 All of the successful first-order optimization algorithms for neural networks
-make use momentum in some form~(see \ref{fig:first_order_hierarchy}). The first
-algorithm that we present is called DH~(for ``diagonal Hessian''), and is based
-on a diagonal approximation to the Levenberg-Marquardt
+make use momentum in some form~(see Figure~\ref{fig:first_order_hierarchy}). The
+first algorithm that we present is abbreviated DH~(for ``diagonal Hessian''),
+and is based on a diagonal approximation to the Levenberg-Marquardt
 algorithm~\citep{lecun-98b}.  In the spirit of~CM, DH~updates an exponentially
 decaying average~$\bar{h}_k \in \reals{n}$ of the diagonal of the Hessian
 matrix. We define the division and absolute value operations for vectors so that
-they are carried out elementwise.  The update rule for~DH is given by
+they are carried out elementwise. The update rule for~DH is given by
 \begin{align*}
 	\bar{h}_{k + 1} &\coloneqq (1 - \tau) \bar{h}_k + \tau |\text{diag}(H_k)| + \epsilon \\
 	\theta_{k + 1}  &\coloneqq \theta_k - \frac{\eta}{\bar{h}_{k + 1}} \;g_k,
 \end{align*}
 where the \emph{decay} parameter~$\tau \in [0, 1]$ controls the ``momentum'' in
 the running average, and~$\epsilon \in \reals{n}$ is a nonnegative constant
-vector chose to prevent the effective learning rate from growing too large.
+vector chosen to prevent the effective learning rate from growing too large.
 Using~$\diag(H_k)$ to scale the individual learning rates can outperform
 carefully annealed versions of~SGU that use global learning
 rates~\citep{lecun-98b}.
@@ -1741,14 +1723,14 @@ where~$\epsilon \in \reals{n}$. The learning rate and decay parameters~$\eta,
 	= (\bar{h}_{k + 1})^{-1} \odot
 		\frac{(\bar{g}_{k + 1})^2}{\bar{v}_{k + 1}} \\
 	\tau_{k + 1} &\coloneqq \left( e - \frac{(\bar{g}_{k + 1})^2}{\bar{v}_{k + 1}} \right)
-		\odot \tau_{k + 1} + 1.
+		\odot \tau_k + 1.
 \end{align*}
 The factor~$(\bar{g}_{k + 1})^2 / \bar{v}_{k + 1}$ in the update to~$\eta$
-scales the learning rate to compensate for the vanishing gradient problem, while
-the factor~$(\bar{h}_{k + 1})^{-1}$ attempts to correct for pathological
-curvature. The update to~$\tau$ is chosen such that the momentum increases when
-the step size decreases, and decreases when the step size increases. Lastly, the
-update to~$\theta$ is given by
+scales the effective learning rate to compensate for the vanishing gradient
+problem, while the factor~$(\bar{h}_{k + 1})^{-1}$ attempts to correct for
+pathological curvature. The update to~$\tau$ is chosen such that the momentum
+increases when the step size decreases, and decreases when the step size
+increases. Lastly, the update to~$\theta$ is given by
 \[
 	\theta_{k + 1} \coloneqq \theta_k - \eta_{k + 1} \odot g_k.
 \]
@@ -1845,12 +1827,12 @@ update rule
 \end{align*}
 where~$\epsilon \in \reals{n}$ and~$\eta \in \reals{+}$. This update rule is the
 same as that of RMSPROP, except that the average of the gradient vector is not
-exponentially decaying. Consequently, the learning rates can only decrease over
-time. If~$\eta$ is chosen too small, then progress will be painfully slow.
-ADADELTA makes the running average of~$(g_k)^2$ exponentially decreasing, and
-also multiplies the step by the root mean square of the average of the past
-updates~(see \citet{zeiler2012adadelta} for the motivation behind why this is
-done). These modifications lead to the update rule
+exponentially decaying. As a result, the effective learning rate can only
+decrease over time. If~$\eta$ is chosen too small, then progress will be
+painfully slow.  ADADELTA makes the running average of~$(g_k)^2$ exponentially
+decreasing, and also multiplies the step by the root mean square of the average
+of the past updates~(see \citet{zeiler2012adadelta} for the motivation behind
+why this is done). These modifications lead to the update rule
 \begin{align*}
 	\bar{v}_{k + 1} &\coloneqq (1 - \tau) \bar{v}_k + \tau (g_k)^2 + \epsilon \\
 	s_{k + 1}       &\coloneqq \sqrt{\frac{\bar{s}_k}{\bar{v}_{k + 1}}} \; g_k \\
@@ -1858,18 +1840,31 @@ done). These modifications lead to the update rule
 	\theta_{k + 1}  &\coloneqq \theta_k - s_{k + 1}.
 \end{align*}
 
-The ADADELTA algorithm possesses many of the same properties as vSGD. The
-numerator~$s_k$ of the step plays the same role as momentum, while the
+The ADADELTA algorithm possesses many of the same properties as~vSGD. The
+numerator~$s_k$ of the step has an effect similar to that of momentum, while the
 denominator~$\bar{v}_{k + 1}$ scales the learning rates to compensate for the
 vanishing gradient problem. Since the value~$s_k$ lags behind by an iteration,
 ADADELTA is robust to sudden changes in the gradient, much in the same way
-as~NAG. As the value of the loss function approaches its optimal value, 
-
-% TODO: line search is unexplored aspect.
+as~NAG. As $\theta_k \to \theta^\star$, $\bar{s}_k, \bar{v}_{k + 1} \to
+\epsilon$, and~$\sqrt{\bar{s}_k / \bar{v}_{k + 1}} \to e$. This property
+provides an intrinsic annealing schedule. Unfortunately, the updates that are
+generated as~$\theta_k \to \theta^\star$ are still too aggressive, and local
+convegence is inferior to that of a carefully tuned version of~SGU with
+momentum.
 
 \subsection{Second-Order Optimization Algorithms}
 
 TODO
+
+\section{Experiments}
+
+TODO
+
+\section{Conclusion}
+
+TODO
+
+% TODO: line search is unexplored aspect.
 
 \bibliographystyle{plainnat}
 \bibliography{references/main,references/lecun}
