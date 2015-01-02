@@ -4,12 +4,6 @@
 % Date:		05/18/2013
 % Contact:	_@adityaramesh.com
 %
-% - The purpose of a convolutional layer is to learn an image kernel for
-% identifying salient features in its input. (Compare to common kernels in image
-% processing, and show a few examples of what they do.)
-% - The purpose of a subsampling layer is to "pool together" the features found
-% by a convolutional layer and summarize them in a lower-dimensional space.
-%
 % Structure:
 %
 % - TODO after finishing report so we have a clearer picture of things. Update
@@ -17,27 +11,6 @@
 % the material necessary to understand and implement neural networks in one
 % place. Individual sources tend to be sparse on important details, but the
 % underlying concepts are very simple.
-% - TODO: mention some exciting applications of neural networks in the
-% introduction/abstract?
-%
-% - Experiments.
-% 	- How images are mapped to the input layer of CNNs.
-% 	- How the color channels are mapped to different feature planes; how
-% 	this is handled in a CNN.
-% 	- Importance of choosing the right color space so that we decorrelate
-% 	the channels; Yann's advice. How people don't really bother with this
-% 	now. Need for benchmark to see if this improves time to convergence.
-%  	- Description of data set, task, architecture, etc.
-%
-% - Discussion.
-% 	- Need for better theoretical understanding. How NN's are very much a
-% 	hacker's science, but that recent research is aiming to reach a better
-% 	theoretical understanding of NN's.
-% 	- In NN community, ideas are often published and quickly forgotten,
-% 	because of the multitude of methods and ideas proposed.
-% 	- Need for better and more thorough benchmark to test proposed ideas,
-% 	both new and old. This leads to a better understanding of what works and
-% 	what does not.
 %
 
 \documentclass[11pt,a4paper]{article}
@@ -47,6 +20,7 @@
 \usepackage{hyperref}
 
 % Basic math and figure configuration.
+\usepackage[group-separator={,}]{siunitx}
 \usepackage{array}
 \usepackage{epigraph}
 \usepackage{afterpage}
@@ -85,7 +59,6 @@
 
 % Math definitions.
 \newcommand{\weight}[2]{w_{#1 \rightarrow #2}}
-\newcommand{\ind}[1]{1\{#1\}}
 \newcommand{\size}{\operatorname{size}}
 \newcommand{\capacity}{\operatorname{capacity}}
 \newcommand{\complexity}{\operatorname{complexity}}
@@ -101,20 +74,29 @@
 
 \maketitle
 \begin{abstract}
-TODO: Update this!
+Top-scoring submissions for any benchmark involving image recognition or
+acoustic modeling invariably use neural networks. The intuition underlying
+neural networks is simple. Many sources attempt to convey this intuition, but
+lack clarity due to the use of imprecise notation. This makes it difficult for a
+practitioner to read one of these sources and subsequently implement neural
+networks to solve nontrivial tasks. One of the purposes of this report is to
+establish a solid foundation based on current practices, so that the reader can
+easily incorporate the results of current research.
 
-We introduce the concept of a neural network as a biologically-inspired
-graphical template that allows us to construct nonlinear functions to perform
-classification and regression tasks. The nonlinear function represented by the
-neural network is controlled by a set of parameters that are calibrated during
-the training process. By viewing the update rule for the optimization algorithm
-used during training as a discrete dynamical system, we can gain some insight
-into the stability properties of a neural network. Using this insight, we derive
-an optimal value for the learning rate used during training.
+Neural networks are prototypical of the large-scale optimization problems often
+encountered when applying machine learning in practice. None of the sources
+makes the connection between training neural networks and statistical learning
+theory. But this connection is necessary in order to explain the difference
+between small-scale problems and large-scale problems from the perspective of
+optimization. We develop guidelines based on this investigation, and use them to
+characterize the most successful optimization algorithms used to train neural
+networks today. Finally, we implement several of these algorithms, and discuss
+the results based on our current understanding.
 \end{abstract}
 
 \section{Introduction to Neural Networks}
 \subsection{Representation}
+\label{sec:representation}
 
 Neural networks take their inspiration from information processing in biological
 systems. In the human brain, information is transmitted between neurons in the
@@ -137,7 +119,7 @@ wish to use~$G$ to approximate a function~$f: \reals{m} \to \reals{n}$. If~$f(x)
 = y$ for some~$x \in \reals{m}$ and~$y \in \reals{n}$, then our task will be to
 use~$G$ to ``learn'' what~$f$ does to transform~$x$ into~$y$.
 
-Let us first impose some organizational strucuture on~$G$. We delegate to a
+Let us first impose some organizational structure on~$G$. We delegate to a
 set~$I$ of~$m$ input nodes the task of broadcasting the components of~$x$ to
 other nodes in~$G$. In order for the neural network to be useful, the
 transmission of information must eventually cease at a set~$O$ of~$n$ output
@@ -154,10 +136,10 @@ than this.
 \begin{minipage}[t]{0.4\linewidth}
 	\centering
 	\begin{tikzpicture}
-	\node[lightstyle, minimum size=20] (a) at (-1,0) {$A$};
-	\node[lightstyle, minimum size=20] (b) at (0,1) {$B$};
-	\node[lightstyle, minimum size=20] (c) at (1,0) {$C$};
-	\node[lightstyle, minimum size=20] (d) at (0,-1) {$D$};
+	\node[lightstyle, minimum size=20] (a) at (-1, 0) {$A$};
+	\node[lightstyle, minimum size=20] (b) at (0,  1) {$B$};
+	\node[lightstyle, minimum size=20] (c) at (1,  0) {$C$};
+	\node[lightstyle, minimum size=20] (d) at (0, -1) {$D$};
 	\draw[-stealth] (a)--(b);
 	\draw[-stealth] (a)--(d);
 	\draw[-stealth] (b)--(d);
@@ -169,10 +151,10 @@ than this.
 \begin{minipage}[t]{0.4\linewidth}
 	\centering
 	\begin{tikzpicture}
-	\node[lightstyle, minimum size=20] (a) at (-1,-1) {$A$};
-	\node[lightstyle, minimum size=20] (c) at (1,-1) {$C$};
-	\node[lightstyle, minimum size=20] (b) at (0,0.6) {$B$};
-	\node[lightstyle, minimum size=20] (d) at (0,2.5) {$D$};
+	\node[lightstyle, minimum size=20] (a) at (-1, -1) {$A$};
+	\node[lightstyle, minimum size=20] (c) at (1,  -1) {$C$};
+	\node[lightstyle, minimum size=20] (b) at (0,  0.6) {$B$};
+	\node[lightstyle, minimum size=20] (d) at (0,  2.5) {$D$};
 	\draw[-stealth] (a)--(b);
 	\draw[-stealth] (a)--(d);
 	\draw[-stealth] (b)--(d);
@@ -359,7 +341,7 @@ by~(\ref{eq:forward_propagation}). This process is called \emph{forward
 propagation}.
 
 \subsection{Activation Functions and Feature Learning}
-\label{sec:act_func_and_feature_learning}
+\label{sec:act_func_and_fl}
 
 \begin{figure}[t]
 \centering
@@ -459,11 +441,11 @@ at~$\pm 1$ instead of~$\pm a$. Then the weights of the network would drastically
 increase, in order to produce the large activation values necessary to drive the
 outputs of $\tanh$ function to the target values at its asymptotes.  The
 derivative of the scaled $\tanh$ function at these large activation values would
-be exponentially small~(see Figure~\ref{fig:tanh_der_plot}). Thus, a
-minimization algorithm using derivative information would be liable to ``get
+be exponentially small~(see Figure~\ref{fig:tanh_der_plot}). Thus, an
+optimization algorithm that used derivative information would be liable to ``get
 stuck''.
 
-Finally, the choices for these constants allow us to intrepret the output of the
+Finally, the choices for these constants allow us to interpret the output of the
 network as a measure of confidence towards its classification. When an input is
 near the decision boundary separating instances in two classes, we would like
 the network to output a small confidence value to reflect this uncertainty. If
@@ -485,7 +467,7 @@ involve a certain degree of experimentation.
 
 One of the principles underlying the effectiveness of neural networks is that of
 \emph{hierarchical feature learning}, and is the focus of much of the deep
-learning research at NYU. A \emph{feature} is a ``simple'' quantity derived from
+learning research at~NYU. A \emph{feature} is a ``simple'' quantity derived from
 the input that is designed to identify one or more of the input's salient
 characteristics. For example, suppose that we wish to identify whether a given
 black and white image contains a human face. One potential feature is the
@@ -531,7 +513,7 @@ the information from layers~$L_0, \ldots, L_{k - 1}$ to produce $z_k$.
 The activation functions discussed so far are useful for learning the low- and
 mid-level features in the hierarchy. For learning high-level features,
 \emph{radial basis functions}~(RBFs) are sometimes more
-appropriate~\citep{lecun-01a}. A radial basis function~$\phi : \reals{1} \to
+appropriate~\citep{lecun-98}. A radial basis function~$\phi : \reals{1} \to
 \reals{1}$ is a continuous function whose value depends only on the
 \emph{radius} from a prescribed center~$c \in \reals{n}$. Suppose that we wish
 to approximate a function~$f : \reals{n} \to \reals{1}$ whose values at the
@@ -605,7 +587,7 @@ The second scheme can be used for unary classification as well as
 classes. This time,~$y_k \in \{0, 1\}^m$ and $\hat{y}_k \in \reals{m}$. These
 values are called \emph{distributed codes}. The component!$(y_k)_i$ is one
 if~$x_k$ belongs to the $i$th class, and zero otherwise. On the other hand,
-$(\hat{y}_k)_i$ is a measure of confidence that $x_k$ belongs to the the $i$th
+$(\hat{y}_k)_i$ is a measure of confidence that $x_k$ belongs to the $i$th
 class. Whether a larger value indicate increased or decreased confidence varies
 based on convention.
 
@@ -712,11 +694,11 @@ two-layer neural network from
 Figure~\ref{fig:two_layer_nn}.\label{fig:nn_with_loss}}
 \end{figure}
 
-Our goal is now to formulate the objective for the minimization algorithm used
-to adjust the weights and biases. To do this, we need a function that measures
-how well the network's prediction~$\hat{y}_k \in \reals{m}$ for $x_k \in
-\reals{n}$ matches the target value~$y_k \in \reals{m}$. This function is called
-the \emph{loss function} or \emph{cost function} (see
+Our goal is now to formulate the objective for the optimization algorithm used
+to calibrate the weights and biases. To do this, we need a function that
+measures how well the network's prediction~$\hat{y}_k \in \reals{m}$ for $x_k
+\in \reals{n}$ matches the target value~$y_k \in \reals{m}$. This function is
+called the \emph{loss function} or \emph{cost function} (see
 Figure~\ref{fig:nn_with_loss}). The choice of the loss function depends on the
 type of problem we would like to solve.
 
@@ -850,7 +832,7 @@ convergence. \citet{lecun-98b} give an intuitive explanation for why
 decorrelating the inputs can be beneficial. Consider the extreme case where all
 components of the inputs are positive. Let~$(1, j)$ be a unit in the second
 layer of the network, and let~$\tilde{x}_k$ consist of the components of~$x_k$
-corresponding to~$\parents{(1, j)}$ (see Figure~\ref{fig:two_layer_nn}).
+corresponding to~$\parents{(1, j)}$ (see Figure~\ref{fig:nn_with_loss}).
 Let~$\delta$ be the scalar error computed for $(1, j)$ using the techniques
 discussed in Section~\ref{sec:computing_derivatives}. Then a na\"{i}ve
 first-order optimization algorithm will update the weights to~$(1, j)$ by an
@@ -910,23 +892,24 @@ solve for the value of~$\sigma$ that forces~$\Var(a_{1j}) = 1$, we compute
 \end{align*}
 So in order to enforce that $\Var(a_{1j}) = 1$, we should sample the weights
 from a distribution with zero mean and standard deviation given by
-\[
+\begin{equation}
 	\sigma = \frac{1}{\sqrt{f}}.
-\]
+	\label{eq:weight_stddev}
+\end{equation}
 The most common choices of distribution for weight initialization are the
 uniform and normal distributions~\citep{lecun-98b, krizhevsky2012imagenet}.
 
 The training dynamics of neural networks are vitally important but poorly
 understood. As the weights and biases of the network are calibrated using the
-minimization algorithm, the distributions of the activation values at each layer
+optimization algorithm, the distributions of the activation values at each layer
 evolve. For deep networks with many layers, the vanishing gradient problem is
 greatly compounded. In particular, the greater the depth of a layer in the
 network, the greater the tendency of the activation values to cluster around
 zero or become very large~\citep{glorot2010understanding}. This causes the
 vanishing gradient problem discussed in
-Section~\ref{sec:act_func_and_feature_learning}. The subtle numerical issues
+Section~\ref{sec:act_func_and_fl}. The subtle numerical issues
 resulting from these complex interactions largely determines whether, when, and
-how a given minimization algorithm will converge.
+how a given optimization algorithm will converge.
 
 The use of a good weight initialization scheme can help mitigate the undesirable
 saturation of the activation values~\citep{glorot2010understanding}. Several
@@ -942,13 +925,81 @@ is likely to have widespread practical consequences.
 \subsection{Computing Derivatives}
 \label{sec:computing_derivatives}
 
-TODO
+All of the optimization algorithms that we will discuss require derivative
+information. We establish some useful notation before proceeding. Let~$e$ be the
+per-instance loss function, and let~$\theta \coloneqq (w, b) \in \reals{p}$ be
+the vector consisting of the weights and biases of the network. We now
+fix~$(x_k, y_k) \in S$ and~$\bar{\theta} \in \reals{p}$, and define~$\varphi :
+\theta \mapsto e(\hat{y}_k, y_k)$, where~$\hat{y}_k$ is the prediction of the
+network with parameters~$\bar{\theta}$ for~$x_k$. The gradient vector and
+Hessian matrix of~$\varphi$ evaluated at~$\bar{\theta}$ are given by
+\[
+	\bar{g} \coloneqq (\nabla_\theta \varphi)(\bar{\theta})
+	\quad\text{and}\quad
+	\bar{H} \coloneqq (\nabla^2_\theta \varphi)(\bar{\theta}),
+\]
+respectively. How can we compute~$\bar{g}$ and~$\bar{H}$ efficiently?
+
+In Section~\ref{sec:representation}, we introduced the forward propagation
+procedure. Given an input~$x \in \reals{n}$, we evaluate the
+functions~$\sigma_1, \ldots, \sigma_d$ corresponding to each layer in
+succession, culminating in the prediction~$\hat{y} \in \reals{m}$~(see
+Figure~\ref{fig:nn_with_loss}). Each forward propagation requires~$O(p)$ steps.
+An obvious way to compute the gradient is to use finite differences. For each~$i
+\in [1, p]$, we calculate
+\[
+	(\bar{g})_i \approx \frac{\varphi(\bar{\theta} + \epsilon e_i) -
+		\varphi(\bar{\theta})}{\epsilon},
+\]
+where~$\epsilon \ll 1$ is chosen to be small enough so that the difference is
+accurate, but not \emph{so} small that the numerator only contains garbage after
+subtraction. This method is rather inefficient. Each component of~$\bar{g}$
+requires a finite difference, and each finite difference requires an additional
+forward propagation. This results in a total of~$O(p^2)$ steps to compute the
+gradient. Using central differences for additional accuracy doubles the amount
+of work.
+
+Fortunately, $\bar{g}$~can be computed in only~$O(p)$ steps. We first compute
+the derivatives of~$u_d$~with respect to the parameters and activation values of
+the units in~$L_d$. Using the chain rule, we can compute the derivatives
+of~$\varphi$ with respect to the parameters of~$L_d$. The components
+of~$\bar{g}$ corresponding to these parameters are now determined. To compute
+the same quantities for~$u_{d - 1}$, we require the derivatives of~$u_{d}$.
+Proceeding with the computations now gives us the information necessary to
+compute the derivatives of~$\varphi$ with respect to the parameters of~$L_{d -
+1}$. The components of~$\bar{g}$ corresponding to these parameters are now
+determined. Repeating this process allows us to accumulate all of the components
+of~$\bar{g}$ by visiting the layers of the network in \emph{reverse order}.
+This procedure is hence called~\emph{backpropagation}; details can be found
+in~\citet{ml_bishop}. Backpropagation can be tricky to implement, so finite
+differences are often used to validate correctness.
+
+Can we extend backpropagation to compute~$\bar{H}$? Yes, but there is a problem.
+A small neural network has on the order of $10^6$~parameters. Hence,
+$\bar{g}$~has $10^6$~elements, and~$\bar{H}$ has $10^{12}$~elements. So even for
+a small network, computing~$\bar{H}$ is completely intractable. However,
+both~$\diag(\bar{H})$ and~$\bar{H}v$ for a vector~$v \in \reals{p}$ can be
+computed efficiently using modified versions of
+backpropagation~\citep{ml_bishop}. Both of these quantities are exploited by
+various optimization algorithms.
 
 \subsection{Convolutional Networks}
 
-TODO
+Convolutional networks are responsible for the success of models based on
+learning hierarchical representations~(see Section~\ref{sec:act_func_and_fl}).
+The area of machine learning that studies such models is called ``deep
+learning''. Of all of the methods commonly studied in deep learning,
+convolutional networks are the most practical: the top scoring methods for any
+benchmark involving image recognition or acoustic modeling invariably use them.
+Forward propagation's low computational cost (on the order of a few milliseconds
+per evaluation) allows convolutional networks to be used in low-power devices
+such as cameras and robots. Training convolutional networks using
+backpropagation has been studied extensively in the
+literature~\citep{lecun-98b}. Due to space and time constraints, we do not
+discuss them here; see~\citet{ufldl-website} for an introduction.
 
 \section{Concepts from Statistical Learning Theory}
+\label{src:concepts_from_slt}
 
 \subsection{Generalization and PAC-learning}
 
@@ -959,7 +1010,7 @@ to learn? So far, we have neglected to provide a definition for what it means
 for an algorithm ``learn'' a model to solve a given problem. A rigorous
 definition for learning is given in the field of statistical learning theory.
 This definition will have widespread consequences in shaping our criteria used
-to determine when an optimization algorithm is good.
+to characterize optimization algorithms.
 
 When performing binary classification, each training instance~$(x_k, y_k) \in S$
 is implicitly associated with a target \emph{concept} that we wish to learn.
@@ -969,8 +1020,8 @@ associated with our classification task is called the \emph{concept class}, and
 is denoted by~$C$. A concept can be something simple, such as the set of
 axis-aligned rectangles in~$\reals{2}$, or something exceedingly complex, such
 as the manifold of human faces in~$\reals{256 \times 256}$, the space of~$256
-\times 256$ black and white images. We assume that all instances are drawn iid
-from some unknown distribution~$D$~over~$X$.
+\times 256$, 1-bit, black and white images. We assume that all instances are
+drawn iid from some unknown distribution~$D$~over~$X$.
 
 Suppose that we are given a family of candidate functions~$F$, such that~$f : X
 \to \{0, 1\}$ for every~$f \in F$. The task of our learning algorithm is to
@@ -1008,7 +1059,7 @@ drawn iid from~$D$, it is easy to show that
 \]
 In other words, the generalization error of~$f$ is simply the average
 misclassification rate over samples drawn from~$D$. We are now ready to present
-the the definition of probably approximate correct~(PAC) learning.
+the definition of probably approximate correct~(PAC) learning.
 
 \begin{definition}[PAC-learning~\citep{ml_mohri}]
 Suppose that we are performing binary classification of inputs from an input
@@ -1035,8 +1086,8 @@ is PAC-learnable if the sample size required to meet our goals is bounded by a
 polynomial function of~$1/\epsilon$ and~$1/\delta$. Roughly speaking, $A$ must
 find a function in~$F$ that is \emph{approximately correct} with \emph{high
 probability}. But it must be able to do this using a sample size that is not
-``too large''. The extension of space and time complexity to sample size
-requires this notion of ``high probability''.
+``too large''. The analogous notion of space and time complexity for sample size
+requires this ``high probability'' bound.
 
 One of the goals of statistical learning theory is to derive upper bounds on the
 generalization error in various situations. When such an upper bound applies to
@@ -1050,26 +1101,38 @@ holds for any~$f \in F$ that
 	\label{eq:generalization_bound}
 \end{equation}
 where~$c \in \reals{+}$ and~$\capacity(F)$ is a quantity that measures the
-complexity of our chosen family of functions. When we apply the
-bound~(\ref{eq:generalization_bound}), we often subsume auxiliary constants
-into~$c$. So two occurrences of~$c$ do not necessary represent the same constant
-value.
+complexity of our chosen family of functions. When we
+apply~(\ref{eq:generalization_bound}), we often subsume auxiliary constants
+into~$c$. So two occurrences of~$c$ do \emph{not} necessary represent the same
+constant value.
 
 \subsection{ERM vs SRM}
 \label{sec:erm_vs_srm}
 
-The central idea of statistical learning theory is that learning is a tradeoff
-between minimizing the training error and the complexity of the family of
-functions used to model~$C$. These quantities correspond to the first and second
-terms on the RHS of~(\ref{eq:generalization_bound}), respectively. This tradeoff
-can be expressed in another way that is particularly illuminating. Let
+\begin{figure}
+\centering
+\resizebox{0.6 \textwidth}{!}{%
+	\includegraphics{graphics/srm_graph.pdf}
+}
+\caption{Visualization of the SRM procedure (adapted from~\citet{ml_mohri}). The
+SRM procedure minimizes an upper bound of the generalization error that is a sum
+of the training error and the complexity term.\label{fig:srm_graph}}
+\end{figure}
+
+The central idea of statistical learning theory is that learning is a
+\emph{tradeoff} between minimizing the training error, and the complexity of the
+family of functions used to model~$C$~(see Figure~\ref{fig:srm_graph}). The
+former and latter quantities correspond to the first and second terms on the RHS
+of~(\ref{eq:generalization_bound}), respectively. A particularly illuminating
+way of expressing this tradeoff is as follows. Let
 \[
 	f^\star \coloneqq \argmin_{f} R(f) \quad\text{and}\quad
 	f_F^\star \coloneqq \argmin_{f \in F} R(f).
 \]
-In other words, $R(f^\star)$~is the best we can ever hope to do, while
-$R(f_F^\star)$~is the best we can do using our chosen family $F$. Given a
-function~$f \in F$, we define the \emph{excess error}~$\mathcal{E}$ as
+In other words, $R(f^\star)$~is the best we can ever hope to do using \emph{any}
+function, while $R(f_F^\star)$~is the best we can do using a \emph{fixed}
+function family $F$. Given a function~$f \in F$, we define the \emph{excess
+error}~$\mathcal{E}$ as
 \begin{equation}
 	\mathcal{E} \coloneqq R(f) - R(f^\star)
 		= (R(f_F^\star) - R(f^\star)) + (R(f) - R(f_F^\star))
@@ -1084,37 +1147,31 @@ where
 \]
 The quantity~$\apperr$ is called the \emph{approximation error}, and measures
 how well functions in~$F$ can approximate functions in~$C$. It is generally
-intractible, as we have no way of estimating it. The quantity~$\esterr$ is
+intractable, as we have no way of estimating it. The quantity~$\esterr$ is
 called the \emph{estimation error}, and measures the performance of~$f$ relative
 to that of the best-in-class hypothesis~$f_F^\star$. It is easy to show
-that~$\esterr$ is bounded above by the second term on the RHS
+that~$\esterr$ is bounded above by the second term on the~RHS
 of~(\ref{eq:generalization_bound}). Equation~\ref{eq:app_est_decomp} tells us
 that the quality of a candidate function~$f$ is determined by the sum of these
 errors.
 
-Reducing the training error causes the estimation error to decrease, while
-reducing the complexity term causes the approximation error to decrease. But
-reducing the approximation error often requires increasing $\capacity(F)$, and
-this increases the complexity term. On the other hand, reducing the complexity
-term requires decreasing $\capacity(F)$, inhibiting our ability to
-approximate~$C$. This increases the training error. The interplay between these
-two errors is called the \emph{approximation-estimation tradeoff}.
+Reducing the training error~$\hat{R}(f)$ decreases $\esterr$, and
+\emph{increasing} $\capacity(F)$ decreases $\apperr$. Suppose we are given a
+fixed training sample~$S$, and wish to reduce $\apperr$. This requires
+increasing $\capacity(F)$, which enlarges the search space of functions for the
+optimization algorithm. Since the optimization algorithm must now look in a
+strictly larger space of functions, $\esterr$ is likely to increase. Let us try
+reduce~$\esterr$. Since~$S$ is fixed, we cannot get more data; our only choice
+is to reduce $\capacity(F)$, which is likely to increase $\apperr$. We cannot
+continue to decrease one of the two errors without beginning to increasing the
+other~(see Figure~\ref{fig:srm_graph}); this is the
+\emph{approximation-estimation tradeoff}.
 
-\begin{figure}
-\centering
-\resizebox{0.6 \textwidth}{!}{%
-	\includegraphics{graphics/srm_graph.png}
-}
-\caption{Visualization of the SRM procedure (adapted from~\citet{ml_mohri}). The
-SRM procedure minimizes an upper bound of the generalization error that is a sum
-of the training error and the complexity term.\label{fig:srm_graph}}
-\end{figure}
-
-Minimizing only the training error while ignoring the complexity term is called
+Minimizing only~$\hat{R}(f)$ while ignoring $\capacity(F)$ is called
 \emph{empirical risk minimization}~(ERM), and is inadvisable on both theoretical
-and practical grounds. An alternative procedure that contols $\capacity(F)$ is
-called \emph{structural risk minimization}~(SRM). Let~$c \in \reals{+}$, and
-define
+and practical grounds. An alternative procedure that controls $\capacity(F)$ is
+called \emph{structural risk minimization}~(SRM). It works as follows. Let~$c
+\in \reals{+}$, and define
 \begin{equation}
 	F_\lambda \coloneqq \{ f \in F : \complexity(f) \leq c \},
 	\label{eq:regularized_family}
@@ -1129,22 +1186,22 @@ to find the functions given by
 		\hat{R}(f),
 	\label{eq:erm_srm_solutions}
 \end{equation}
-respectively. The SRM procedure finds a function in~$F$ that minimizes the
-generalization bound~(\ref{eq:generalization_bound}) (see
-Figure~\ref{fig:srm_graph}). We can transform second equation
-in~(\ref{eq:erm_srm_solutions}) into an unconstrained minimization problem by
-using the penalty method. This gives
+respectively. The SRM procedure finds a function in~$F$ that
+minimizes~(\ref{eq:generalization_bound})~(see Figure~\ref{fig:srm_graph}). For
+convenience, we can transform second equation in~(\ref{eq:erm_srm_solutions})
+into an unconstrained minimization problem by using the penalty method. This
+gives
 \begin{equation}
 	f_{\text{SRM}} = \argmin_{\substack{\lambda \in \reals{+} \\ f \in F}}
 		\left(\hat{R}(f) + \lambda\complexity(f)\right).
 	\label{eq:srm_penalty}
 \end{equation}
-The Lagrange multiplier~$\lambda$ called the the \emph{regularization
-parameter}, and penalizes more complex functions. We can now conduct our search
+The Lagrange multiplier~$\lambda$ called the \emph{regularization parameter},
+and penalizes more complex functions. We can now conduct our search
 over~$\lambda$ instead of over~$c$. If~$H$ is a vector space, then we can define
 $\complexity(f) \coloneqq \|f\|$ for some norm~${\|\cdot\|}$. Note that SRM
-involves finding the solution to several ERM subproblems, and is intractible in
-general. In practice, we find an approximate SRM solution by using
+involves finding the solution to several ERM subproblems, and is generally
+intractable. In practice, we find an \emph{approximate} SRM solution by using
 cross-validation to choose~$\lambda^\star$ from a finite sequence~$\{ \lambda_k
 \}_{k = 1}^r$.
 
@@ -1161,19 +1218,23 @@ by~(\ref{eq:sum_of_squares}). According to the theory developed so far, choosing
 $f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let $\complexity(f)
 \coloneqq \|w\|_2$ for any $f \in F$. A better idea would be to try sequence of
 values for~$\lambda$ in~(\ref{eq:srm_penalty}), such as~$\{ \lambda_k \}_{k =
--5}^5$, where~$\lambda_k \coloneqq 2^k$. The results from statistical learning
-theory shape our understanding of how we should solve problems in machine
-learning.
+-5}^5$, where~$\lambda_k \coloneqq 2^k$. In this way, the results from
+statistical learning theory shape our perspective when solving practical
+problems.
 
 \section{Characterizing Optimization Algorithms}
+\label{sec:characterizing_opt}
 
 \subsection{Goals of Optimization}
 
-We turn our focus to applying statistical learning theory to characterize the
-quality of optimization algorithms for machine learning. Let~$f_{\text{ERM}}$ be
-given by~(\ref{eq:erm_srm_solutions}). During training, we only require that the
-optimization algorithm produce a function~$\hat{f} \in F$, whose empirical error
-is within a fixed tolerance~$\rho \in \reals{+}$ of that of~$f_{\text{ERM}}$:
+We turn our focus to applying the results
+from~Section~\ref{src:concepts_from_slt} to characterize the quality of
+optimization algorithms for machine learning. To more closely model reality, we
+split~$\esterr$ into two terms, yielding a threefold decomposition
+of~$\mathcal{E}$. Let~$f_{\text{ERM}}$ be given by~(\ref{eq:erm_srm_solutions}).
+During training, we may only require that the optimization algorithm produce a
+function~$\hat{f} \in F$, whose empirical error is within a fixed
+tolerance~$\rho \in \reals{+}$ of that of~$f_{\text{ERM}}$:
 \begin{equation}
 	\hat{R}(\hat{f}) - \hat{R}(f_{\text{ERM}}) \leq \rho.
 	\label{eq:tol_eq}
@@ -1261,7 +1322,7 @@ Using~(\ref{eq:generalization_bound}), it is easy to show that
 
 Unfortunately, the bounds~(\ref{eq:small_scale_bound})
 and~(\ref{eq:large_scale_bound}) are too pessimistic, and do not accurately
-reflect reality. In order to proceed with our analysis, we make some simpliyfing
+reflect reality. In order to proceed with our analysis, we make some simplifying
 assumptions. First, we assume that $F$~is the family of affine functions given
 by~(\ref{eq:affine_family}). In this special case, the generalization
 bound~(\ref{eq:generalization_bound}) simplifies to
@@ -1320,33 +1381,33 @@ and
 where~$e$ is the per-instance loss function associated with~$E$. We assume that
 there exist constants~$\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$
 and~$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample
-size~$s \in \naturals{1}$ such that, with probability at least~$1 - \delta$, we
-have
+size~$s \in \naturals{1}$ for which
 \[
 	\tr(G_{\text{ERM}} (H_{\text{ERM}})^{-1}) \leq \nu \quad\text{and}\quad
 	\spectrum(H_{\text{ERM}}) \subset [\lambda_{\text{min}}, \lambda_{\text{max}}].
 \]
-The condition number~$\kappa \coloneqq
+with probability at least~$1 - \delta$. The condition number~$\kappa \coloneqq
 \lambda_{\text{max}}/{\lambda_{\text{min}}}$ determines the difficulty of the
 optimization problem.
 
 The optimization algorithms used in machine learning either operate on
 \emph{full batches} or \emph{mini-batches}. An full batch algorithm will only
-apply an update to~$\theta$ after processing the entire training sample~$S$. The
-derivative information computed by batch algorithms is averaged over the batch
-of instances. A mini-batch algorithm applies an update to $\theta$ every~$r$
-iterations, where~$r | s$. A \emph{stochastic} or \emph{online} algorithm uses a
-mini-batch size of one. The first two algorithms that we present are full batch
-algorithms, while the last two algorithms are stochastic.
+apply an update to~$\theta$ after processing the \emph{entire} training
+sample~$S$. The derivative information computed by batch algorithms is averaged
+over the batch of instances. A mini-batch algorithm applies an update to
+$\theta$ every~$r$ iterations, where~$r | s$. A \emph{stochastic} or
+\emph{online} algorithm uses a mini-batch size of one. The first two algorithms
+that we present are full batch algorithms, while the last two algorithms are
+stochastic.
 
 Mini-batch algorithms are often several times faster than full batch algorithms.
-This is because mini-batch algorithms are better able to exploit redundacy in
+This is because mini-batch algorithms are better able to exploit redundancy in
 the training sample~$S$. \citet{lecun-98b} give an explanation for why this
-happens. Suppose that~$|S| = 1000$, and consists of the same~100 instances
+happens. Suppose that~$|S| = \num{1000}$, and consists of the same~100 instances
 replicated ten times in the same order. The average of the gradient over~$S$ is
-equal to the average of the gradient over the first 100 instances. A full batch
+equal to the average of the gradient over the first 100~instances. A full batch
 algorithm will compute the same gradient ten times before applying a single
-update. In this time, an algorithm with a mini-batch size of 100 would apply ten
+update. In this time, an algorithm with a mini-batch size of~100 would apply ten
 updates. While duplicate instances are rare in practice, there are often
 clusters of instances that are similar in some sense.
 
@@ -1442,13 +1503,12 @@ $O\left( \frac{n \nu}{\epsilon} \right)$ \\
 from~\citet{bousquet2008tradeoffs}).\label{tab:asymptotic_rates}}
 \end{table}
 
-The the asymptotic rates for the four algorithms that were presented are given
-in Table~\ref{tab:asymptotic_rates}. The rates in the first column are based on
-the sizes of the vectors and matrices involved in the corresponding update
-rules. The rates in the second column are taken directly from our discussion. To
-obtain the rates in the third column, we multiply the corresponding rates in the
-first and second columns. One of our assumptions in~(\ref{eq:error_equiv}) is
-that
+The asymptotic rates for the four algorithms that were presented are given in
+Table~\ref{tab:asymptotic_rates}. The rates in the first column are based on the
+sizes of the vectors and matrices involved in the corresponding update rules.
+The rates in the second column are taken directly from our discussion. To obtain
+the rates in the third column, we multiply the corresponding rates in the first
+and second columns. One of our assumptions in~(\ref{eq:error_equiv}) is that
 \begin{equation}
 	\rho \approx \left(\frac{n}{s}\log\frac{s}{n}\right)^\alpha.
 	\label{eq:rho_assumption}
@@ -1465,7 +1525,7 @@ shown that
 	s \approx \frac{n}{\epsilon^{1 / \alpha}} \log\frac{1}{\epsilon}.
 	\label{eq:s_assumption}
 \end{equation}
-Substituing~(\ref{eq:rho_approx_eps}) and~(\ref{eq:s_assumption}) into the rates
+Substituting~(\ref{eq:rho_approx_eps}) and~(\ref{eq:s_assumption}) into the rates
 in the third column gives the rates in the fourth column.
 
 Table~\ref{tab:asymptotic_rates} contains a wealth of information regarding the
@@ -1506,25 +1566,24 @@ becomes even more apparent.
 
 \subsection{Challenges of Large-Scale Optimization}
 
-Deep neural networks are used today to solve challenging problems in computer
-vision, natural language processing, and several other fields. Training these
-networks is prototypical of the large-scale problems discussed in the previous
-section. Our guidelines suggest that for such problems, optimization algorithms
-based on steepest descent should use mini-batches, and carefully evaluate the
-tradeoffs of incorporating second-order information. Almost all optimization
-algorithms used to train deep neural networks abide by these constraints.
+Training convolutional networks is prototypical of the large-scale problems
+discussed in the previous section. Our guidelines suggest that for such
+problems, optimization algorithms based on steepest descent should use
+mini-batches, and carefully evaluate the tradeoffs of incorporating second-order
+information. Almost all optimization algorithms used to train convolutional
+networks, or deep neural networks of other kinds, abide by these constraints.
 
 First-order algorithms must effectively deal with the vanishing gradient problem
 and the issue of ``pathological curvature''~\citep{martens2010deep}. In
 Section~\ref{sec:pp_and_init}, we mentioned that activation values in deeper
 layers of a network have a greater tendency to cluster around zero or very large
 values. Since the gradients in one layer depend multiplicatively on those in the
-next, the vanishing gradient problem usually affects the lowest levels most
-severely. We also saw that when features of the input are correlated, the weight
-updates are no longer decoupled. Both of these phenomena suggest that
-\emph{each} weight and bias in the network should be given its own learning
-rate~\citep{lecun-98b}, something that is usually not done for traditional
-optimization problems.
+next~(see Section~\ref{sec:computing_derivatives}), the vanishing gradient
+problem usually affects the lowest levels most severely. We also saw that when
+features of the input are correlated, the weight updates are no longer
+decoupled. Both of these phenomena suggest that \emph{each} weight and bias in
+the network should be given its own learning rate~\citep{lecun-98b}, something
+that is usually not done for traditional optimization problems.
 
 The asymptotic rates for the stochastic algorithms in
 Table~\ref{tab:asymptotic_rates} suggest vulnerability to ill-conditioning of
@@ -1534,7 +1593,7 @@ bias in the network is given its own learning rate. By viewing the full batch
 gradient update rule as a discrete time dynamical system, it can be shown that
 the optimal learning rate for the $i$th parameter $\theta_i$ scales the
 corresponding eigenvalue of the Hessian matrix to unity~\citep{lecun-98b}. That
-is, the optimal value of the learning rate for $\theta_i$ is given by
+is, the optimal learning rate for $\theta_i$ is given by
 \[
 	\eta_i^\star \coloneqq \frac{r}{\lambda_i},
 \]
@@ -1542,28 +1601,23 @@ where~$r$ is the size of the mini-batch. Intuitively, this means that we would
 like to amplify~$\eta_i$ along directions of low curvature, and decay~$\eta_i$
 along directions of high curvature.
 
-A small neural network has on the order of $10^6$~parameters. This means that
-the gradient vector has $10^6$~elements, while the Hessian matrix has
-$10^{12}$~elements. Even for a small network, computing the spectrum of the
-Hessian matrix, let alone the Hessian matrix itself, is completely intractible.
-\citet{lecun-98b} give several techniques for estimating the maximum eigenvalue
-of the Hessian matrix, but dividing all of the learning rates by this quantity
-would unnecessarily retard progress. This means that first-order algorithms must
-somehow deal with pathological curvature without access to second-order
-information.
+Even for a small network, computing the spectrum of the Hessian matrix is
+completely intractable. \citet{lecun-98b} give several techniques for estimating
+the maximum eigenvalue of the Hessian matrix, but dividing all of the learning
+rates by this quantity would unnecessarily retard progress. This means that
+first-order algorithms must somehow deal with pathological curvature without
+access to second-order information.
 
-Unsurprisingly, the most successful first-order optimization algorithms do this
-by making innovative use of first-order information. These techniques use a
-combination of the following three ingredients: momentum, a window of past
-updates, and the diagonal of the Hessian matrix (which can actually be computed
-efficiently). Despite the efficacy of these techniques, there is a small but
-definite gap in the performance between first-order algorithms and the two most
-successful second-order algorithms that have been adapted for use with neural
-networks: limited-memory BFGS~(L-BFGS) and ``Hessian free
-optimization''~(HF)~\citep{martens2010deep, ngiam2011optimization,
-sutskever2013importance}. These second-order algorithms seem to make effective
-use of the curvature information from Hessian matrix in order to explore regions
-of the parameter space that are inaccessible to first-order algorithms.
+Unsurprisingly, the most successful ones do this by making innovative use of the
+information that is available. These algorithms enjoy widespread use, and can
+solve a variety of challenging tasks. However, there is a small but definite gap
+in the performance between first- and second-order
+algorithms~\citep{martens2010deep, ngiam2011optimization,
+sutskever2013importance}. Second-order algorithms seem to make effective use of
+the curvature information from Hessian matrix in order to explore regions of the
+parameter space that are otherwise inaccessible. This gain in performance comes
+at a cost: second-order algorithms are considerably more complex, and
+practitioners are less willing to implement them.
 
 \subsection{Momentum}
 
@@ -1609,7 +1663,7 @@ characteristic of the unstable nature of SGU~algorithms. It also amplifies the
 gradient along directions of low curvature. In a deterministic setting, CM
 requires $\sqrt{\kappa}$~times fewer iterations than steepest descent to reach a
 solution of accuracy~$\rho$, where~$\kappa$ is defined as
-in~Table~\ref{tab:asymptotic_rates}~\citep{sutskever2013importance}.  Hence, CM
+in~Table~\ref{tab:asymptotic_rates}~\citep{sutskever2013importance}. Hence, CM
 reduces the vulnerability of first-order algorithms to ill-conditioning of the
 Hessian matrix.
 
@@ -1633,10 +1687,10 @@ update. In a deterministic setting for a smooth, convex function, NAG achieves a
 global convergence rate of~$O(1 / k^2)$, compared to convergence rate of~$O(1 /
 k)$ for steepest descent~\citep{sutskever2013importance}.
 
-Figure~\ref{fig:momentum_updates} suggests that there is a relationship between
-CM and~NAG. Suppose that~$s_k$ is an eigenvector of a quadratic function with
-positive-definite Hessian matrix $H$. Then the NAG~update is equivalent to a~CM
-update with momentum parameter
+Figure~\ref{fig:momentum_updates} suggests that there is a relationship
+between~CM and~NAG. Suppose that~$s_k$ is an eigenvector of a quadratic function
+with positive-definite Hessian matrix~$H$. Then the NAG~update is equivalent to
+a~CM update with momentum parameter
 \[
 	\mu_{\text{CM}} \coloneqq \mu_{\text{NAG}} (1 - \eta \lambda),
 \]
@@ -1649,7 +1703,7 @@ effective momentum than CM. This shows that NAG is able to automatically
 throttle the momentum parameter along directions of high curvature, adding a
 measure of stability that is absent in~CM.
 
-When training deep neural networks, the local convergence properties of
+When training deep neural networks, the \emph{local} convergence properties of
 optimization algorithms are largely irrelevant. Since the parameter space for
 deep neural networks is so vast and complex, the ``transitory
 period''~\citep{sutskever2013importance} before local convergence sets in lasts
@@ -1660,11 +1714,11 @@ Suppose that we are optimizing a smooth, convex function~$f : \reals{1} \to
 \reals{1}$ using stochastic first-order algorithms. Without momentum (i.e. using
 vanilla SGU), we have a convergence rate of~$O(\ell / k + \sigma / \sqrt{k})$,
 where~$\ell$ is the Lipschitz constant and $\sigma$~is the variance in the
-gradient estimate.  With momentum, the convergence rate is~$O(\ell / k^2 +
-\sigma / \sqrt{k})$~\citep{sutskever2013importance}. Since $f$~is convex, the
-first term is dominant during the transitory period, and momentum gives us a
-clear advantage. As $\theta_k \to \theta^\star$, the second term takes effect,
-and both algorithms have approximately the same performance.
+gradient estimate. With momentum, the convergence rate is~$O(\ell / k^2 + \sigma
+/ \sqrt{k})$~\citep{sutskever2013importance}. Since $f$~is convex, the first
+term is dominant during the transitory period, and momentum gives us a clear
+advantage. As $\theta_k \to \theta^\star$, the second term takes effect, and
+both algorithms have approximately the same performance.
 
 \subsection{First-Order Optimization Algorithms}
 
@@ -1684,7 +1738,7 @@ All of the successful first-order optimization algorithms for neural networks
 make use momentum in some form~(see Figure~\ref{fig:first_order_hierarchy}). The
 first algorithm that we present is abbreviated DH~(for ``diagonal Hessian''),
 and is based on a diagonal approximation to the Levenberg-Marquardt
-algorithm~\citep{lecun-98b}.  In the spirit of~CM, DH~updates an exponentially
+algorithm~\citep{lecun-98b}. In the spirit of~CM, DH~updates an exponentially
 decaying average~$\bar{h}_k \in \reals{n}$ of the diagonal of the Hessian
 matrix. We define the division and absolute value operations for vectors so that
 they are carried out elementwise. The update rule for~DH is given by
@@ -1735,12 +1789,12 @@ increases. Lastly, the update to~$\theta$ is given by
 	\theta_{k + 1} \coloneqq \theta_k - \eta_{k + 1} \odot g_k.
 \]
 
-While the vSGD update rule is complex, it is designed to work effectively with a
+While the~vSGD update rule is complex, it is designed to work effectively with a
 minimal amount of human effort. Previously proposed methods had on the order of
 ten or a hundred hyperparameters, and were often sensitive to the values chosen
 for them. Additionally, first-order methods often require careful annealing of
 the learning rate to yield acceptable results, or sometimes to converge at
-all~\citep{krizhevsky2012imagenet}. The vSGD algorithm only has a single
+all~\citep{krizhevsky2012imagenet}. The~vSGD algorithm only has a single
 parameter that needs to be set~(hence the name of the paper ``No More Pesky
 Learning Rates''), and the learning rate automatically converges to zero as the
 value of the loss function becomes optimal. If the objective function is
@@ -1748,7 +1802,7 @@ nonstationary and the data changes, vSGD will ramp up the learning rate in
 response~\citep{schaul-icml-13}. This makes vSGD suitable for online learning
 problems.
 
-The vSGD algorithm works best when initialized with a \emph{slow start}
+The~vSGD algorithm works best when initialized with a \emph{slow start}
 heuristic~\citep{schaul-icml-13}. By this, we mean that the parameter updates
 should be kept small artificially until the exponentially decaying averages
 become sufficiently accurate. We first seed the algorithm by computing the
@@ -1757,7 +1811,7 @@ relevant averages over a ``handful'' of instances (the paper suggests~$10^{-3}
 initial parameter updates small, the resulting value of~$\bar{v}_1$ is
 ``overestimated'' by a factor~$C$, which the paper recommends setting to~$n /
 10$, where~$n$ is the dimension of the input space. This is the only parameter
-that needs to be set. Using this heuristic, the vSGD algorithm surpasses the
+that needs to be set. Using this heuristic, the~vSGD algorithm surpasses the
 performance of finely-tuned implementations of SGU and previously proposed
 adaptive learning algorithms~\citep{schaul-icml-13}.
 
@@ -1788,7 +1842,7 @@ are~$\eta_{\text{min}} = 10^{-6}$ and~$\eta_{\text{max}} = 50$.
 The RPROP algorithm's strategy of only using the signs of the gradient vector is
 also its limitation: RPROP cannot be used with mini-batches. The signs of the
 gradient vector are only meaningful if the gradient over the current batch is a
-good approximation of the true gradient of the the loss function~$E$, which is
+good approximation of the true gradient of the loss function~$E$, which is
 evaluated over the entire training sample. To see how things can go wrong,
 suppose that RPROP were used as a stochastic algorithm. If the gradient of a
 parameter~$\theta_i$ is~$+0.1$ for nine instances and~$-0.9$ for one instance,
@@ -1829,7 +1883,7 @@ where~$\epsilon \in \reals{n}$ and~$\eta \in \reals{+}$. This update rule is the
 same as that of RMSPROP, except that the average of the gradient vector is not
 exponentially decaying. As a result, the effective learning rate can only
 decrease over time. If~$\eta$ is chosen too small, then progress will be
-painfully slow.  ADADELTA makes the running average of~$(g_k)^2$ exponentially
+painfully slow. ADADELTA makes the running average of~$(g_k)^2$ exponentially
 decreasing, and also multiplies the step by the root mean square of the average
 of the past updates~(see \citet{zeiler2012adadelta} for the motivation behind
 why this is done). These modifications lead to the update rule
@@ -1849,24 +1903,195 @@ as~NAG. As $\theta_k \to \theta^\star$, $\bar{s}_k, \bar{v}_{k + 1} \to
 \epsilon$, and~$\sqrt{\bar{s}_k / \bar{v}_{k + 1}} \to e$. This property
 provides an intrinsic annealing schedule. Unfortunately, the updates that are
 generated as~$\theta_k \to \theta^\star$ are still too aggressive, and local
-convegence is inferior to that of a carefully tuned version of~SGU with
+convergence is inferior to that of a carefully tuned version of~SGU with
 momentum.
 
 \subsection{Second-Order Optimization Algorithms}
+\label{sec:second_order_alg}
 
-TODO
+The two most successful optimization algorithms for deep neural networks that
+can justifiably be called ``second-order methods'' are~L-BFGS and an adaptation
+of the linear~CG method called ``Hessian-free
+optimization''~(HF)~\citep{martens2010deep}. Both of these algorithms are
+second-order methods from traditional optimization that have been adapted for
+use with mini-batches. The~L-BFGS algorithm maintains a history of past values
+of~$\theta_k$ and~$g_k$ in order to implicitly compute approximate
+Hessian-vector products. Since the Hessian matrix is only crudely approximated
+by past updates, accuracy can suffer compared to that of~HF, which computes
+\emph{exact} Hessian-vector products~\citep{ngiam2011optimization}.
+
+HF is the \emph{only} known competitive optimization algorithm for deep neural
+networks that computes the Hessian-vector products exactly. At each outer
+iteration, HF computes the gradient over a relatively large mini-batch. It then
+iterates the linear~CG method to minimize the local quadratic model determined
+by the gradient and Hessian. At each inner iteration of~CG, a modified version
+of backpropagation~(see Section~\ref{sec:computing_derivatives}) is used to
+compute the Hessian-vector products exactly. These inner iterations are
+terminated when the relative per-iteration progress becomes sufficiently small.
+
+In the process of adapting linear~CG to work for deep neural networks, Martens
+developed custom strategies for damping, choosing the mini-batch size,
+termination, ``hot-starting'' the inner iterations, preconditioning,
+initialization, and more~\citep{martens2010deep}. \citep{martens-hf-guide}~give
+a comprehensive tutorial on using HF in practice. While implementing HF is
+involved, its performance in several tasks is still
+unmatched~\citep{martens2010deep, ngiam2011optimization,
+sutskever2013importance}. Unfortunately, practitioners are reluctant to
+implement it due to its underlying complexity, instead preferring to continue
+experimentation with first-order methods in order to tighten the performance
+gap~\citep{sutskever2013importance}.
 
 \section{Experiments}
 
-TODO
+I benchmarked the first-order methods covered in this report on the~MNIST
+database of handwritten digits~\citep{lecun-98}. This data set consists
+of~$\num{60000}$, $28 \times 28$, 8-bit, black and white images of handwritten
+digits. The training set consists of~$\num{50000}$ images, and the test set
+consists of the remaining~$\num{10000}$ images. Classifying handwritten digits
+is now considered to be an easy task, since relatively small convolutional
+networks can achieve error rates considerably less than one percent without any
+data augmentation techniques~(e.g. affine distortions). Nonetheless, the~MNIST
+database is still a useful benchmark that is almost invariably used in
+publications that propose new techniques for convolutional networks.
+
+The convolutional network that is used for this benchmark is the same one
+described by~\citet{lecun-98}, except some small changes are made for the sake
+of simplicity. Instead of using the given sparse connection pattern between
+layers~S2 and~C3, I connected each unit in layer~C3 to the corresponding units
+in every feature map of layer~S2. Additionally, the center of each Euclidean
+RBF~unit was randomly initialized from the values~$\pm 1$ instead of being
+chosen to represent ASCII bitmaps of the corresponding digit. The images in the
+training sample were centered and scaled as described
+by~(\ref{eq:center_and_scale}), and the initial weights of each layer were
+sampled from a uniform distribution with mean zero and standard deviation given
+by~(\ref{eq:weight_stddev}).
+
+I used four variants each of~SGU: one with a global, static learning rate, one
+with a global learning rate and an annealing schedule, one with~CM, and
+with~NAG. The global learning rate was chosen by performing a grid search
+in~$(0, 2]$, using increments of~$\rho_1 \coloneqq 0.1$. For each trial learning
+rate, the convolutional network was trained on a randomly chosen sample of~$200$
+training instances to minimize the test error. I identified the learning
+rate~$\eta_1^\star$ achieving the lowest mean test error computed from five
+initializations, each using a newly-chosen training sample. The grid search was
+refined twice: first on the interval~$[\eta_1^\star - \rho_1, \eta_1^\star +
+\rho_1]$, with~$\rho_2 \coloneqq 0.01$, and next on the interval~$[\eta_2^\star
+- \rho_2, \eta_2^\star + \rho_2]$ with~$\rho_3 \coloneqq 0.001$.
+
+The annealing schedule I used is given by
+\[
+	\eta_k \coloneqq \frac{\eta_0}{1 + \beta k},
+\]
+as suggested by~\citep{bottou2012stochastic}. Many other annealing schedules are
+used in practice; see~\citet{pylearn2-training} for more examples. The
+parameters~$\eta_0^\star, \beta^\star$ were found using a twice-refined grid
+search on~$(0, 2]^2$, using the same values of~$\rho_1, \rho_2, \rho_3$ given
+previously. The annealing schedule for the momentum is the same one used
+by~\citet{sutskever2013importance}, and is given by
+\[
+	\mu_k \coloneqq \min\left(
+		1 - 2^{-1 - \log_2(\floor{sk / r} + 1)},
+	\mu_{\text{max}}\right),
+\]
+where~$s$ is the size of the training sample~($\num{50000}$~in our case), $r$~is
+the mini-batch size, and~$\mu_{\text{max}} \in \reals{+}$ limits the growth of
+the momentum parameter. For both~CM and~NAG, I kept the learning rate~$\eta$
+constant, as was done in~\citet{sutskever2013importance}.
+Both~$\mu_{\text{max}}$ and~$\eta$ were selected using a twice-refined grid
+search on~$(0, 2]$ using the same values for~$\rho_1, \rho_2, \rho_3$ given
+previously. The parameters for the same four variants of~DH were chosen using
+the same grid search procedures, and $\tau$~was selected using a twice-refined
+grid search on~$(0, 1]$ with the same values of~$\rho_1, \rho_2, \rho_3$.
+
+While vSGD, RMSPROP, and ADADELTA are claimed to require little human effort,
+selecting the best values for the hyperparameters still requires a grid search.
+To find the best values for~$\eta$ and~$\tau$ for RMSPROP, $\eta$, $\tau$,
+and~$\mu$ for RMSPROP~+~NAG, and~$\tau$ for ADADELTA, I performed the usual
+twice-refined grid search. The initial search intervals for all parameters
+were~$(0, 1]$. To find the best value of~$C$ for~vSGD, I performed a grid search
+in~$(0, \num{1000}]$, with~$\rho_1 \coloneqq 100$, $\rho_2 \coloneqq 10$,
+and~$\rho_3 \coloneqq 1$. All hyperparameters were kept constant during
+training. Due to time constraints, I set the mini-batch size~$r$ to~$200$ for
+all of the algorithms tested. The best results obtained are given in
+Table~\ref{tab:first_order_results}. Since computing time is not a determining
+factor for the quality of the solution found, I allowed all algorithms to run
+until convergence.
+
+\begin{table}
+\centering
+\begin{tabular}{llllc}
+\toprule
+Algorithm & \multicolumn{3}{c}{Parameters} & Test Error~(\%) \\
+\midrule
+SGU~(global) & $\eta \coloneqq 0.006$ & & & 1.14 \\
+SGU~(annealed) & $\eta_0 \coloneqq 0.013$ & $\beta \coloneqq 1.005$ & & 0.83 \\
+SGU~+~CM & $\eta_0 \coloneqq 0.004$ & $\mu_{\text{max}} \coloneqq 0.982$ & & 0.78 \\
+SGU~+~NAG & $\eta_0 \coloneqq 0.006$ & $\mu_{\text{max}} \coloneqq 0.995$ & & 0.76 \\
+DH~(global) & $\eta \coloneqq 0.011$ & $\tau \coloneqq 0.634$ & & 1.11 \\
+DH~(annealed) & $\eta_0 \coloneqq 0.014$ & $\tau \coloneqq 0.667$ & $\beta \coloneqq 1.012$ & 0.82 \\
+DH~+~CM & $\eta \coloneqq 0.012$ & $\tau \coloneqq 0.661$ & $\mu_{\text{max}} \coloneqq 0.988$ & 0.78 \\
+DH~+~NAG & $\eta \coloneqq 0.013$ & $\tau \coloneqq 0.665$ & $\mu_{\text{max}} \coloneqq 0.993$ & 0.75 \\
+vSGD & $C \coloneqq 48$ & & & 0.74 \\
+RMSPROP & $\eta \coloneqq 0.004$ & $\tau \coloneqq 0.792$ & & 0.76 \\
+RMSPROP + NAG & $\eta \coloneqq 0.004$ & $\tau \coloneqq 0.810$ & $\mu \coloneqq 0.664$ & 0.76 \\
+ADADELTA & $\eta \coloneqq 0.006$ & & & 0.78 \\
+\bottomrule
+\end{tabular}
+\caption{Results for the first-order optimization algorithms on the MNIST
+database.\label{tab:first_order_results}}
+\end{table}
+
+Several features of the results confirm our expectations. The adaptive
+algorithms (vSGD, RMSPROP, and ADADELTA), which use separate learning rates for
+each parameter, generally outperformed those that used global learning rates.
+However, the differences in performance were not as great as I would have
+expected. Each modification, such as the incorporation of momentum
+or~$\diag(H)$, only yielded minuscule improvements in the test error at
+convergence. Moreover, these improvements were only apparent after exhaustive
+grid searches were used to find the best values for all of the hyperparameters. A
+practitioner is unlikely to have the time or patience to do this for each new
+problem. In this respect, the adaptive algorithms provide a clear advantage:
+they are robust with respect to selection of the hyperparameters.
+
+I was surprised to see that the heuristics used by the adaptive algorithms only
+provided marginal improvements over the best results for algorithms that used
+global learning rates. One explanation for this is that a finely-tuned annealing
+schedule ensures that the effective learning rates gently approach zero
+as~$\theta_k \to \theta^\star$. Both vSGD and ADAGRAD have intrinsic annealing
+schedules, but the updates generated as~$\theta_k \to \theta^\star$ are probably
+too aggressive. Further experimentation with custom annealing schedules is
+likely to provide improvements over the results for the adaptive algorithms.
+These results show that careful testing can provide valuable information about
+the relative performance of algorithms that would otherwise be missed.
 
 \section{Conclusion}
 
-TODO
+Research suffers from a lack of theoretical understanding of the training
+dynamics of neural networks. Most of the techniques used by the recent adaptive
+optimization algorithms for neural networks were already mentioned over a decade
+earlier~\citep{lecun-98b}. But because the experiments carried out at that time
+were not comprehensive enough, these techniques were quickly forgotten, and had
+to be rediscovered later. The availability of more general software that would
+allow practitioners to easily try out a variety of optimization algorithms for a
+given problem may help avoid this problem.
 
-% TODO: line search is unexplored aspect.
+Due to space and time constraints, several interesting topics were not addressed
+by the experiments. The MNIST database was the only data set used for the
+experiments. The extent to which the relative performance of optimization
+algorithms depends on specific features of the data remains to be seen.  There
+is also evidence that incorporating a line search into first-order optimization
+algorithms, even for small mini-batches, may improve
+generalization~\citep{ngiam2011optimization}. The interaction between line
+search procedures and the other techniques used by these algorithms remains
+unexplored. Lastly, none of the second-order algorithms mentioned in
+Section~\ref{sec:second_order_alg} were implemented. For a different type of
+convolutional network, \citet{sutskever2013importance} report a test error
+of~$0.69\%$ on the MNIST database, using a modified version of~HF. It would be
+interesting to compare the performances of~L-BFGS and~HF to the results
+in~Table~\ref{tab:first_order_results}.
 
 \bibliographystyle{plainnat}
+\clearpage
 \bibliography{references/main,references/lecun}
 
 \end{document}
