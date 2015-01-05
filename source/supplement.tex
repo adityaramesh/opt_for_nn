@@ -1,0 +1,61 @@
+%
+% File Name: supplement.tex
+% Author:    Aditya Ramesh
+% Date:      01/02/2015
+% Contact:   _@adityaramesh.com
+%
+
+\documentclass[11pt,a4paper]{article}
+
+% Bibliography management.
+\usepackage{hyperref}
+
+% Font configuration.
+\usepackage[
+	activate={true,nocompatibility},
+	tracking=true
+]{microtype}
+\usepackage{fontspec}
+\usepackage{mathpazo}
+\setmainfont[Ligatures = TeX]{TeX Gyre Pagella}
+\setsansfont[Ligatures = TeX, Scale = 0.9]{Source Code Pro}
+\setmonofont[Ligatures = TeX, Scale = 0.9]{Source Code Pro}
+
+\title{Supplement to Report}
+\author{Aditya Ramesh}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+Several libraries (written by me) were used to run the experiments mentioned in
+the report. These libraries are described below.
+\begin{description}
+\item[\textsf{ccbase}] A C++ utility library for formatting output, detecting
+platform-specific features, unit testing, error handling, loading dynamic
+libraries, and working with the filesystem. Downloadable at
+\url{https://github.com/adityaramesh/ccbase}.
+
+\item[\textsf{ctop}] A C++ library for analyzing system topology information.
+Downloadable at \url{https://github.com/adityaramesh/ctop}.
+
+\item[\textsf{gcd}] A small C++14 library used to solve systems of linear
+congruences. Downloadable at \url{https://github.com/adityaramesh/gcd}.
+
+\item[\textsf{z1d}] A C++14 library for one-dimensional root-finding.
+Downloadable at \url{https://github.com/adityaramesh/z1d}.
+
+\item[\textsf{neo}] A C++ library for high-performance binary IO. Included in
+archive.
+
+\item[\textsf{ntl}] A C++ library for training feed-forward neural networks.
+Included in archive. The \textsf{cuda-convnet} library, written by Alex
+Krizhevsky, was used to help validate correctness during the development of
+\textsf{ntl}.
+
+\item[\textsf{ndmath}] A C++ library for working with $n$-dimensional arrays.
+Included in archive.
+\end{description}
+
+\end{document}

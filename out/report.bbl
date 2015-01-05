@@ -24,8 +24,8 @@ Olivier Bousquet and L{\'e}on Bottou.
 \newblock In \emph{Advances in neural information processing systems}, pages
   161--168, 2008.
 
-\bibitem[climin developers(2013)]{climin-rmsprop}
-climin developers.
+\bibitem[{climin developers}(2013)]{climin-rmsprop}
+{climin developers}.
 \newblock rmsprop.
 \newblock
   \url{http://climin.readthedocs.org/en/latest/rmsprop.html\#tieleman2012rmsprop},
@@ -51,13 +51,6 @@ Alex Krizhevsky, Ilya Sutskever, and Geoffrey~E Hinton.
 \newblock In \emph{Advances in neural information processing systems}, pages
   1097--1105, 2012.
 
-\bibitem[Lab(2011)]{pylearn2-training}
-LISA Lab.
-\newblock Training -- pylearn2 dev documentation.
-\newblock \url{http://deeplearning.net/software/pylearn2/library/train.html},
-  2011.
-\newblock Accessed: 2014-12-08.
-
 \bibitem[LeCun et~al.(1998{\natexlab{a}})LeCun, Bottou, Bengio, and
   Haffner]{lecun-98}
 Y.~LeCun, L.~Bottou, Y.~Bengio, and P.~Haffner.
@@ -71,6 +64,13 @@ Y.~LeCun, L.~Bottou, G.~Orr, and K.~Muller.
 \newblock Efficient backprop.
 \newblock In G.~Orr and Muller K., editors, \emph{Neural Networks: Tricks of
   the trade}. Springer, 1998{\natexlab{b}}.
+
+\bibitem[{LISA Lab}(2011)]{pylearn2-training}
+{LISA Lab}.
+\newblock Training -- pylearn2 dev documentation.
+\newblock \url{http://deeplearning.net/software/pylearn2/library/train.html},
+  2011.
+\newblock Accessed: 2014-12-08.
 
 \bibitem[Martens(2010)]{martens2010deep}
 James Martens.

@@ -4,14 +4,6 @@
 % Date:		05/18/2013
 % Contact:	_@adityaramesh.com
 %
-% Structure:
-%
-% - TODO after finishing report so we have a clearer picture of things. Update
-% the abstract to include how this paper is useful in bringing together all of
-% the material necessary to understand and implement neural networks in one
-% place. Individual sources tend to be sparse on important details, but the
-% underlying concepts are very simple.
-%
 
 \documentclass[11pt,a4paper]{article}
 
@@ -66,6 +58,80 @@
 \newcommand{\esterr}{\mathcal{E}_{\mathrm{est}}}
 \newcommand{\opterr}{\mathcal{E}_{\mathrm{opt}}}
 
+%
+% This implementation of `widebar` is taken from the following link:
+% http://tex.stackexchange.com/questions/16337/can-i-get-a-widebar-without-using-the-mathabx-package.
+%
+\makeatletter
+\let\save@mathaccent\mathaccent
+\newcommand*\if@single[3]{%
+  \setbox0\hbox{${\mathaccent"0362{#1}}^H$}%
+  \setbox2\hbox{${\mathaccent"0362{\kern0pt#1}}^H$}%
+  \ifdim\ht0=\ht2 #3\else #2\fi
+  }
+%The bar will be moved to the right by a half of \macc@kerna, which is computed by amsmath:
+\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
+%If there's a superscript following the bar, then no negative kern may follow the bar;
+%an additional {} makes sure that the superscript is high enough in this case:
+\newcommand*\widebar[1]{\@ifnextchar^{{\wide@bar{#1}{0}}}{\wide@bar{#1}{1}}}
+%Use a separate algorithm for single symbols:
+\newcommand*\wide@bar[2]{\if@single{#1}{\wide@bar@{#1}{#2}{1}}{\wide@bar@{#1}{#2}{2}}}
+\newcommand*\wide@bar@[3]{%
+  \begingroup
+  \def\mathaccent##1##2{%
+%Enable nesting of accents:
+    \let\mathaccent\save@mathaccent
+%If there's more than a single symbol, use the first character instead (see below):
+    \if#32 \let\macc@nucleus\first@char \fi
+%Determine the italic correction:
+    \setbox\z@\hbox{$\macc@style{\macc@nucleus}_{}$}%
+    \setbox\tw@\hbox{$\macc@style{\macc@nucleus}{}_{}$}%
+    \dimen@\wd\tw@
+    \advance\dimen@-\wd\z@
+%Now \dimen@ is the italic correction of the symbol.
+    \divide\dimen@ 3
+    \@tempdima\wd\tw@
+    \advance\@tempdima-\scriptspace
+%Now \@tempdima is the width of the symbol.
+    \divide\@tempdima 10
+    \advance\dimen@-\@tempdima
+%Now \dimen@ = (italic correction / 3) - (Breite / 10)
+    \ifdim\dimen@>\z@ \dimen@0pt\fi
+%The bar will be shortened in the case \dimen@<0 !
+    \rel@kern{0.6}\kern-\dimen@
+    \if#31
+      \overline{\rel@kern{-0.6}\kern\dimen@\macc@nucleus\rel@kern{0.4}\kern\dimen@}%
+      \advance\dimen@0.4\dimexpr\macc@kerna
+%Place the combined final kern (-\dimen@) if it is >0 or if a superscript follows:
+      \let\final@kern#2%
+      \ifdim\dimen@<\z@ \let\final@kern1\fi
+      \if\final@kern1 \kern-\dimen@\fi
+    \else
+      \overline{\rel@kern{-0.6}\kern\dimen@#1}%
+    \fi
+  }%
+  \macc@depth\@ne
+  \let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
+  \mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
+  \macc@set@skewchar\relax
+  \let\mathaccentV\macc@nested@a
+%The following initialises \macc@kerna and calls \mathaccent:
+  \if#31
+    \macc@nested@a\relax111{#1}%
+  \else
+%If the argument consists of more than one symbol, and if the first token is
+%a letter, use that letter for the computations:
+    \def\gobble@till@marker##1\endmarker{}%
+    \futurelet\first@char\gobble@till@marker#1\endmarker
+    \ifcat\noexpand\first@char A\else
+      \def\first@char{}%
+    \fi
+    \macc@nested@a\relax111{\first@char}%
+  \fi
+  \endgroup
+}
+\makeatother
+
 \title{Optimization for Neural Networks}
 \author{Aditya Ramesh}
 \date{}
@@ -86,7 +152,7 @@ easily incorporate the results of current research.
 Neural networks are prototypical of the large-scale optimization problems often
 encountered when applying machine learning in practice. None of the sources
 makes the connection between training neural networks and statistical learning
-theory. But this connection is necessary in order to explain the difference
+theory. But this connection is necessary in order to explain the differences
 between small-scale problems and large-scale problems from the perspective of
 optimization. We develop guidelines based on this investigation, and use them to
 characterize the most successful optimization algorithms used to train neural
@@ -585,7 +651,7 @@ a single unit.
 The second scheme can be used for unary classification as well as
 \emph{multiclass classification}, in which the~$x_k$ can belong to one or more
 classes. This time,~$y_k \in \{0, 1\}^m$ and $\hat{y}_k \in \reals{m}$. These
-values are called \emph{distributed codes}. The component!$(y_k)_i$ is one
+values are called \emph{distributed codes}. The component~$(y_k)_i$ is one
 if~$x_k$ belongs to the $i$th class, and zero otherwise. On the other hand,
 $(\hat{y}_k)_i$ is a measure of confidence that $x_k$ belongs to the $i$th
 class. Whether a larger value indicate increased or decreased confidence varies
@@ -766,7 +832,7 @@ The corresponding NLL function is the \emph{multiclass cross-entropy function},
 and does not have any constant terms that we can discard. So we define
 \[
 	E(w, b)
-	= -\sum_{k = 1}^s \sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}
+	\coloneqq -\sum_{k = 1}^s \sum_{i = 1}^m y_{ki} \ln\hat{y}_{ki}
 	= \sum_{k = 1}^s e(\hat{y}_k, y_k),
 \]
 where~$e$ is the per-instance loss function
@@ -789,7 +855,7 @@ The cross-entropy loss function is almost exclusively used with a special
 activation function for the output layer of the network. This activation
 function is the \emph{softmax} function; for~$z \in \reals{m}$, it is given by
 \begin{equation}
-	\phi(z_i) = \frac{\exp(z_i)}{\sum_{j = 1}^m \exp(z_j)}.
+	\phi(z_i) \coloneqq \frac{\exp(z_i)}{\sum_{j = 1}^m \exp(z_j)}.
 	\label{eq:softmax}
 \end{equation}
 This is a normalized RBF of the form given by~(\ref{eq:normalized_rbf}). It
@@ -936,9 +1002,9 @@ Hessian matrix of~$\varphi$ evaluated at~$\bar{\theta}$ are given by
 \[
 	\bar{g} \coloneqq (\nabla_\theta \varphi)(\bar{\theta})
 	\quad\text{and}\quad
-	\bar{H} \coloneqq (\nabla^2_\theta \varphi)(\bar{\theta}),
+	\widebar{H} \coloneqq (\nabla^2_\theta \varphi)(\bar{\theta}),
 \]
-respectively. How can we compute~$\bar{g}$ and~$\bar{H}$ efficiently?
+respectively. How can we compute~$\bar{g}$ and~$\widebar{H}$ efficiently?
 
 In Section~\ref{sec:representation}, we introduced the forward propagation
 procedure. Given an input~$x \in \reals{n}$, we evaluate the
@@ -974,11 +1040,11 @@ This procedure is hence called~\emph{backpropagation}; details can be found
 in~\citet{ml_bishop}. Backpropagation can be tricky to implement, so finite
 differences are often used to validate correctness.
 
-Can we extend backpropagation to compute~$\bar{H}$? Yes, but there is a problem.
+Can we extend backpropagation to compute~$\widebar{H}$? Yes, but there is a problem.
 A small neural network has on the order of $10^6$~parameters. Hence,
-$\bar{g}$~has $10^6$~elements, and~$\bar{H}$ has $10^{12}$~elements. So even for
-a small network, computing~$\bar{H}$ is completely intractable. However,
-both~$\diag(\bar{H})$ and~$\bar{H}v$ for a vector~$v \in \reals{p}$ can be
+$\bar{g}$~has $10^6$~elements, and~$\widebar{H}$ has $10^{12}$~elements. So even for
+a small network, computing~$\widebar{H}$ is completely intractable. However,
+both~$\diag(\widebar{H})$ and~$\widebar{H}v$ for a vector~$v \in \reals{p}$ can be
 computed efficiently using modified versions of
 backpropagation~\citep{ml_bishop}. Both of these quantities are exploited by
 various optimization algorithms.
@@ -1129,10 +1195,10 @@ way of expressing this tradeoff is as follows. Let
 	f^\star \coloneqq \argmin_{f} R(f) \quad\text{and}\quad
 	f_F^\star \coloneqq \argmin_{f \in F} R(f).
 \]
-In other words, $R(f^\star)$~is the best we can ever hope to do using \emph{any}
-function, while $R(f_F^\star)$~is the best we can do using a \emph{fixed}
-function family $F$. Given a function~$f \in F$, we define the \emph{excess
-error}~$\mathcal{E}$ as
+In other words, $R(f^\star)$~is the best we can ever hope to do using an
+\emph{arbitrary} function, while $R(f_F^\star)$~is the best we can do using a
+\emph{fixed} function family $F$. Given a function~$f \in F$, we define the
+\emph{excess error}~$\mathcal{E}$ as
 \begin{equation}
 	\mathcal{E} \coloneqq R(f) - R(f^\star)
 		= (R(f_F^\star) - R(f^\star)) + (R(f) - R(f_F^\star))
@@ -1208,11 +1274,11 @@ cross-validation to choose~$\lambda^\star$ from a finite sequence~$\{ \lambda_k
 As an example, suppose that we are are performing least-squares regression,
 where~$X = \reals{n}$ and~$Y \in \reals{1}$. Let~$S$ be a training sample
 consisting of~$s$ instances. We define
-\[
+\begin{equation}
 	F \coloneqq \{ x \mapsto \trans{w}x + b : w \in \reals{n}, b \in
 		\reals{1} \},
 	\label{eq:affine_family}
-\]
+\end{equation}
 and assume let~$E$ be the sum-of-squares error given
 by~(\ref{eq:sum_of_squares}). According to the theory developed so far, choosing
 $f \coloneqq \argmin_{f \in F} E(f)$ is highly inadvisable. Let $\complexity(f)
@@ -1383,8 +1449,9 @@ there exist constants~$\lambda_{\text{max}} \geq \lambda_{\text{min}} > 0$
 and~$\nu > 0$ such that for any $\delta \in (0, 1]$, there exists a sample
 size~$s \in \naturals{1}$ for which
 \[
-	\tr(G_{\text{ERM}} (H_{\text{ERM}})^{-1}) \leq \nu \quad\text{and}\quad
-	\spectrum(H_{\text{ERM}}) \subset [\lambda_{\text{min}}, \lambda_{\text{max}}].
+	\tr\left( G_{\text{ERM}} (H_{\text{ERM}})^{-1} \right) \leq \nu
+	\quad\text{and}\quad
+	\spectrum(H_{\text{ERM}}) \subset [\lambda_{\text{min}}, \lambda_{\text{max}}],
 \]
 with probability at least~$1 - \delta$. The condition number~$\kappa \coloneqq
 \lambda_{\text{max}}/{\lambda_{\text{min}}}$ determines the difficulty of the
@@ -2087,8 +2154,8 @@ unexplored. Lastly, none of the second-order algorithms mentioned in
 Section~\ref{sec:second_order_alg} were implemented. For a different type of
 convolutional network, \citet{sutskever2013importance} report a test error
 of~$0.69\%$ on the MNIST database, using a modified version of~HF. It would be
-interesting to compare the performances of~L-BFGS and~HF to the results
-in~Table~\ref{tab:first_order_results}.
+interesting to incorporate the results for~L-BFGS and~HF into
+Table~\ref{tab:first_order_results}.
 
 \bibliographystyle{plainnat}
 \clearpage

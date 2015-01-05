@@ -102,7 +102,7 @@
 \newlabel{eq:regularized_family}{{2.3}{18}{ERM vs SRM}{equation.2.3}{}}
 \newlabel{eq:erm_srm_solutions}{{2.4}{18}{ERM vs SRM}{equation.2.4}{}}
 \newlabel{eq:srm_penalty}{{2.5}{18}{ERM vs SRM}{equation.2.5}{}}
-\newlabel{eq:affine_family}{{2.2}{18}{ERM vs SRM}{equation.2.5}{}}
+\newlabel{eq:affine_family}{{2.6}{18}{ERM vs SRM}{equation.2.6}{}}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
 \citation{bousquet2008tradeoffs}
@@ -127,20 +127,22 @@
 \citation{bousquet2008tradeoffs}
 \@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces Asymptotic rates for the four algorithms discussed (adapted from\nobreakspace {}\citet  {bousquet2008tradeoffs}).\relax }}{22}{table.caption.9}}
 \newlabel{tab:asymptotic_rates}{{3.2}{22}{Asymptotic rates for the four algorithms discussed (adapted from~\citet {bousquet2008tradeoffs}).\relax }{table.caption.9}{}}
+\newlabel{eq:rho_assumption}{{3.9}{22}{Analysis of Optimization Algorithms}{equation.3.9}{}}
 \citation{bousquet2008tradeoffs}
 \citation{lecun-98b}
-\newlabel{eq:rho_assumption}{{3.9}{23}{Analysis of Optimization Algorithms}{equation.3.9}{}}
 \newlabel{eq:rho_approx_eps}{{3.10}{23}{Analysis of Optimization Algorithms}{equation.3.10}{}}
 \newlabel{eq:s_assumption}{{3.11}{23}{Analysis of Optimization Algorithms}{equation.3.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization Algorithms for Neural Networks}{23}{section.4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Challenges of Large-Scale Optimization}{23}{subsection.4.1}}
 \citation{martens2010deep}
 \citation{lecun-98b}
 \citation{lecun-98b}
 \citation{lecun-98b}
 \citation{martens2010deep,ngiam2011optimization,sutskever2013importance}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Optimization Algorithms for Neural Networks}{24}{section.4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Challenges of Large-Scale Optimization}{24}{subsection.4.1}}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
+\citation{sutskever2013importance}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Momentum}{24}{subsection.4.2}}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
@@ -150,14 +152,12 @@
 \newlabel{sub@fig:nag_update}{{b}{25}{The NAG update rule.\relax }{figure.caption.10}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4.1}{\ignorespaces Illustration of the two momentum-based update rules (adapted from\nobreakspace {}\citet  {sutskever2013importance}).\relax }}{25}{figure.caption.10}}
 \newlabel{fig:momentum_updates}{{4.1}{25}{Illustration of the two momentum-based update rules (adapted from~\citet {sutskever2013importance}).\relax }{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Momentum}{25}{subsection.4.2}}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
-\citation{sutskever2013importance}
+\citation{lecun-98b}
 \citation{lecun-98b}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}First-Order Optimization Algorithms}{26}{subsection.4.3}}
-\citation{lecun-98b}
 \citation{schaul-icml-13}
 \@writefile{lof}{\contentsline {figure}{\numberline {4.2}{\ignorespaces Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block is based on the one represented by the second. Here, CM\nobreakspace {}stands for ``classical momentum'', NAG\nobreakspace {}for ``Nesterov accelerated momentum'', and DH\nobreakspace {}for ``diagonal Hessian''.\relax }}{27}{figure.caption.11}}
 \newlabel{fig:first_order_hierarchy}{{4.2}{27}{Hierarchy of the first-order optimization techniques and algorithms. An arrow from one block to another means that the algorithm represented by the first block is based on the one represented by the second. Here, CM~stands for ``classical momentum'', NAG~for ``Nesterov accelerated momentum'', and DH~for ``diagonal Hessian''.\relax }{figure.caption.11}{}}
@@ -173,25 +173,25 @@
 \citation{zeiler2012adadelta}
 \citation{martens2010deep}
 \citation{ngiam2011optimization}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Second-Order Optimization Algorithms}{30}{subsection.4.4}}
-\newlabel{sec:second_order_alg}{{4.4}{30}{Second-Order Optimization Algorithms}{subsection.4.4}{}}
 \citation{martens2010deep}
 \citation{martens-hf-guide}
 \citation{martens2010deep,ngiam2011optimization,sutskever2013importance}
 \citation{sutskever2013importance}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Second-Order Optimization Algorithms}{30}{subsection.4.4}}
+\newlabel{sec:second_order_alg}{{4.4}{30}{Second-Order Optimization Algorithms}{subsection.4.4}{}}
 \citation{lecun-98}
 \citation{lecun-98}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{31}{section.5}}
 \citation{bottou2012stochastic}
 \citation{pylearn2-training}
 \citation{sutskever2013importance}
 \citation{sutskever2013importance}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{31}{section.5}}
+\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Results for the first-order optimization algorithms on the MNIST database.\relax }}{32}{table.caption.12}}
+\newlabel{tab:first_order_results}{{5.1}{32}{Results for the first-order optimization algorithms on the MNIST database.\relax }{table.caption.12}{}}
 \citation{lecun-98b}
 \citation{ngiam2011optimization}
 \citation{sutskever2013importance}
 \bibstyle{plainnat}
-\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Results for the first-order optimization algorithms on the MNIST database.\relax }}{33}{table.caption.12}}
-\newlabel{tab:first_order_results}{{5.1}{33}{Results for the first-order optimization algorithms on the MNIST database.\relax }{table.caption.12}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{33}{section.6}}
 \bibdata{references/main,references/lecun}
 \bibcite{ml_bishop}{{1}{2006}{{Bishop}}{{}}}
@@ -201,9 +201,9 @@
 \bibcite{glorot2010understanding}{{5}{2010}{{Glorot and Bengio}}{{}}}
 \bibcite{hinton-nnml-2014}{{6}{2014}{{Hinton et~al.}}{{Hinton, Srivastava, and Swersky}}}
 \bibcite{krizhevsky2012imagenet}{{7}{2012}{{Krizhevsky et~al.}}{{Krizhevsky, Sutskever, and Hinton}}}
-\bibcite{pylearn2-training}{{8}{2011}{{Lab}}{{}}}
-\bibcite{lecun-98}{{9}{1998{a}}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
-\bibcite{lecun-98b}{{10}{1998{b}}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
+\bibcite{lecun-98}{{8}{1998{a}}{{LeCun et~al.}}{{LeCun, Bottou, Bengio, and Haffner}}}
+\bibcite{lecun-98b}{{9}{1998{b}}{{LeCun et~al.}}{{LeCun, Bottou, Orr, and Muller}}}
+\bibcite{pylearn2-training}{{10}{2011}{{LISA Lab}}{{}}}
 \bibcite{martens2010deep}{{11}{2010}{{Martens}}{{}}}
 \bibcite{martens-hf-guide}{{12}{2012}{{Martens and Sutskever}}{{}}}
 \bibcite{ml_mohri}{{13}{2012}{{Mohri et~al.}}{{Mohri, Rostamizadeh, and Talwalkar}}}
