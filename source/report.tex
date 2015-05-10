@@ -58,80 +58,6 @@
 \newcommand{\esterr}{\mathcal{E}_{\mathrm{est}}}
 \newcommand{\opterr}{\mathcal{E}_{\mathrm{opt}}}
 
-%
-% This implementation of `widebar` is taken from the following link:
-% http://tex.stackexchange.com/questions/16337/can-i-get-a-widebar-without-using-the-mathabx-package.
-%
-\makeatletter
-\let\save@mathaccent\mathaccent
-\newcommand*\if@single[3]{%
-  \setbox0\hbox{${\mathaccent"0362{#1}}^H$}%
-  \setbox2\hbox{${\mathaccent"0362{\kern0pt#1}}^H$}%
-  \ifdim\ht0=\ht2 #3\else #2\fi
-  }
-%The bar will be moved to the right by a half of \macc@kerna, which is computed by amsmath:
-\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
-%If there's a superscript following the bar, then no negative kern may follow the bar;
-%an additional {} makes sure that the superscript is high enough in this case:
-\newcommand*\widebar[1]{\@ifnextchar^{{\wide@bar{#1}{0}}}{\wide@bar{#1}{1}}}
-%Use a separate algorithm for single symbols:
-\newcommand*\wide@bar[2]{\if@single{#1}{\wide@bar@{#1}{#2}{1}}{\wide@bar@{#1}{#2}{2}}}
-\newcommand*\wide@bar@[3]{%
-  \begingroup
-  \def\mathaccent##1##2{%
-%Enable nesting of accents:
-    \let\mathaccent\save@mathaccent
-%If there's more than a single symbol, use the first character instead (see below):
-    \if#32 \let\macc@nucleus\first@char \fi
-%Determine the italic correction:
-    \setbox\z@\hbox{$\macc@style{\macc@nucleus}_{}$}%
-    \setbox\tw@\hbox{$\macc@style{\macc@nucleus}{}_{}$}%
-    \dimen@\wd\tw@
-    \advance\dimen@-\wd\z@
-%Now \dimen@ is the italic correction of the symbol.
-    \divide\dimen@ 3
-    \@tempdima\wd\tw@
-    \advance\@tempdima-\scriptspace
-%Now \@tempdima is the width of the symbol.
-    \divide\@tempdima 10
-    \advance\dimen@-\@tempdima
-%Now \dimen@ = (italic correction / 3) - (Breite / 10)
-    \ifdim\dimen@>\z@ \dimen@0pt\fi
-%The bar will be shortened in the case \dimen@<0 !
-    \rel@kern{0.6}\kern-\dimen@
-    \if#31
-      \overline{\rel@kern{-0.6}\kern\dimen@\macc@nucleus\rel@kern{0.4}\kern\dimen@}%
-      \advance\dimen@0.4\dimexpr\macc@kerna
-%Place the combined final kern (-\dimen@) if it is >0 or if a superscript follows:
-      \let\final@kern#2%
-      \ifdim\dimen@<\z@ \let\final@kern1\fi
-      \if\final@kern1 \kern-\dimen@\fi
-    \else
-      \overline{\rel@kern{-0.6}\kern\dimen@#1}%
-    \fi
-  }%
-  \macc@depth\@ne
-  \let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
-  \mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
-  \macc@set@skewchar\relax
-  \let\mathaccentV\macc@nested@a
-%The following initialises \macc@kerna and calls \mathaccent:
-  \if#31
-    \macc@nested@a\relax111{#1}%
-  \else
-%If the argument consists of more than one symbol, and if the first token is
-%a letter, use that letter for the computations:
-    \def\gobble@till@marker##1\endmarker{}%
-    \futurelet\first@char\gobble@till@marker#1\endmarker
-    \ifcat\noexpand\first@char A\else
-      \def\first@char{}%
-    \fi
-    \macc@nested@a\relax111{\first@char}%
-  \fi
-  \endgroup
-}
-\makeatother
-
 \title{Optimization for Neural Networks}
 \author{Aditya Ramesh}
 \date{}
@@ -924,16 +850,16 @@ to~(\ref{eq:center_and_scale}), so that
 for each~$i \in [1, n]$. From~(\ref{eq:activation}), we know that the activation
 of~$(1, j)$ is given by
 \[
-	a_{1j} \;\coloneqq \sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}.
+	a_{1j} \;\coloneqq \sum_{(0, i) \in \parents(1, j)} \weight{0i}{1j} x_{0i} + b_{1j}.
 \]
 If the weights are chosen independently from the inputs, and both the weights
 and the biases have zero mean, then we have
 \begin{align*}
 	\E(a_{1j})
-	&= \E\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}\Bigg) \\
-	&= \sum_{(0, i) \in \parents(1, j)} \E(\weight{0l}{1j} x_{0l} + b_{1j}) \\
-	&= \sum_{(0, i) \in \parents(1, j)} \left(\E(\weight{0l}{1j} x_{0l}) + \E(b_{1j})\right) \\
-	&= \sum_{(0, i) \in \parents(1, j)} \E(\weight{0l}{1j}) \E(x_{0l}) = 0.
+	&= \E\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0i}{1j} x_{0i} + b_{1j}\Bigg) \\
+	&= \sum_{(0, i) \in \parents(1, j)} \E(\weight{0i}{1j} x_{0i} + b_{1j}) \\
+	&= \sum_{(0, i) \in \parents(1, j)} \left(\E(\weight{0i}{1j} x_{0i}) + \E(b_{1j})\right) \\
+	&= \sum_{(0, i) \in \parents(1, j)} \E(\weight{0i}{1j}) \E(x_{0i}) = 0.
 \end{align*}
 Thus, our requirement that the activation values have zero mean is satisfied.
 
@@ -943,17 +869,17 @@ deviation~$\sigma$. The value~$f$ is called the \emph{fan-in} of~$(1, j)$. To
 solve for the value of~$\sigma$ that forces~$\Var(a_{1j}) = 1$, we compute
 \begin{align*}
 	\Var(a_{1j})
-	&= \Var\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} + b_{1j}\Bigg) \\
+	&= \Var\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0i}{1j} x_{0i} + b_{1j}\Bigg) \\
 	&= \Var\Bigg(
-		\sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l} +
+		\sum_{(0, i) \in \parents(1, j)} \weight{0i}{1j} x_{0i} +
 		\sum_{(0, i) \in \parents(1, j)} b_{1j}
 	\Bigg) \\
-	&= \Var\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0l}{1j} x_{0l}\Bigg)\\
+	&= \Var\Bigg(\sum_{(0, i) \in \parents(1, j)} \weight{0i}{1j} x_{0l}\Bigg)\\
 	&= \sum_{(0, i) \in \parents(1, j)} \left(
-		\Var(\weight{0l}{1j}) \Var(x_{0l}) -
-		\E(\weight{0l}{1j})^2 \E(x_{0l})^2
+		\Var(\weight{0i}{1j}) \Var(x_{0i}) -
+		\E(\weight{0i}{1j})^2 \E(x_{0i})^2
 	\right) \\
-	&= \sum_{(0, i) \in \parents(1, j)} \Var(\weight{0l}{1j}) \Var(x_{0l}) \\
+	&= \sum_{(0, i) \in \parents(1, j)} \Var(\weight{0i}{1j}) \Var(x_{0i}) \\
 	&= \sum_{(0, i) \in \parents(1, j)} \sigma^2 = f \sigma^2.
 \end{align*}
 So in order to enforce that $\Var(a_{1j}) = 1$, we should sample the weights
@@ -1239,7 +1165,7 @@ and practical grounds. An alternative procedure that controls $\capacity(F)$ is
 called \emph{structural risk minimization}~(SRM). It works as follows. Let~$c
 \in \reals{+}$, and define
 \begin{equation}
-	F_\lambda \coloneqq \{ f \in F : \complexity(f) \leq c \},
+	F_c \coloneqq \{ f \in F : \complexity(f) \leq c \},
 	\label{eq:regularized_family}
 \end{equation}
 where $\complexity(f)$ is a measure of complexity of~$f$. Consequently, $F_a
@@ -1248,7 +1174,7 @@ to find the functions given by
 \begin{equation}
 	f_{\text{ERM}} \coloneqq \argmin_{f \in F} \hat{R}(f)
 	\quad\text{and}\quad
-	f_{\text{SRM}} \coloneqq \argmin_{\substack{c \in \reals{+} \\ f \in F_c}}
+	f_{\text{SRM}} \coloneqq \argmin_{\subalign{c &\in \reals{+} \\ f &\in F_c}}
 		\hat{R}(f),
 	\label{eq:erm_srm_solutions}
 \end{equation}
@@ -1258,7 +1184,7 @@ convenience, we can transform second equation in~(\ref{eq:erm_srm_solutions})
 into an unconstrained minimization problem by using the penalty method. This
 gives
 \begin{equation}
-	f_{\text{SRM}} = \argmin_{\substack{\lambda \in \reals{+} \\ f \in F}}
+	f_{\text{SRM}} = \argmin_{\subalign{\lambda &\in \reals{+} \\ f &\in F}}
 		\left(\hat{R}(f) + \lambda\complexity(f)\right).
 	\label{eq:srm_penalty}
 \end{equation}
@@ -1272,7 +1198,7 @@ cross-validation to choose~$\lambda^\star$ from a finite sequence~$\{ \lambda_k
 \}_{k = 1}^r$.
 
 As an example, suppose that we are are performing least-squares regression,
-where~$X = \reals{n}$ and~$Y \in \reals{1}$. Let~$S$ be a training sample
+where~$X = \reals{n}$ and~$Y = \reals{1}$. Let~$S$ be a training sample
 consisting of~$s$ instances. We define
 \begin{equation}
 	F \coloneqq \{ x \mapsto \trans{w}x + b : w \in \reals{n}, b \in
