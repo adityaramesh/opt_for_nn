@@ -8,4 +8,4 @@
 # Overview
 
 A report on optimization algorithms for neural networks. Download the PDF file
-[here](out/report.pdf).
+[here.](out/report.pdf)
